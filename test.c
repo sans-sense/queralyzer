@@ -11,11 +11,6 @@ static char *server_options[] = \
   { "mysql_test", 
     "--defaults-file=my.init", 
     "--debug", 
-    "--default-storage-engine=MyISAM",
-    "--innodb=OFF",
-    "--datadir=/host/apurba/thirdPartySrc/linux/mysql-user-test/wip/data",
-    "--basedir=/host/apurba/thirdPartySrc/linux/mysql-user-test/wip", 
-    "--skip-grant-tables=1",
     "--core-file=1",
     NULL };
 
@@ -38,7 +33,7 @@ int main(void)
      mysql_real_connect(mysql, NULL,NULL,NULL, "database1", 0,NULL,0);
      printf("2\n");
 
-     mysql_query(mysql, "SELECT 2 FROM dual");
+     mysql_query(mysql, "explain SELECT 2 FROM dual");
 
      results = mysql_store_result(mysql);
 
