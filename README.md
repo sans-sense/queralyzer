@@ -1,0 +1,1 @@
+Simple app to expose the query plan for mysql.
