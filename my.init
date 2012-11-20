@@ -1,11 +1,11 @@
 [client]
 default-character-set=latin1
 [server]
-basedir=/host/apurba/thirdPartySrc/linux/user-test-mysql/wip
-datadir=/host/apurba/thirdPartySrc/linux/user-test-mysql/wip/data
+basedir=./wip
+datadir=./wip/data
 #default-character-set=latin1
 skip-grant-tables=1
 innodb=OFF
 default-storage-engine=MyISAM
-#debug=d,trace,error:t,2:L:F:O,/host/apurba/thirdPartySrc/linux/user-test-mysql/log.trace
-#debug=d,trace,error:t,2:O,/host/apurba/thirdPartySrc/linux/user-test-mysql/log.trace
+debug=d,trace,error:t,10:L:F:O,./log.trace
+#debug=d,trace,error:t,2:O,./log.trace

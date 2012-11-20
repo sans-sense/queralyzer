@@ -1,0 +1,64 @@
+Actual stack trace for a real JOIN::optimize
+ sql_select.cc:   750: | | | | | | <JOIN::prepare
+ sql_select.cc:   856: | | | | | | >JOIN::optimize
+sql_profile.cc:   336: | | | | | | | >PROFILING::status_change
+sql_profile.cc:   342: | | | | | | | <PROFILING::status_change
+ sql_select.cc:8948: | | | | | | | >simplify_joins : remove redundant nested joins
+ sql_select.cc:  9102: | | | | | | | <simplify_joins
+ sql_select.cc:  9131: | | | | | | | >build_bitmap_for_nested_joins
+ sql_select.cc:  9154: | | | | | | | <build_bitmap_for_nested_joins
+ sql_select.cc:  9400: | | | | | | | >optimize_cond
+ sql_select.cc:  9429: | | | | | | | <optimize_cond
+ sql_select.cc:  9400: | | | | | | | >optimize_cond
+ sql_select.cc:  9429: | | | | | | | <optimize_cond
+  opt_range.cc:  2615: | | | | | | | >prune_partitions
+  opt_range.cc:  2618: | | | | | | | <prune_partitions
+ sql_select.cc: 15327: | | | | | | | >get_sort_by_table
+ sql_select.cc: 15341: | | | | | | | <get_sort_by_table
+sql_profile.cc:   336: | | | | | | | >PROFILING::status_change
+sql_profile.cc:   342: | | | | | | | <PROFILING::status_change
+ sql_select.cc:  2666: | | | | | | | >make_join_statistics
+ sql_select.cc: 15774: | | | | | | | | >make_sum_func_list
+ sql_select.cc: 15801: | | | | | | | | <make_sum_func_list
+ sql_select.cc:  4918: | | | | | | | | >choose_plan
+ sql_select.cc:  9172: | | | | | | | | | >reset_nj_counters
+ sql_select.cc:  9182: | | | | | | | | | <reset_nj_counters
+ sql_select.cc:  5232: | | | | | | | | | >greedy_search
+ sql_select.cc:  5258: | | | | | | | | | <greedy_search
+ sql_select.cc:  4967: | | | | | | | | <choose_plan
+ sql_select.cc:  3111: | | | | | | | <make_join_statistics
+ sql_select.cc:  5801: | | | | | | | >get_best_combination
+ sql_select.cc:  5842: | | | | | | | <get_best_combination
+sql_profile.cc:   336: | | | | | | | >PROFILING::status_change
+sql_profile.cc:   342: | | | | | | | <PROFILING::status_change
+  opt_range.cc:  1073: | | | | | | | >make_select
+  opt_range.cc:  1097: | | | | | | | <make_select
+ sql_select.cc:  9172: | | | | | | | >reset_nj_counters
+ sql_select.cc:  9182: | | | | | | | <reset_nj_counters
+ sql_select.cc:  6326: | | | | | | | >make_outerjoin_info
+ sql_select.cc:  6370: | | | | | | | <make_outerjoin_info
+ sql_select.cc:  6378: | | | | | | | >make_join_select
+ sql_select.cc:  6202: | | | | | | | | >add_not_null_conds
+ sql_select.cc:  6244: | | | | | | | | <add_not_null_conds
+ sql_select.cc:  6751: | | | | | | | <make_join_select
+ sql_select.cc:  7386: | | | | | | | >remove_const
+ sql_select.cc:  7451: | | | | | | | <remove_const
+ sql_select.cc:  7386: | | | | | | | >remove_const
+ sql_select.cc:  7451: | | | | | | | <remove_const
+ sql_select.cc: 15774: | | | | | | | >make_sum_func_list
+ sql_select.cc: 15801: | | | | | | | <make_sum_func_list
+ sql_select.cc:  6825: | | | | | | | >make_join_readinfo
+ sql_select.cc:  6967: | | | | | | | <make_join_readinfo
+ sql_select.cc:  1704: | | | | | | <JOIN::optimize
+
+
+elim
+build_bitmap_for_nested_joins
+
+create table test_master (id int primary key, name varchar(100));
+insert into test_master values(0, 'first');
+
+create table test_detail (id int primary key, master_id int,  name varchar(100), index master_id_idx (master_id), foreign key (master_id) references test_master (id));
+insert into test_detail values (0,0, 'first child');
+insert into test_detail values (1,0, 'second child');
+insert into test_detail values (2,0, 'third child');

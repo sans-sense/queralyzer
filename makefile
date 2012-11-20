@@ -1,8 +1,9 @@
-MY_HOME := /data/host/apurba/thirdPartySrc/linux
+# we can set this in the environment or hard code it here
+#QA_MYSQL_HOME := <mysql-src-dir>
 
-# If you have not installed the MySQL software yet, try this instead
-inc      := $(MY_HOME)/mysql-5.5/include
-lib      := $(MY_HOME)/mysql-5.5/libmysqld
+# we use the embedded server so we may need to build it from scratch
+inc      := $(QA_MYSQL_HOME)/include
+lib      := $(QA_MYSQL_HOME)/libmysqld
 
 CC       := gcc
 CPPFLAGS := -I$(inc) -D_THREAD_SAFE -D_REENTRANT
