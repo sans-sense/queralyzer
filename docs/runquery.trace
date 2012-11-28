@@ -1,10 +1,31 @@
-## Traceof method calls for sql execution flow
+
+      client.c:  3846: >mysql_real_query
+      client.c:  3838: | >mysql_send_query
+      client.c:  3839: | <mysql_send_query
+sql_profile.cc:   358: | >PROFILING::start_new_query
+sql_profile.cc:   371: | <PROFILING::start_new_query
+   sql_class.h:  2405: | >clear_error
+   sql_class.h:  2409: | <clear_error
+  sql_error.cc:   330: | >reset_diagnostics_area
+  sql_error.cc:   343: | <reset_diagnostics_area
+      client.c:   872: | >free_old_query
+    my_alloc.c:    49: | | >init_alloc_root
+    my_alloc.c:    72: | | <init_alloc_root
+      client.c:   880: | <free_old_query
+  sql_parse.cc:   874: | >dispatch_command
+sql_profile.cc:   358: | | >PROFILING::start_new_query
+sql_profile.cc:   371: | | <PROFILING::start_new_query
+    my_alloc.c:   183: | | >alloc_root
+    my_alloc.c:   240: | | <alloc_root
+sql_profile.cc:   496: | | >PROFILING::set_query_source
+sql_profile.cc:   499: | | <PROFILING::set_query_source
+    my_alloc.c:   183: | | >alloc_root
+    my_alloc.c:   240: | | <alloc_root
   sql_parse.cc:  5549: | | >mysql_parse
     sql_lex.cc:   363: | | | >lex_start
     my_alloc.c:   183: | | | | >alloc_root
     my_alloc.c:   240: | | | | <alloc_root
     sql_lex.cc:   450: | | | <lex_start
-
   sql_parse.cc:  5322: | | | >mysql_reset_thd_for_next_command
    sql_class.h:  2405: | | | | >clear_error
    sql_class.h:  2409: | | | | <clear_error
@@ -15,7 +36,6 @@
    sql_class.h:  2555: | | | | | <clear_current_stmt_binlog_format_row
    sql_class.h:  2586: | | | | <reset_current_stmt_binlog_format_row
   sql_parse.cc:  5372: | | | <mysql_reset_thd_for_next_command
-
   sql_cache.cc:  1454: | | | >Query_cache::send_result_to_client
   sql_cache.cc:  1794: | | | <Query_cache::send_result_to_client
     my_alloc.c:   183: | | | >alloc_root
@@ -23,14 +43,23 @@
     sql_lex.cc:  2067: | | | >st_select_lex::add_item_to_list
     sql_lex.cc:  2069: | | | <st_select_lex::add_item_to_list
     my_alloc.c:   183: | | | >alloc_root
+    my_alloc.c:   240: | | | <alloc_root
+    my_alloc.c:   183: | | | >alloc_root
+    my_alloc.c:   240: | | | <alloc_root
+    my_alloc.c:   183: | | | >alloc_root
+    my_alloc.c:   240: | | | <alloc_root
   sql_parse.cc:  5857: | | | >add_table_to_list
+    my_alloc.c:   183: | | | | >alloc_root
+    my_alloc.c:   240: | | | | <alloc_root
+    my_alloc.c:   183: | | | | >alloc_root
+    my_alloc.c:   240: | | | | <alloc_root
+    my_alloc.c:   183: | | | | >alloc_root
     my_alloc.c:   240: | | | | <alloc_root
   sql_parse.cc:  5999: | | | <add_table_to_list
   sql_parse.cc:  6159: | | | >add_joined_table
     my_alloc.c:   183: | | | | >alloc_root
     my_alloc.c:   240: | | | | <alloc_root
   sql_parse.cc:  6163: | | | <add_joined_table
-
   sql_parse.cc:  1875: | | | >mysql_execute_command
     my_alloc.c:   350: | | | | >free_root
    my_malloc.c:   126: | | | | | >my_free
@@ -140,63 +169,9 @@ sql_profile.cc:   339: | | | | | | | <PROFILING::status_change
    sql_base.cc:  5530: | | | | <open_and_lock_tables
     my_alloc.c:   183: | | | | >alloc_root
     my_alloc.c:   240: | | | | <alloc_root
-    lib_sql.cc:   948: | | | | >send_result_set_metadata
-    mulalloc.c:    39: | | | | | >my_multi_malloc
-   my_malloc.c:    31: | | | | | | >my_malloc
-   my_malloc.c:    60: | | | | | | <my_malloc
-    mulalloc.c:    62: | | | | | <my_multi_malloc
-    my_alloc.c:    49: | | | | | >init_alloc_root
-    my_alloc.c:    72: | | | | | <init_alloc_root
-    my_alloc.c:   183: | | | | | >alloc_root
-   my_malloc.c:    31: | | | | | | >my_malloc
-   my_malloc.c:    60: | | | | | | <my_malloc
-    my_alloc.c:   240: | | | | | <alloc_root
-    my_alloc.c:   183: | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | <alloc_root
-    my_alloc.c:   183: | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | <alloc_root
-    my_alloc.c:   183: | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | <alloc_root
-    my_alloc.c:   183: | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | <alloc_root
-    my_alloc.c:   183: | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | <alloc_root
-    my_alloc.c:   183: | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | <alloc_root
-    my_alloc.c:   183: | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | <alloc_root
-    my_alloc.c:   183: | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | <alloc_root
-    my_alloc.c:   183: | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | <alloc_root
-    my_alloc.c:   183: | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | <alloc_root
-    my_alloc.c:   183: | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | <alloc_root
-    my_alloc.c:   183: | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | <alloc_root
-    my_alloc.c:   183: | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | <alloc_root
-    my_alloc.c:   183: | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | <alloc_root
-    my_alloc.c:   183: | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | <alloc_root
-    my_alloc.c:   183: | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | <alloc_root
-    my_alloc.c:   183: | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | <alloc_root
-    my_alloc.c:   183: | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | <alloc_root
-    my_alloc.c:   183: | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | <alloc_root
-    my_alloc.c:   183: | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | <alloc_root
-    my_alloc.c:   183: | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | <alloc_root
-    my_alloc.c:   183: | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | <alloc_root
-    lib_sql.cc:  1043: | | | | <send_result_set_metadata
- sql_select.cc: 17086: | | | | >mysql_explain_union
+  sql_cache.cc:  1169: | | | | >Query_cache::store_query
+  sql_cache.cc:  1179: | | | | <Query_cache::store_query
+ sql_select.cc:   270: | | | | >handle_select
  sql_select.cc:  2507: | | | | | >mysql_select
     my_alloc.c:   183: | | | | | | >alloc_root
     my_alloc.c:   240: | | | | | | <alloc_root
@@ -287,8 +262,6 @@ sql_profile.cc:   342: | | | | | | | <PROFILING::status_change
  sql_select.cc:  3111: | | | | | | | <make_join_statistics
  sql_select.cc:  5801: | | | | | | | >get_best_combination
     my_alloc.c:   183: | | | | | | | | >alloc_root
-   my_malloc.c:    31: | | | | | | | | | >my_malloc
-   my_malloc.c:    60: | | | | | | | | | <my_malloc
     my_alloc.c:   240: | | | | | | | | <alloc_root
  sql_select.cc:  5842: | | | | | | | <get_best_combination
 sql_profile.cc:   336: | | | | | | | >PROFILING::status_change
@@ -315,14 +288,22 @@ sql_profile.cc:   342: | | | | | | | <PROFILING::status_change
  sql_select.cc: 15801: | | | | | | | <make_sum_func_list
  sql_select.cc:  6825: | | | | | | | >make_join_readinfo
  sql_select.cc:  6967: | | | | | | | <make_join_readinfo
- sql_select.cc:  1562: | | | | | | <JOIN::optimize
+ sql_select.cc:  1704: | | | | | | <JOIN::optimize
  sql_select.cc:  1821: | | | | | | >JOIN::exec
 sql_profile.cc:   336: | | | | | | | >PROFILING::status_change
 sql_profile.cc:   342: | | | | | | | <PROFILING::status_change
-    my_alloc.c:   183: | | | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | | | <alloc_root
- sql_select.cc: 16620: | | | | | | | >select_describe
+sql_profile.cc:   336: | | | | | | | >PROFILING::status_change
+sql_profile.cc:   342: | | | | | | | <PROFILING::status_change
+    lib_sql.cc:   948: | | | | | | | >send_result_set_metadata
+    mulalloc.c:    39: | | | | | | | | >my_multi_malloc
+   my_malloc.c:    31: | | | | | | | | | >my_malloc
+   my_malloc.c:    60: | | | | | | | | | <my_malloc
+    mulalloc.c:    62: | | | | | | | | <my_multi_malloc
+    my_alloc.c:    49: | | | | | | | | >init_alloc_root
+    my_alloc.c:    72: | | | | | | | | <init_alloc_root
     my_alloc.c:   183: | | | | | | | | >alloc_root
+   my_malloc.c:    31: | | | | | | | | | >my_malloc
+   my_malloc.c:    60: | | | | | | | | | <my_malloc
     my_alloc.c:   240: | | | | | | | | <alloc_root
     my_alloc.c:   183: | | | | | | | | >alloc_root
     my_alloc.c:   240: | | | | | | | | <alloc_root
@@ -348,30 +329,80 @@ sql_profile.cc:   342: | | | | | | | <PROFILING::status_change
     my_alloc.c:   240: | | | | | | | | <alloc_root
     my_alloc.c:   183: | | | | | | | | >alloc_root
     my_alloc.c:   240: | | | | | | | | <alloc_root
-    my_alloc.c:   183: | | | | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | | | | <alloc_root
-    my_alloc.c:   183: | | | | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | | | | <alloc_root
-     mi_info.c:    39: | | | | | | | | >mi_status
-  mi_locking.c:   394: | | | | | | | | | >_mi_readinfo
-  mi_locking.c:   422: | | | | | | | | | <_mi_readinfo
-     mi_info.c:    99: | | | | | | | | <mi_status
-    my_alloc.c:   183: | | | | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | | | | <alloc_root
-    my_alloc.c:   183: | | | | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | | | | <alloc_root
-    my_alloc.c:   183: | | | | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | | | | <alloc_root
-    my_alloc.c:   183: | | | | | | | | >alloc_root
-    my_alloc.c:   240: | | | | | | | | <alloc_root
-  sql_class.cc:  2114: | | | | | | | | >select_send::send_data
-    lib_sql.cc:  1181: | | | | | | | | | >send_data
-    lib_sql.cc:  1202: | | | | | | | | | <send_data
-   protocol.cc:   841: | | | | | | | | | >Protocol::send_result_set_row
-   protocol.cc:   862: | | | | | | | | | <Protocol::send_result_set_row
-  sql_class.cc:  2139: | | | | | | | | <select_send::send_data
- sql_select.cc: 17080: | | | | | | | <select_describe
- sql_select.cc:  1940: | | | | | | <JOIN::exec
+    lib_sql.cc:  1043: | | | | | | | <send_result_set_metadata
+ sql_select.cc: 11427: | | | | | | | >do_select
+    records.cc:   178: | | | | | | | | >init_read_record
+     handler.h:  1371: | | | | | | | | | >ha_rnd_init
+     handler.h:  1374: | | | | | | | | | <ha_rnd_init
+    mi_extra.c:    45: | | | | | | | | | >mi_extra
+    mi_extra.c:   386: | | | | | | | | | <mi_extra
+    records.cc:   296: | | | | | | | | <init_read_record
+     mi_scan.c:    41: | | | | | | | | >mi_scan
+     mi_scan.c:    44: | | | | | | | | <mi_scan
+   mi_dynrec.c:  1720: | | | | | | | | >_mi_read_rnd_dynamic_record
+    mi_cache.c:    45: | | | | | | | | | >_mi_read_cache
+    mi_cache.c:    86: | | | | | | | | | <_mi_read_cache
+   mi_dynrec.c:  1225: | | | | | | | | | >_mi_rec_unpack
+   mi_dynrec.c:  1341: | | | | | | | | | <_mi_rec_unpack
+   mi_dynrec.c:  1878: | | | | | | | | <_mi_read_rnd_dynamic_record
+ sql_select.cc: 12636: | | | | | | | | >end_send
+  sql_class.cc:  2114: | | | | | | | | | >select_send::send_data
+  sql_class.cc:  2139: | | | | | | | | | <select_send::send_data
+ sql_select.cc: 12711: | | | | | | | | <end_send
+     mi_scan.c:    41: | | | | | | | | >mi_scan
+     mi_scan.c:    44: | | | | | | | | <mi_scan
+   mi_dynrec.c:  1720: | | | | | | | | >_mi_read_rnd_dynamic_record
+    mi_cache.c:    45: | | | | | | | | | >_mi_read_cache
+    mi_cache.c:    68: | | | | | | | | | <_mi_read_cache
+   mi_dynrec.c:  1225: | | | | | | | | | >_mi_rec_unpack
+   mi_dynrec.c:  1341: | | | | | | | | | <_mi_rec_unpack
+   mi_dynrec.c:  1878: | | | | | | | | <_mi_read_rnd_dynamic_record
+ sql_select.cc: 12636: | | | | | | | | >end_send
+  sql_class.cc:  2114: | | | | | | | | | >select_send::send_data
+  sql_class.cc:  2139: | | | | | | | | | <select_send::send_data
+ sql_select.cc: 12711: | | | | | | | | <end_send
+     mi_scan.c:    41: | | | | | | | | >mi_scan
+     mi_scan.c:    44: | | | | | | | | <mi_scan
+   mi_dynrec.c:  1720: | | | | | | | | >_mi_read_rnd_dynamic_record
+    mi_cache.c:    45: | | | | | | | | | >_mi_read_cache
+    mi_cache.c:    68: | | | | | | | | | <_mi_read_cache
+   mi_dynrec.c:  1225: | | | | | | | | | >_mi_rec_unpack
+   mi_dynrec.c:  1341: | | | | | | | | | <_mi_rec_unpack
+   mi_dynrec.c:  1878: | | | | | | | | <_mi_read_rnd_dynamic_record
+ sql_select.cc: 12636: | | | | | | | | >end_send
+  sql_class.cc:  2114: | | | | | | | | | >select_send::send_data
+  sql_class.cc:  2139: | | | | | | | | | <select_send::send_data
+ sql_select.cc: 12711: | | | | | | | | <end_send
+     mi_scan.c:    41: | | | | | | | | >mi_scan
+     mi_scan.c:    44: | | | | | | | | <mi_scan
+   mi_dynrec.c:  1720: | | | | | | | | >_mi_read_rnd_dynamic_record
+    mi_cache.c:    45: | | | | | | | | | >_mi_read_cache
+    mi_cache.c:    68: | | | | | | | | | <_mi_read_cache
+   mi_dynrec.c:  1225: | | | | | | | | | >_mi_rec_unpack
+   mi_dynrec.c:  1341: | | | | | | | | | <_mi_rec_unpack
+   mi_dynrec.c:  1878: | | | | | | | | <_mi_read_rnd_dynamic_record
+ sql_select.cc: 12636: | | | | | | | | >end_send
+  sql_class.cc:  2114: | | | | | | | | | >select_send::send_data
+  sql_class.cc:  2139: | | | | | | | | | <select_send::send_data
+ sql_select.cc: 12711: | | | | | | | | <end_send
+     mi_scan.c:    41: | | | | | | | | >mi_scan
+     mi_scan.c:    44: | | | | | | | | <mi_scan
+   mi_dynrec.c:  1720: | | | | | | | | >_mi_read_rnd_dynamic_record
+  mi_locking.c:   435: | | | | | | | | | >_mi_writeinfo
+  mi_locking.c:   466: | | | | | | | | | <_mi_writeinfo
+   mi_dynrec.c:  1886: | | | | | | | | <_mi_read_rnd_dynamic_record
+ sql_select.cc: 12636: | | | | | | | | >end_send
+ sql_select.cc: 12711: | | | | | | | | <end_send
+ sql_select.cc:  7084: | | | | | | | | >JOIN::join_free
+ sql_select.cc:  7145: | | | | | | | | | >JOIN::cleanup
+ sql_select.cc:  7210: | | | | | | | | | <JOIN::cleanup
+       lock.cc:   412: | | | | | | | | | >mysql_unlock_read_tables
+       lock.cc:   462: | | | | | | | | | <mysql_unlock_read_tables
+ sql_select.cc:  7127: | | | | | | | | <JOIN::join_free
+  sql_error.cc:   385: | | | | | | | | >set_eof_status
+  sql_error.cc:   404: | | | | | | | | <set_eof_status
+ sql_select.cc: 11542: | | | | | | | <do_select
+ sql_select.cc:  2389: | | | | | | <JOIN::exec
 sql_profile.cc:   336: | | | | | | >PROFILING::status_change
 sql_profile.cc:   342: | | | | | | <PROFILING::status_change
   sql_union.cc:   818: | | | | | | >st_select_lex::cleanup()
@@ -389,27 +420,15 @@ sql_profile.cc:   342: | | | | | | <PROFILING::status_change
    my_malloc.c:   129: | | | | | | | | | <my_free
    my_malloc.c:   126: | | | | | | | | | >my_free
    my_malloc.c:   129: | | | | | | | | | <my_free
-    mf_cache.c:   100: | | | | | | | | | >close_cached_file
-    mf_cache.c:   120: | | | | | | | | | <close_cached_file
    my_malloc.c:   126: | | | | | | | | | >my_free
    my_malloc.c:   129: | | | | | | | | | <my_free
-   my_malloc.c:   126: | | | | | | | | | >my_free
-   my_malloc.c:   129: | | | | | | | | | <my_free
-   my_malloc.c:   126: | | | | | | | | | >my_free
-   my_malloc.c:   129: | | | | | | | | | <my_free
-   my_malloc.c:   126: | | | | | | | | | >my_free
-   my_malloc.c:   129: | | | | | | | | | <my_free
-    mi_extra.c:    45: | | | | | | | | | >mi_extra
-    mi_extra.c:   386: | | | | | | | | | <mi_extra
  sql_select.cc:  7210: | | | | | | | | <JOIN::cleanup
     mf_cache.c:   100: | | | | | | | | >close_cached_file
     mf_cache.c:   120: | | | | | | | | <close_cached_file
  sql_select.cc:  2437: | | | | | | | <JOIN::destroy
   sql_union.cc:   834: | | | | | | <st_select_lex::cleanup()
  sql_select.cc:  2592: | | | | | <mysql_select
- sql_select.cc: 17138: | | | | <mysql_explain_union
-  sql_error.cc:   385: | | | | >set_eof_status
-  sql_error.cc:   404: | | | | <set_eof_status
+ sql_select.cc:   306: | | | | <handle_select
 sql_profile.cc:   336: | | | | >PROFILING::status_change
 sql_profile.cc:   342: | | | | <PROFILING::status_change
 transaction.cc:   287: | | | | >trans_commit_stmt
@@ -428,16 +447,6 @@ sql_profile.cc:   342: | | | | <PROFILING::status_change
   sql_class.cc:  4754: | | | | | >THD::binlog_flush_pending_rows_event
   sql_class.cc:  4761: | | | | | <THD::binlog_flush_pending_rows_event
        lock.cc:   382: | | | | | >mysql_unlock_tables
-       lock.cc:   635: | | | | | | >unlock_external
-    handler.cc:  5026: | | | | | | | >handler::ha_external_lock
-  mi_locking.c:    32: | | | | | | | | >mi_lock_database
-    my_alloc.c:   350: | | | | | | | | | >free_root
-    my_alloc.c:   383: | | | | | | | | | <free_root
-     my_lock.c:   146: | | | | | | | | | >my_lock
-     my_lock.c:   150: | | | | | | | | | <my_lock
-  mi_locking.c:   252: | | | | | | | | <mi_lock_database
-    handler.cc:  5081: | | | | | | | <handler::ha_external_lock
-       lock.cc:   651: | | | | | | <unlock_external
    my_malloc.c:   126: | | | | | | >my_free
    my_malloc.c:   129: | | | | | | <my_free
        lock.cc:   388: | | | | | <mysql_unlock_tables
@@ -502,11 +511,6 @@ sql_profile.cc:   342: | | | <PROFILING::status_change
        item.cc:  4862: | | | | <Item_field::cleanup
   sql_class.cc:  2929: | | | <Query_arena::free_items
   sql_parse.cc:  5642: | | <mysql_parse
-
-
-
-
-
    protocol.cc:   488: | | >Protocol::end_statement
    protocol.cc:   557: | | | >Protocol::send_eof
    protocol.cc:   559: | | | <Protocol::send_eof
@@ -522,8 +526,6 @@ sql_profile.cc:   342: | | <PROFILING::status_change
 sql_profile.cc:   336: | | >PROFILING::status_change
 sql_profile.cc:   339: | | <PROFILING::status_change
     my_alloc.c:   350: | | >free_root
-   my_malloc.c:   126: | | | >my_free
-   my_malloc.c:   129: | | | <my_free
     my_alloc.c:   383: | | <free_root
 sql_profile.cc:   400: | | >PROFILING::finish_current_profile
 sql_profile.cc:   428: | | <PROFILING::finish_current_profile
@@ -531,10 +533,19 @@ sql_profile.cc:   428: | | <PROFILING::finish_current_profile
 sql_profile.cc:   400: | >PROFILING::finish_current_profile
 sql_profile.cc:   428: | <PROFILING::finish_current_profile
       client.c:  3852: <mysql_real_query
+
+
+// store resullt which is boring and pure client side cursor handling
       client.c:  3864: >mysql_store_result
    my_malloc.c:    31: | >my_malloc
    my_malloc.c:    60: | <my_malloc
       client.c:  3901: <mysql_store_result
+      client.c:  3960: >mysql_fetch_row
+      client.c:  4001: <mysql_fetch_row
+      client.c:  3960: >mysql_fetch_row
+      client.c:  4001: <mysql_fetch_row
+      client.c:  3960: >mysql_fetch_row
+      client.c:  4001: <mysql_fetch_row
       client.c:  3960: >mysql_fetch_row
       client.c:  4001: <mysql_fetch_row
       client.c:  3960: >mysql_fetch_row
@@ -553,6 +564,7 @@ sql_profile.cc:   428: | <PROFILING::finish_current_profile
    my_malloc.c:   126: | >my_free
    my_malloc.c:   129: | <my_free
       client.c:  1123: <mysql_free_result
+
 
 
 

@@ -62,3 +62,22 @@ create table test_detail (id int primary key, master_id int,  name varchar(100),
 insert into test_detail values (0,0, 'first child');
 insert into test_detail values (1,0, 'second child');
 insert into test_detail values (2,0, 'third child');
+
+
+working with plugins
+1       breakpoint     keep y   0x082655da in plugin_init(int*, char**, int) 
+                                           at /host/apurba/thirdPartySrc/linux/mysql-5.5/sql/sql_plugin.cc:1362
+	breakpoint already hit 1 time
+2       breakpoint     keep y   0x08266023 in plugin_load_list(MEM_ROOT*, int*, char**, char const*) 
+                                           at /host/apurba/thirdPartySrc/linux/mysql-5.5/sql/sql_plugin.cc:1563
+
+
+code that adds the plugin
+#0  plugin_dl_add (dl=0xbfffe474, report=1) at /host/apurba/thirdPartySrc/linux/mysql-5.5/sql/sql_plugin.cc:432
+#1  0x08263fad in plugin_add (tmp_root=0xbfffe728, name=0xbfffe46c, dl=0xbfffe474, argc=0x8ae1454, argv=0x8b02b20, report=1)
+    at /host/apurba/thirdPartySrc/linux/mysql-5.5/sql/sql_plugin.cc:831
+#2  0x082661e5 in plugin_load_list (tmp_root=0xbfffe728, argc=0x8ae1454, argv=0x8b02b20, list=0x8b02a9b "")
+    at /host/apurba/thirdPartySrc/linux/mysql-5.5/sql/sql_plugin.cc:1591
+#3  0x08265618 in plugin_init (argc=0x8ae1454, argv=0x8b02b20, flags=2)
+    at /host/apurba/thirdPartySrc/linux/mysql-5.5/sql/sql_plugin.cc:1365
+#4  0x08083f83 in init_server_components () at /host/apurba/thirdPartySrc/linux/mysql-5.5/libmysqld/../sql/mysqld.cc:3884

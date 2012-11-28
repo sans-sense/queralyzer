@@ -3,6 +3,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include "mysql.h"
+#include <dlfcn.h>
 
 MYSQL *mysql;
 MYSQL_RES *results;
@@ -14,7 +15,6 @@ static char *server_options[] = \
   { "mysql_test", 
     "--defaults-file=my.init", 
     "--debug", 
-    "--core-file=1",
     NULL };
 
 int num_elements = (sizeof(server_options) / sizeof(char *)) - 1;
@@ -39,6 +39,7 @@ int main() {
   int needsCleanup = 0;
 
   FILE* command_pipe = fdopen(command_fd, "rb");
+
   if (!command_pipe) {
     perror("fdopen(command_fd)");
     return 1;
@@ -56,7 +57,7 @@ int main() {
 
   char buf[1024];
   char strquit[] = "quit\n";
-  printf("Type your query and hit enter, use quit to end the session\n");
+  printf("Type your query and hit enter, type 'quit' to end the session, test_aps is the default table\n");
 
   while (fgets(buf, sizeof(buf), command_pipe))
   {

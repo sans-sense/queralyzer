@@ -44,5 +44,5 @@ Refer http://dev.mysql.com/doc/refman/5.5/en/source-configuration-options.html f
 
 ### Building queralyzer
  1. Set env variable QA_MYSQL_HOME or edit the makefile to define QA_MYSQL_HOME. It should point to the extracted and built MySQL server
-2. Run make in the queralyzer folder
+ 2. Run make in the queralyzer folder
 

@@ -1,5 +1,3 @@
-[client]
-default-character-set=latin1
 [server]
 basedir=./wip
 datadir=./wip/data
@@ -7,5 +5,8 @@ datadir=./wip/data
 skip-grant-tables=1
 innodb=OFF
 default-storage-engine=MyISAM
-debug=d,trace,error:t,10:L:F:O,./log.trace
-#debug=d,trace,error:t,2:O,./log.trace
+#plugin-load=blackhole=ha_blackhole.so
+#log-error=./error-mysql.log
+#debug=d,debug,error,warning:F:L:O,./log.trace
+debug=d,trace,error:t,5:F:L:O,./log.trace
+#sql_plugin.cc:1362; sql_plugin.cc:820 sql_plugin.cc:831 sql_plugin.cc:469 log.cc:1040
