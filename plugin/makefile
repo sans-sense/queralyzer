@@ -1,5 +1,5 @@
 # we can set this in the environment or hard code it here
-#QA_MYSQL_HOME := <mysql-src-dir>
+QA_MYSQL_HOME := /home/prabinb/Downloads/source/mysql-5.6.10/
 
 # we use the embedded server so we may need to build it from scratch
 inc      := $(QA_MYSQL_HOME)/sql $(QA_MYSQL_HOME)/include $(QA_MYSQL_HOME)/regex
@@ -7,7 +7,7 @@ lib      := $(QA_MYSQL_HOME)/libmysqld
 inc_params=$(foreach d, $(inc), -I$d)
 
 CC       := gcc
-CPPFLAGS := $(inc_params) -D_THREAD_SAFE -D_REENTRANT  -Dblackhole_EXPORTS -DHAVE_CONFIG_H -DMYSQL_DYNAMIC_PLUGIN -fno-rtti  -fPIC
+CPPFLAGS := -g $(inc_params) -D_THREAD_SAFE -D_REENTRANT  -Dblackhole_EXPORTS -DHAVE_CONFIG_H -DMYSQL_DYNAMIC_PLUGIN -fno-rtti  -fPIC
 #CXX_DEFINES = -Dblackhole_EXPORTS -DHAVE_CONFIG_H -DMYSQL_DYNAMIC_PLUGIN
 CFLAGS   := -g -W -Wall 
 LDFLAGS  := -static-libgcc

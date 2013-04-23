@@ -13,9 +13,11 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA */
 
-#ifdef USE_PRAGMA_INTERFACE
-#pragma interface			/* gcc class implementation */
-#endif
+
+//#ifdef USE_PRAGMA_INTERFACE
+//#pragma interface			/* gcc class implementation */
+//#endif
+
 
 #include "thr_lock.h"                           /* THR_LOCK */
 #include "handler.h"                            /* handler */
@@ -28,7 +30,7 @@ struct st_blackhole_share {
   THR_LOCK lock;
   uint use_count;
   uint table_name_length;
-  char table_name[1];
+  char table_name[10];
 };
 
 
@@ -36,14 +38,14 @@ struct st_blackhole_share {
   Class definition for the blackhole storage engine
   "Dumbest named feature ever"
 */
-class ha_blackhole: public handler
+class qa_blackhole: public handler
 {
   THR_LOCK_DATA lock;      /* MySQL lock */
   st_blackhole_share *share;
 
 public:
-  ha_blackhole(handlerton *hton, TABLE_SHARE *table_arg);
-  ~ha_blackhole()
+  qa_blackhole(handlerton *hton, TABLE_SHARE *table_arg);
+  ~qa_blackhole()
   {
   }
   /* The name that will be used for display purposes */
@@ -58,8 +60,8 @@ public:
   {
     return(HA_NULL_IN_KEY | HA_CAN_FULLTEXT | HA_CAN_SQL_HANDLER |
            HA_BINLOG_STMT_CAPABLE | HA_BINLOG_ROW_CAPABLE |
-           HA_CAN_INDEX_BLOBS | HA_AUTO_PART_KEY |
-           HA_FILE_BASED | HA_CAN_GEOMETRY | HA_CAN_INSERT_DELAYED);
+           HA_CAN_INDEX_BLOBS | HA_AUTO_PART_KEY | HA_READ_OUT_OF_SYNC |
+           HA_FILE_BASED | HA_CAN_GEOMETRY | HA_CAN_INSERT_DELAYED | HA_STATS_RECORDS_IS_EXACT);
   }
   ulong index_flags(uint inx, uint part, bool all_parts) const
   {
