@@ -1,6 +1,6 @@
 %{
 #include "q_table.h"
-#include "y.tab.h"
+#include "q_parser.h"
 #define yyterminate() return 0 
 %}
 

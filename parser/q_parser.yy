@@ -7,6 +7,12 @@
 #include <map>
 #include "q_table.h"
 #define YYERROR_VERBOSE
+
+//extern struct yy_buffer_state;
+typedef struct yy_buffer_state *YY_BUFFER_STATE;
+extern int yyparse();
+extern YY_BUFFER_STATE yy_scan_string(const char *str);
+
 using namespace std;
 int yylex();
 void yyerror(string s);
@@ -2552,11 +2558,14 @@ type_datetime_precision:
         ;
 
 %%
-int main(void)
+int queralyzer_parser(const char * queryBuffer)
 {
 	using namespace std;
 	//yydebug = 1;
+	//yyin=queryBuffer;
+	yy_scan_string(queryBuffer);
 	int parseResult = yyparse();
+	//yy_delete_buffer(queryBuffer);
 	//cout<<"Parse Returned: "<<parseResult<<endl;
 	set<string>::iterator it;
 	//cout<<"OUTPUT:"<<endl;
@@ -2594,7 +2603,7 @@ int main(void)
 		}
 	}
 	createQueryFile.close();
-	return 0;
+	return parseResult;
 }
 void yyerror(string s)
 {
