@@ -1,17 +1,18 @@
 # we can set this in the environment or hard code it here
-#QA_MYSQL_HOME := <mysql-src-dir>
+QA_MYSQL_HOME := /home/prabinb/Downloads/source/mysql-5.6.10/
 
 # we use the embedded server so we may need to build it from scratch
 inc      := $(QA_MYSQL_HOME)/include
-lib      := $(QA_MYSQL_HOME)/libmysqld
+lib      := $(QA_MYSQL_HOME)/libmysqld 
+parselib :=  /home/prabinb/queralyzer/
 
-CC       := gcc
+CC       := g++
 CPPFLAGS := -I$(inc) -D_THREAD_SAFE -D_REENTRANT
 CFLAGS   := -g -W -Wall
 LDFLAGS  := -static-libgcc
 # You can change -lmysqld to -lmysqlclient to use the
 # client/server library
-LDLIBS    = -L$(lib) -lmysqld -lz -lm -ldl -lcrypt -lstdc++ -lrt
+LDLIBS    = -L$(lib) -L$(parselib) -lmysqld -lz -lm -ldl -lcrypt -lstdc++ -lrt libqparser.a
 
 ifneq (,$(shell grep FreeBSD /COPYRIGHT 2>/dev/null))
 # FreeBSD

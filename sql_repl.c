@@ -4,6 +4,11 @@
 #include <string.h>
 #include "mysql.h"
 #include <dlfcn.h>
+#include <vector>
+#include <string>
+
+#define QUERY_BUFFER_LENGTH 4096
+int queralyzer_parser(const char * str, std::vector<std::string> *create_queries);
 
 MYSQL *mysql;
 MYSQL_RES *results;
@@ -14,7 +19,6 @@ MYSQL_FIELD *field;
 static char *server_options[] = \
   { "mysql_test", 
     "--defaults-file=my.init", 
-    "--debug", 
     NULL };
 
 int num_elements = (sizeof(server_options) / sizeof(char *)) - 1;
@@ -33,11 +37,10 @@ int close_mysql();
 int display_results();
 
 int main() {
-
+  using namespace std;
   const int command_fd = 0;//stdin
   const int response_fd = 1;//stdout
   int needsCleanup = 0;
-
   FILE* command_pipe = fdopen(command_fd, "rb");
 
   if (!command_pipe) {
@@ -51,30 +54,49 @@ int main() {
     perror("fdopen(response_fd)");
     return 1;
   }
-  setlinebuf(response_pipe);
+ setlinebuf(response_pipe);
 
   needsCleanup = initialize_mysql();
 
-  char buf[1024];
+  char buf[QUERY_BUFFER_LENGTH];
   char strquit[] = "quit\n";
   printf("Type your query and hit enter, type 'quit' to end the session, test_aps is the default table\n");
 
+  vector<string> create_queries;
+  vector<string>::iterator create_queries_it;
   while (fgets(buf, sizeof(buf), command_pipe))
   {
 	  if(strcmp(buf,strquit) == 0)
 	  {
-		  break;
+		break;	  
 	  }
 	  else
 	  {
-		  //print the input
-		  if (fputs(buf, response_pipe) < 0) {
-			  perror("CHILD> fputs");
-			  break;
-		  } else {
-            run_query(mysql, buf);
-            display_results();
-          }
+                  //print the input
+                  if (fputs(buf, response_pipe) < 0) 
+		  {
+                          perror("CHILD> fputs");
+                        break;
+                  } 
+	   	  else 
+		  {
+			if(queralyzer_parser(buf, &create_queries))
+			{
+				printf("Error while parsing\n");
+				exit(1);
+			}
+
+			for (create_queries_it=create_queries.begin(); create_queries_it!=create_queries.end(); ++create_queries_it)
+			{
+				char create_query[QUERY_BUFFER_LENGTH];
+				strcpy(create_query, (*create_queries_it).c_str());
+				printf("%s\n", create_query);
+				run_query(mysql, create_query);
+				display_results();
+			}
+          	        run_query(mysql, buf);
+	                display_results();
+          	  }
 	  }
 	  fflush(response_pipe);
   }

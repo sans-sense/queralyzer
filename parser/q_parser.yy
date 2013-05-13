@@ -1,13 +1,27 @@
 %{
 #include <iostream>
-#include <fstream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
 #include <map>
+#include <vector>
 #include "q_table.h"
 #define YYERROR_VERBOSE
 
+#define yyin q_sql_in
+#define yylex q_sql_lex
+#define yylineno q_sql_lineno
+#define yytext q_sql_text
+#define yywrap q_sql_wrap
+#define yy_scan_string q_sql__scan_string
+
+#define yyparse         q_sql_parse
+#define yylex           q_sql_lex
+#define yyerror         q_sql_error
+#define yylval          q_sql_lval
+#define yychar          q_sql_char
+#define yydebug         q_sql_debug
+#define yynerrs         q_sql_nerrs
 //extern struct yy_buffer_state;
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
 extern int yyparse();
@@ -2558,7 +2572,7 @@ type_datetime_precision:
         ;
 
 %%
-int queralyzer_parser(const char * queryBuffer)
+int queralyzer_parser(const char * queryBuffer, vector<string> *queries_vector)
 {
 	using namespace std;
 	//yydebug = 1;
@@ -2569,20 +2583,23 @@ int queralyzer_parser(const char * queryBuffer)
 	//cout<<"Parse Returned: "<<parseResult<<endl;
 	set<string>::iterator it;
 	//cout<<"OUTPUT:"<<endl;
-	ofstream createQueryFile("intermediate_create_queries", ios::out);
-
+/*	ofstream createQueryFile("intermediate_create_queries", ios::out);
 	if(!createQueryFile)
 	{
-		cout<<"Error while opening the file for writint intermediate create queries"<<endl;
+		cout<<"Error while opening the file for writing intermediate create queries"<<endl;
 		exit(1);
 	}
-
+*/
 	for (qTableAliasMap_it = qTableAliasMap.begin(); qTableAliasMap_it!=qTableAliasMap.end(); ++qTableAliasMap_it)
 	{
+		string create_queries;
 		qTable *qt = qTableAliasMap_it->second;
                 if(!(qt->tableName.empty()))
 		{
-			createQueryFile<<"create table if not exist "<< qt->tableName <<" ( ";		
+			create_queries = "create table if not exists ";
+			create_queries += qt->tableName;
+			create_queries += " ( ";
+			//createQueryFile<<"create table if not exists "<< qt->tableName <<" ( ";		
 			//cout<<"Table Name: "<<qt->tableName<<endl;
 			//cout<<"Table Alias: "<<qt->tableAlias<<endl;
 			set<string>::iterator columnSet_it;
@@ -2590,19 +2607,23 @@ int queralyzer_parser(const char * queryBuffer)
 			for(columnSet_it=qt->columnSet.begin(); columnSet_it!=qt->columnSet.end(); ++columnSet_it)
 			{
 				//cout<<*columnSet_it<<" ";
-				createQueryFile<<*columnSet_it<< " int";
+				//createQueryFile<<*columnSet_it<< " int";
+				create_queries += *columnSet_it;
+				create_queries += " int";
 				if(columnCount>1)
 				{
-					createQueryFile<<", ";
+					//createQueryFile<<", ";
+					create_queries += ",";
 					columnCount -= 1;
 				}
 			}
-			createQueryFile<<" ) engine=qa_blackhole;"<<endl;
+			create_queries += " ) engine=qa_blackhole;\n";
+			//createQueryFile<<" ) engine=qa_blackhole;"<<endl;
 			//cout<<endl;
-
+			queries_vector->push_back(create_queries);
 		}
 	}
-	createQueryFile.close();
+	//createQueryFile.close();
 	return parseResult;
 }
 void yyerror(string s)

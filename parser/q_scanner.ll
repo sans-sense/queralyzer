@@ -1,7 +1,17 @@
 %{
 #include "q_table.h"
 #include "q_parser.h"
+
+#define yyparse         q_sql_parse
+#define yylex           q_sql_lex
+#define yyerror         q_sql_error
+#define yylval          q_sql_lval
+#define yychar          q_sql_char
+#define yydebug         q_sql_debug
+#define yynerrs         q_sql_nerrs
+
 #define yyterminate() return 0 
+
 %}
 
 %%
