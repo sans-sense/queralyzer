@@ -65,7 +65,7 @@ const char **qa_blackhole::bas_ext() const
 int qa_blackhole::open(const char *name, int mode, uint test_if_locked)
 {
   DBUG_ENTER("qa_blackhole::open");
-	printf("INside the qa_blackhole::open\n");
+	//printf("INside the qa_blackhole::open\n");
   if (!(share= get_share(name)))
     DBUG_RETURN(HA_ERR_OUT_OF_MEM);
 
@@ -84,7 +84,7 @@ int qa_blackhole::create(const char *name, TABLE *table_arg,
                          HA_CREATE_INFO *create_info)
 {
   DBUG_ENTER("qa_blackhole::create");
-  printf("Creating new table: inside func qa_blackhole::create\n");
+  //printf("Creating new table: inside func qa_blackhole::create\n");
   DBUG_RETURN(0);
 }
 
@@ -181,12 +181,12 @@ void qa_blackhole::position(const uchar *record)
 int qa_blackhole::info(uint flag)
 {
   DBUG_ENTER("qa_blackhole::info");
-  printf("inside the qa_blackhole::info\n");
+  //printf("inside the qa_blackhole::info\n");
   memset((char*) &stats, 0, sizeof(stats));
   if (flag & HA_STATUS_VARIABLE)
   {
-  printf("inside the if cond in qa_blackhole::info\n");
-    stats.records=1;
+  //printf("inside the if cond in qa_blackhole::info\n");
+    stats.records=10000;
     stats.deleted=99;
   }
   if (flag & HA_STATUS_AUTO)
@@ -431,7 +431,7 @@ static int qa_blackhole_init(void *p)
   blackhole_hton->create= blackhole_create_handler;
   blackhole_hton->flags= HTON_CAN_RECREATE;
 
-  printf("initializes the blackhole\n");
+  //printf("initializes the blackhole\n");
 
   mysql_mutex_init(bh_key_mutex_blackhole,
                    &blackhole_mutex, MY_MUTEX_INIT_FAST);

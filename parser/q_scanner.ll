@@ -16,6 +16,9 @@
 
 %%
 
+"explain"     	return DESCRIBE;
+"describe"     	return DESCRIBE;
+"desc"     	return DESCRIBE;
 "select"     	return SELECT_SYM;
 "from"       	return FROM;
 "where"	     	return WHERE;
@@ -53,7 +56,7 @@
 %%
 int yywrap(void)
 {
-	printf("reached end of file\n");
+	//printf("reached end of file\n");
 	return 1;
 }
 

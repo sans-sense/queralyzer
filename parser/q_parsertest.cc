@@ -35,42 +35,14 @@ int main()
                 cout<<"Error while opening the file for writing intermediate create queries"<<endl;
                 exit(1);
         }
-        for(queries_it=queries.begin(); queries_it!=queries.end(); ++queries_it)
+        for(queries_it=queries.begin(); queries_it!=queries.end();)
         {
 		createQueryFile<<*queries_it<<endl;
                 //cout<<*queries_it<<endl;
+		queries_it = queries.erase(queries_it);
         }
 
         createQueryFile.close();
-	
-/*  int runParser=1;
-  runParser = system("parser/q_yacc");
-  if(runParser)
-  {
-        printf("Some problem with the parser\n");
-        exit(1);
-  }     
-*/
-  /* this code needs to be integrated */
-/*  FILE *createQuery = fopen("parser/intermediate_create_queries", "r");
-  if(!createQuery)
-  {
-        printf("Some problem with reading the intermediate_create_queries file\n");
-        exit(1);
-  }     
-
-  char queryBuffer[QUERY_BUFFER_LENGTH];
-  while(fgets(queryBuffer, sizeof(queryBuffer), createQuery))
-  {
-        printf("%s\n", queryBuffer);
-        run_query(mysql, queryBuffer);
-        display_results();
-
-  }     
-
-  fclose(createQuery);
-*/
-
 	return parserResult;
 
 }

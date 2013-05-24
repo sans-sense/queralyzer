@@ -687,12 +687,16 @@ map<string, qTable*>::iterator qTableAliasMap_it;
 
 
 select:
+	  opt_explain
 	  select_init
           {
           }
           ';'
         ;
-
+opt_explain:
+	  /* empty */
+	| DESCRIBE
+	;
 opt_end_of_input:
           /* empty */
         | END_OF_INPUT
@@ -787,6 +791,9 @@ select_item_list:
           }
         | '*'
 	  {
+		/* Wild character at item_list is not supported */
+		cout<<"Wild character at item_list is not supported"<<endl;
+          	YYABORT;	
 	  }
         ;
 
@@ -920,6 +927,7 @@ all_or_any:
 simple_expr:
           simple_ident
 	  {
+                $$=$1;
 	  }
         | function_call_keyword
         | function_call_nonkeyword
@@ -1335,13 +1343,43 @@ table_factor:
                 {
                         qTable *qt_found=qTableAliasMap_it->second;
                         qt_found->tableName=$1;
+                        /* Handling the cases where different table aliases 
+                           is used for same table (in sub-queries)
+                        */
+                        /* TODO:- Improve this */
+                        qTable *qt_search_duplicates = NULL;
+                        qTableAliasMap_it=qTableAliasMap.begin();
+                        for(;qTableAliasMap_it!=qTableAliasMap.end();)
+                        {
+                                if (qTableAliasMap_it->second->tableName == $1)
+                                {
+                                        qt_search_duplicates=qTableAliasMap_it->second;
+					if (qt_search_duplicates!=qt_found)
+					{
+						/* Found a duplicate, copy all the column name
+						   and delete the object
+						*/
+		                                set<string>::iterator columnSet_it;
+						for (columnSet_it=qt_search_duplicates->columnSet.begin(); 
+							columnSet_it!=qt_search_duplicates->columnSet.end();
+							++columnSet_it)
+						{
+							qt_found->columnSet.insert(*columnSet_it);
+						}
+						qTableAliasMap.erase(qTableAliasMap_it);
+					}
+                                }
+                                ++qTableAliasMap_it;
+                        }
+
                 }
                 else
                 {
-                        qTable *qt_new=new qTable();
-                        qt_new->tableAlias=$3;
-                        qt_new->tableName=$1;
-                        qTableAliasMap.insert(pair<string,qTable*>($3, qt_new));
+			qTable *qt_new=new qTable();
+			qt_new->tableAlias=$3;
+			qt_new->tableName=$1;
+			qTableAliasMap.insert(pair<string,qTable*>($3, qt_new));
+			
                 }		
 	  }
         | select_derived_init get_select_lex select_derived2
@@ -1873,14 +1911,21 @@ temporal_literal:
         | table_wild { $$=$1; }
         ;
 */
+
+/*TODO*/
+/* table_wild cannot be supported, it is fatal if no other column
+   is specified for that table, in any query
+*/          
 table_wild:
           ident '.' '*'
           {
-           
+		cout<<"Table Wild character is not supported"<<endl;
+          	YYABORT;	
           }
         | ident '.' ident '.' '*'
           {
-           
+		cout<<"Table Wild character is not supported"<<endl;
+          	YYABORT;	
           }
         ;
 
@@ -2580,16 +2625,7 @@ int queralyzer_parser(const char * queryBuffer, vector<string> *queries_vector)
 	yy_scan_string(queryBuffer);
 	int parseResult = yyparse();
 	//yy_delete_buffer(queryBuffer);
-	//cout<<"Parse Returned: "<<parseResult<<endl;
 	set<string>::iterator it;
-	//cout<<"OUTPUT:"<<endl;
-/*	ofstream createQueryFile("intermediate_create_queries", ios::out);
-	if(!createQueryFile)
-	{
-		cout<<"Error while opening the file for writing intermediate create queries"<<endl;
-		exit(1);
-	}
-*/
 	for (qTableAliasMap_it = qTableAliasMap.begin(); qTableAliasMap_it!=qTableAliasMap.end(); ++qTableAliasMap_it)
 	{
 		string create_queries;
@@ -2599,7 +2635,6 @@ int queralyzer_parser(const char * queryBuffer, vector<string> *queries_vector)
 			create_queries = "create table if not exists ";
 			create_queries += qt->tableName;
 			create_queries += " ( ";
-			//createQueryFile<<"create table if not exists "<< qt->tableName <<" ( ";		
 			//cout<<"Table Name: "<<qt->tableName<<endl;
 			//cout<<"Table Alias: "<<qt->tableAlias<<endl;
 			set<string>::iterator columnSet_it;
@@ -2607,23 +2642,18 @@ int queralyzer_parser(const char * queryBuffer, vector<string> *queries_vector)
 			for(columnSet_it=qt->columnSet.begin(); columnSet_it!=qt->columnSet.end(); ++columnSet_it)
 			{
 				//cout<<*columnSet_it<<" ";
-				//createQueryFile<<*columnSet_it<< " int";
 				create_queries += *columnSet_it;
 				create_queries += " int";
 				if(columnCount>1)
 				{
-					//createQueryFile<<", ";
 					create_queries += ",";
 					columnCount -= 1;
 				}
 			}
 			create_queries += " ) engine=qa_blackhole;\n";
-			//createQueryFile<<" ) engine=qa_blackhole;"<<endl;
-			//cout<<endl;
 			queries_vector->push_back(create_queries);
 		}
 	}
-	//createQueryFile.close();
 	return parseResult;
 }
 void yyerror(string s)

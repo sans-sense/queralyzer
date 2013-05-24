@@ -1,6 +1,6 @@
 # plain simple makefile to build q_parsertest
 
-OUT = ../libqparser.a
+OUT = ../lib/libqparser.a
 
 CXX = g++
 LEX = flex
