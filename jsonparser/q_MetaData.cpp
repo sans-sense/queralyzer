@@ -4,7 +4,6 @@
 void TableMetaData::deserialize(Json::Value &root)
 {
   tableName = root.get("tableName", "").asString();
-  //*tableColumns;
   schemaName = root.get("schemaName","").asString();
   storageEngine = root.get("storageEngine", "").asString();
   createOption = root.get("createOption", "").asString();
@@ -15,35 +14,14 @@ void TableMetaData::deserialize(Json::Value &root)
   Json::Value columnArray(vt);
   columnArray=root["tableColumns"];
 
-  deserialize(columnArray, tableColumns, columnCount);
-
-/*  tableColumns = new std::string[columnCount];
-  while(i<columnCount)
-  {
-	//std::cout<<columnArray[i];
-	tableColumns[i]=columnArray[i].asString();
-	i++;
-  }
-*/
+  JsonSerializer::deserializeArray(columnArray, tableColumns, columnCount);
   return;
 
-}
-void TableMetaData::deserialize(Json::Value &rootArray, std::string* copyValues, unsigned int arrayLength)
-{
-  copyValues = new std::string[arrayLength];
-  int i;
-  while(i<arrayLength)
-  {
-	copyValues[i]=rootArray[i].asString();
-	i++;
-  }
-  return;
 }
 
 void TableMetaData::serialize(Json::Value &root)
 {
   root["tableName"] = tableName;
-  //*tableColumns;
   root["schemaName"] = schemaName;
   root["storageEngine"] = storageEngine;
   root["createOption"] = createOption;
@@ -52,55 +30,46 @@ void TableMetaData::serialize(Json::Value &root)
   Json::ValueType vt = Json::arrayValue;
   Json::Value columnArray(vt);
  
-  serialize(columnArray, tableColumns, columnCount);
- /* int i =0;
-  while (i<columnCount)
-  {
-	columnArray[i] = tableColumns[i];
-	i++;
-  }
-*/
+  JsonSerializer::serializeArray(columnArray, tableColumns, columnCount);
   root["tableColumns"] = columnArray;
-
+  return;
 }
 
-void TableMetaData::serialize(Json::Value &rootArray, std::string* inputValues, unsigned int arrayLength)
+void IndexMetaData::deserialize(Json::Value &root)
 {
-   
-  int i;
-  while(i<arrayLength)
-  {
-	rootArray[i] = inputValues[i];
-	i++;
-  }
-  
+  indexName = root.get("indexName", "").asString();
+  indexType = root.get("indexType", "").asString();
+  tableName = root.get("tableName", "").asString();
+  schemaName = root.get("schemaName","").asString();
+  storageEngine = root.get("storageEngine", "").asString();
+  columnCount = root.get("columnCount", 0).asInt();
+  cardinality = root.get("cardinality", 0).asInt();
+  nonUnique = root.get("nonUnique", 0).asBool();
+  isNullable = root.get("isNullable", 0).asBool();
+  Json::ValueType vt = Json::arrayValue;
+  Json::Value columnArray(vt);
+  columnArray=root["indexColumns"];
+  JsonSerializer::deserializeArray(columnArray, indexColumns, columnCount);
   return;
 }
 
 void IndexMetaData::serialize(Json::Value &root)
 {
-/*  std::string indexName;      //for primary key it is always PRIMARY
-  std::string indexType;
-  std::string *indexColumns;
-  std::string tableName;
-  std::string schemaName;
-  std::string storageEngine;
-  int         cardinality;
-  bool        nonUnique;
-*/
-}
-
-void IndexMetaData::deserialize(Json::Value &root)
-{
-/*  std::string indexName;      //for primary key it is always PRIMARY
-  std::string indexType;
-  std::string *indexColumns;
-  std::string tableName;
-  std::string schemaName;
-  std::string storageEngine;
-  int         cardinality;
-  bool        nonUnique;
-*/
+  root["indexName"] = indexName;  //for primary key it is always PRIMARY
+  root["indexType"] = indexType;
+  root["tableName"] = tableName;
+  root["schemaName"] = schemaName;
+  root["storageEngine"] = storageEngine;
+  root["columnCount"] = columnCount;
+  root["cardinality"] = cardinality;
+  root["nonUnique"] = nonUnique;
+  root["isNullable"] = isNullable;
+  Json::ValueType vt = Json::arrayValue;
+  Json::Value columnArray(vt);
+ 
+  JsonSerializer::serializeArray(columnArray, indexColumns, columnCount);
+  root["indexColumns"] = columnArray;
+  return;
 }
 
 bool JsonSerializer::serialize(JsonSerializable *pObj, std::string &output)
@@ -130,4 +99,28 @@ bool JsonSerializer::deserialize(JsonSerializable *pObj, std::string &input)
   return true;
 }
 
+void JsonSerializer::deserializeArray(Json::Value &rootArray, std::string* copyValues, unsigned int arrayLength)
+{
+  copyValues = new std::string[arrayLength];
+  int i;
+  while(i<arrayLength)
+  {
+        copyValues[i]=rootArray[i].asString();
+        i++;
+  }
+  return;
+}
+
+void JsonSerializer::serializeArray(Json::Value &rootArray, std::string* inputValues, unsigned int arrayLength)
+{
+
+  int i;
+  while(i<arrayLength)
+  {
+        rootArray[i] = inputValues[i];
+        i++;
+  }
+
+  return;
+}
 

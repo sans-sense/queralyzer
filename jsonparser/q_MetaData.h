@@ -19,8 +19,6 @@ public:
 
   virtual void serialize(Json::Value &root);
   virtual void deserialize(Json::Value &root);
-  virtual void deserialize(Json::Value &rootArray,std::string * copyValues, unsigned int arrayLength);
-  virtual void serialize(Json::Value &rootArray, std::string* inputValues, unsigned int arrayLength);
 };
 
 class IndexMetaData : public JsonSerializable {
@@ -38,6 +36,7 @@ public:
   std::string tableName;
   std::string schemaName;
   std::string storageEngine;
+  int  	      columnCount;
   int         cardinality;
   bool        nonUnique;
   bool        isNullable;
