@@ -19,17 +19,18 @@ public:
 
   virtual void serialize(Json::Value &root);
   virtual void deserialize(Json::Value &root);
+  TableMetaData &operator=(const TableMetaData &other);
 };
 
 class IndexMetaData : public JsonSerializable {
 private:
-  IndexMetaData();
-  virtual ~IndexMetaData();
 
 public:
+  IndexMetaData(){}
   IndexMetaData(std::string name):indexName(name),indexType("")
   {
   }
+  virtual ~IndexMetaData(){}
   std::string indexName;      //for primary key it is always PRIMARY
   std::string indexType;
   std::string *indexColumns;

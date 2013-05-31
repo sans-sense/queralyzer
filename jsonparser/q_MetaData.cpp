@@ -35,6 +35,23 @@ void TableMetaData::serialize(Json::Value &root)
   return;
 }
 
+TableMetaData & TableMetaData::operator=(const TableMetaData &other)
+{
+  tableName = other.tableName;
+  schemaName = other.schemaName;
+  storageEngine = other.storageEngine;
+  createOption = other.createOption;
+  rowCount = other.rowCount;
+  columnCount = other.columnCount;
+
+  tableColumns = new std::string[columnCount];
+  for(int i=0; i<columnCount; i++)
+  {
+	tableColumns[i] = other.tableColumns[i];
+  }
+  return *this;
+}
+
 void IndexMetaData::deserialize(Json::Value &root)
 {
   indexName = root.get("indexName", "").asString();

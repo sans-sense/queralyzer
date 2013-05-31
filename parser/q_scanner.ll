@@ -33,10 +33,12 @@
 "as"		return AS;
 "in"		return IN_SYM;
 "into"		return INTO;
+"all"		return ALL;
 "distinct"	return DISTINCT;
 "curdate"	return CURDATE;
 "avg"		return AVG_SYM;
 "sum"		return SUM_SYM;
+"union"		return UNION_SYM;
 "<"		return LT;
 ">"		return GT_SYM;
 "<="		return LE;

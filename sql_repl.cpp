@@ -9,6 +9,7 @@
 #include <istream>
 #include "inc/json.h"
 #include "q_explain_class.h"
+#include "jsonparser/q_MetaData.h"
 
 #define QUERY_BUFFER_LENGTH 4096
 
@@ -18,13 +19,42 @@
 #define by_pass_parser 0
 #endif
 
-int queralyzer_parser(const char * str, std::vector<std::string> *create_queries);
+int queralyzer_parser(const char * str, std::vector<std::string> *create_queries, std::vector<TableMetaData> *tableData_vector, std::vector<IndexMetaData> *indexData_vector);
 int display_results_in_json(char **query_op);
 MYSQL *mysql;
 MYSQL_RES *results;
 MYSQL_ROW row, end_row;
 MYSQL_FIELD *field;
 
+
+//declaring global but needs to be changed
+std::vector<TableMetaData> tableData_vector;
+std::vector<IndexMetaData> indexData_vector;
+
+//std::array<TableMetaData, 10> tableData;
+//std::array<IndexMetaData, 10> indexData;
+
+//TableMetaData tableData = new TableMetaData[10];
+//IndexMetaData indexData = new IndexMetaData[10];
+
+void get_tableData(TableMetaData *getData, int *count)
+{
+	*count = tableData_vector.size();
+	std::cout<<*count<<std::endl;
+	int i=0;
+	for (std::vector<TableMetaData>::iterator it = tableData_vector.begin(); it != tableData_vector.end();)
+	{
+		getData[i++] = *it;
+                it = tableData_vector.erase(it);
+	}
+	return;
+}
+
+void set_tableData(TableMetaData *setData)
+{
+	//tableData = *setData;
+	return;
+}
 // break my_error.c:88, table.cc:697, my_lib.c:412
 static char *server_options[] = \
   { "mysql_test", 
@@ -92,7 +122,7 @@ int queralyzer(char *buf, char** query_op) {
                   } */
 	   	  if(!by_pass_parser) 
 		  {
-			if(queralyzer_parser(buf, &create_queries))
+			if(queralyzer_parser(buf, &create_queries, &tableData_vector, &indexData_vector))
 			{
 				printf("Error while parsing\n");
 				exit(1);

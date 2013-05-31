@@ -13,7 +13,7 @@ CFLAGS   := -g -W -Wall
 LDFLAGS  := -static-libgcc 
 # You can change -lmysqld to -lmysqlclient to use the
 # client/server library
-LDLIBS   := -L$(lib) -L$(parserlib) -L$(HTTPD_HOME)/lib -lmysqld -lz -lm -ldl -lcrypt -lstdc++ -lrt -lqparser -lhttpd -ljson_linux-gcc-4.7_libmt
+LDLIBS   := -L$(lib) -L$(parserlib) -L$(HTTPD_HOME)/lib -lmysqld -lz -lm -ldl -lcrypt -lstdc++ -lrt -lqparser -lhttpd -ljson_linux-gcc-4.7_libmt -lqjsonserializer
 
 ifneq (,$(shell grep FreeBSD /COPYRIGHT 2>/dev/null))
 # FreeBSD

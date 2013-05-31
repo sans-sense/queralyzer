@@ -1,10 +1,13 @@
 # plain simple makefile to build q_parsertest
 
 OUT = ../lib/libqparser.a
+lib :=/home/prabinb/queralyzer/lib
 
 CXX = g++
 LEX = flex
 YACC = bison
+
+LDLIBS   := -L$(lib) -lqjsonserializer -ljson_linux-gcc-4.7_libmt 
 
 CXXFLAGS = -W -Wall -Wextra -ansi -g
 LDFLAGS  = 
@@ -32,7 +35,7 @@ $(OUT): q_parser.o q_scanner.o
 # Link executable
 
 q_parsertest: q_parsertest.o q_parser.o q_scanner.o
-	$(CXX) $(LDFLAGS) -o $@ q_parsertest.o q_parser.o q_scanner.o 
+	$(CXX) $(LDFLAGS) q_parsertest.o q_parser.o q_scanner.o $(LDLIBS) -o $@ 
 
 clean:
 	rm -f q_parsertest *.o $(OUT) 

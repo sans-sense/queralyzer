@@ -6,6 +6,7 @@
 #include <map>
 #include <vector>
 #include "q_table.h"
+#include "../jsonparser/q_MetaData.h"
 #define YYERROR_VERBOSE
 
 #define yyin q_sql_in
@@ -2617,7 +2618,10 @@ type_datetime_precision:
         ;
 
 %%
-int queralyzer_parser(const char * queryBuffer, vector<string> *queries_vector)
+int queralyzer_parser(const char * queryBuffer, 
+		      vector<string> *queries_vector,
+		      vector<TableMetaData> *tableData_vector,
+		      vector<IndexMetaData> *indexData_vector)
 {
 	using namespace std;
 	//yydebug = 1;
@@ -2626,6 +2630,7 @@ int queralyzer_parser(const char * queryBuffer, vector<string> *queries_vector)
 	int parseResult = yyparse();
 	//yy_delete_buffer(queryBuffer);
 	set<string>::iterator it;
+	int tableCount = 0;
 	for (qTableAliasMap_it = qTableAliasMap.begin(); qTableAliasMap_it!=qTableAliasMap.end(); ++qTableAliasMap_it)
 	{
 		string create_queries;
@@ -2639,10 +2644,27 @@ int queralyzer_parser(const char * queryBuffer, vector<string> *queries_vector)
 			//cout<<"Table Alias: "<<qt->tableAlias<<endl;
 			set<string>::iterator columnSet_it;
 			int columnCount=qt->columnSet.size();
+			TableMetaData *tableData = new TableMetaData();
+                        if (tableData != NULL)
+                        {                       
+                                tableData->tableName = qt->tableName;
+                                tableData->storageEngine = "qa_blackhole"; 
+                                tableData->schemaName = "Dummy";
+                                tableData->createOption = "Normal";
+                                tableData->rowCount = 10000; 
+				tableData->columnCount = columnCount;
+				tableData->tableColumns = new std::string[columnCount];
+                        }
+
+			int i=0;
 			for(columnSet_it=qt->columnSet.begin(); columnSet_it!=qt->columnSet.end(); ++columnSet_it)
 			{
 				//cout<<*columnSet_it<<" ";
 				create_queries += *columnSet_it;
+				if (tableData!=NULL)
+				{
+					tableData->tableColumns[i++]=*columnSet_it;
+				}
 				create_queries += " int";
 				if(columnCount>1)
 				{
@@ -2652,7 +2674,11 @@ int queralyzer_parser(const char * queryBuffer, vector<string> *queries_vector)
 			}
 			create_queries += " ) engine=qa_blackhole;\n";
 			queries_vector->push_back(create_queries);
+			std::cout<<create_queries<<std::endl;
+			tableCount++;
+			tableData_vector->push_back(*tableData);
 		}
+		qTableAliasMap.erase(qTableAliasMap_it);
 	}
 	return parseResult;
 }
