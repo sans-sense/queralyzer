@@ -30,7 +30,7 @@ struct st_blackhole_share {
   THR_LOCK lock;
   uint use_count;
   uint table_name_length;
-  char table_name[10];
+  char table_name[31];
 };
 
 

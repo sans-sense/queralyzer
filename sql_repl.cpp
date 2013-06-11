@@ -8,7 +8,6 @@
 #include <string>
 #include <istream>
 #include "inc/json.h"
-#include "q_explain_class.h"
 #include "jsonparser/q_MetaData.h"
 
 #define QUERY_BUFFER_LENGTH 4096

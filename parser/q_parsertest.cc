@@ -7,6 +7,8 @@
 #define QUERY_BUFFER_LENGTH 4096
 using namespace std;
 extern int queralyzer_parser(const char* str, vector<string> *queries, vector<TableMetaData> *tableData, vector<IndexMetaData> *indexData);
+std::vector<TableMetaData> tableData_vector;
+std::vector<IndexMetaData> indexData_vector;
 /*TODO */
 int main()
 {
@@ -24,7 +26,7 @@ int main()
 	char input_buffer[QUERY_BUFFER_LENGTH];
 	cout<<"Type your query and hit enter, and check the file 'intermediate_create_queries'"<<endl;
 	fgets(input_buffer, sizeof(input_buffer), command_pipe);
-        parserResult= queralyzer_parser(input_buffer, &queries, NULL, NULL);
+        parserResult= queralyzer_parser(input_buffer, &queries, &tableData_vector, &indexData_vector);
 	if (parserResult)
 	{
 		cout<<"Problem while parsing, erroring out"<<endl;

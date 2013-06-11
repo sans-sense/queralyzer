@@ -28,7 +28,7 @@ int main()
   JsonSerializer::serialize( &table1, output );
   std::cout<<output<<std::endl;
 
-  std::string input = "{ \"tableName\" : \"Test2\", \"tableColumns\" :[\"col1\", \"col2\", \"col3\"], \"schemaName\" : \"My_DB2\", \"storageEngine\" : \"qa_blackhole\", \"createOption\":\"NONE\", \"rowCount\":100, \"columnCount\":3 }\n";
+  std::string input = "[{ \"tableName\" : \"Test2\", \"tableColumns\" :[\"col1\", \"col2\", \"col3\"], \"schemaName\" : \"My_DB2\", \"storageEngine\" : \"qa_blackhole\", \"createOption\":\"NONE\", \"rowCount\":100, \"columnCount\":3 }]\n";
   JsonSerializer::deserialize( &table1, input );
   JsonSerializer::serialize( &table1, output );
   std::cout<<output<<std::endl;
@@ -61,7 +61,7 @@ int main()
   JsonSerializer::serialize( &index1, indexOutput );
   std::cout<<indexOutput<<std::endl;
 
-  std::string indexInput = "{ \"indexName\" : \"i2\", \"indexType\" : \"PRIMARY\", \"indexColumn\" :[\"col1\", \"col2\", \"col3\"], \"tableName\" : \"Test2\", \"schemaName\" : \"My_DB2\", \"storageEngine\" : \"qa_blackhole\", \"columnCount\":3, \"cardinality\":300, \"nonUnique\" : false, \"isNullable\" : false }\n";
+  std::string indexInput = "[{ \"indexName\" : \"i2\", \"indexType\" : \"PRIMARY\", \"indexColumn\" :[\"col1\", \"col2\", \"col3\"], \"tableName\" : \"Test2\", \"schemaName\" : \"My_DB2\", \"storageEngine\" : \"qa_blackhole\", \"columnCount\":3, \"cardinality\":300, \"nonUnique\" : false, \"isNullable\" : false }]\n";
   JsonSerializer::deserialize( &index1, indexInput );
   JsonSerializer::serialize( &index1, indexOutput );
   std::cout<<indexOutput<<std::endl;

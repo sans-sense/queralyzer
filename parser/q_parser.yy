@@ -1339,7 +1339,12 @@ use_partition:
 table_factor:
           table_ident opt_use_partition opt_table_alias opt_key_definition
 	  {
-	        qTableAliasMap_it = qTableAliasMap.find($3);
+	        if($3 == NULL)
+		{
+			cout<<"A table alias is a must"<<endl;
+	          	YYABORT;	
+		}
+		qTableAliasMap_it = qTableAliasMap.find($3);
                 if (qTableAliasMap_it != qTableAliasMap.end())
                 {
                         qTable *qt_found=qTableAliasMap_it->second;
@@ -1362,8 +1367,8 @@ table_factor:
 						*/
 		                                set<string>::iterator columnSet_it;
 						for (columnSet_it=qt_search_duplicates->columnSet.begin(); 
-							columnSet_it!=qt_search_duplicates->columnSet.end();
-							++columnSet_it)
+						columnSet_it!=qt_search_duplicates->columnSet.end();
+						++columnSet_it)
 						{
 							qt_found->columnSet.insert(*columnSet_it);
 						}
@@ -1380,8 +1385,7 @@ table_factor:
 			qt_new->tableAlias=$3;
 			qt_new->tableName=$1;
 			qTableAliasMap.insert(pair<string,qTable*>($3, qt_new));
-			
-                }		
+		}				
 	  }
         | select_derived_init get_select_lex select_derived2
           /*
@@ -1937,6 +1941,8 @@ order_ident:
 simple_ident:
           ident
           {
+		//cout<<"A table alias is a must while mentioning column names"<<endl;
+	       	//YYABORT;	
 		$$=$1;
 		//printf("field name is %s\n", $1);
           }
@@ -1957,6 +1963,11 @@ simple_ident_nospvar:
 simple_ident_q:
           ident '.' ident
           {
+	        if($1 == NULL)
+		{
+			cout<<"Expecting a table alias while using column names"<<endl;
+	          	YYABORT;	
+		}
 		qTableAliasMap_it = qTableAliasMap.find($1);
 		if (qTableAliasMap_it != qTableAliasMap.end())
 		{
@@ -1974,6 +1985,11 @@ simple_ident_q:
           }
         | '.' ident '.' ident
 	  {
+	        if($2 == NULL)
+		{
+                        cout<<"Expecting a table alias while using column names"<<endl;
+	          	YYABORT;	
+		}
                 qTableAliasMap_it = qTableAliasMap.find($2);
                 if (qTableAliasMap_it != qTableAliasMap.end())
                 {
@@ -1991,6 +2007,11 @@ simple_ident_q:
 	  }
         | ident '.' ident '.' ident
 	  {
+	        if($3 == NULL)
+		{
+                        cout<<"Expecting a table alias while using column names"<<endl;
+	          	YYABORT;	
+		}
                 qTableAliasMap_it = qTableAliasMap.find($3);
                 if (qTableAliasMap_it != qTableAliasMap.end())
                 {

@@ -1,12 +1,24 @@
 [server]
-basedir=./wip
-datadir=./wip/data
+basedir=/usr/local/mysql
+datadir=/usr/local/mysql/data2
 #default-character-set=latin1
-skip-grant-tables=1
+skip-grant-tables=0
 innodb=OFF
 default-storage-engine=MyISAM
-#plugin-load=blackhole=ha_blackhole.so
-#log-error=./error-mysql.log
-#debug=d,debug,error,warning:F:L:O,./log.trace
-debug=d,trace,error:t,5:F:L:O,./log.trace
-#sql_plugin.cc:1362; sql_plugin.cc:820 sql_plugin.cc:831 sql_plugin.cc:469 log.cc:1040
+#plugin-name=qa_blackhole
+plugin-load=qa_blackhole=ha_blackhole
+plugin-dir=./plugin/
+server_id = 1
+log-output=FILE
+general-log=ON
+general-log-file=./gen.log
+slow-query-log=ON
+#deprecated#--log=./log.log
+log-bin=FILE
+log-bin-index=./log.log
+log-error=./server.error-mysql.log
+#debug=d,debug,error,warning:F:L:O,./server.log.trace
+#debug=d,trace,error:t,5:F:L:O,./server.log.trace
+debug=d,debug, info,error,trace, enter, exit, warning:t, 20:F:L:O,./server.mysqld.trace
+#debug=d,debug, info,error,trace, enter, exit, warning, F:L:O,./server.mysqld.trace
+

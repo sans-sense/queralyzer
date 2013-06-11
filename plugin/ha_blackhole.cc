@@ -25,7 +25,15 @@
 #include "ha_blackhole.h"
 #include "sql_class.h"                          // THD, SYSTEM_THREAD_SLAVE_SQL
 
+
 /* Static declarations for handlerton */
+
+static bool is_slave_applier(THD *thd)
+{
+  return thd->system_thread == SYSTEM_THREAD_SLAVE_SQL ||
+    thd->system_thread == SYSTEM_THREAD_SLAVE_WORKER;
+}
+
 
 static handler *blackhole_create_handler(handlerton *hton,
                                          TABLE_SHARE *table,
@@ -65,7 +73,7 @@ const char **qa_blackhole::bas_ext() const
 int qa_blackhole::open(const char *name, int mode, uint test_if_locked)
 {
   DBUG_ENTER("qa_blackhole::open");
-	//printf("INside the qa_blackhole::open\n");
+	printf("INside the qa_blackhole::open\n");
   if (!(share= get_share(name)))
     DBUG_RETURN(HA_ERR_OUT_OF_MEM);
 
@@ -84,7 +92,7 @@ int qa_blackhole::create(const char *name, TABLE *table_arg,
                          HA_CREATE_INFO *create_info)
 {
   DBUG_ENTER("qa_blackhole::create");
-  //printf("Creating new table: inside func qa_blackhole::create\n");
+  printf("Creating new table: inside func qa_blackhole::create\n");
   DBUG_RETURN(0);
 }
 
@@ -120,7 +128,8 @@ int qa_blackhole::update_row(const uchar *old_data, uchar *new_data)
 {
   DBUG_ENTER("qa_blackhole::update_row");
   THD *thd= ha_thd();
-  if (thd->system_thread == SYSTEM_THREAD_SLAVE_SQL && thd->query() == NULL)
+  //if (thd->system_thread == SYSTEM_THREAD_SLAVE_SQL && thd->query() == NULL)
+ if (is_slave_applier(thd) && thd->query() == NULL)
     DBUG_RETURN(0);
   DBUG_RETURN(HA_ERR_WRONG_COMMAND);
 }
@@ -130,7 +139,8 @@ int qa_blackhole::delete_row(const uchar *buf)
   DBUG_ENTER("qa_blackhole::delete_row");
   THD *thd= ha_thd();
   ha_statistic_increment(&SSV::ha_delete_count);
-  if (thd->system_thread == SYSTEM_THREAD_SLAVE_SQL && thd->query() == NULL)
+  //if (thd->system_thread == SYSTEM_THREAD_SLAVE_SQL && thd->query() == NULL)
+ if (is_slave_applier(thd) && thd->query() == NULL)
     DBUG_RETURN(0);
   DBUG_RETURN(HA_ERR_WRONG_COMMAND);
 }
@@ -149,7 +159,8 @@ int qa_blackhole::rnd_next(uchar *buf)
   MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str,
                        TRUE);
   THD *thd= ha_thd();
-  if (thd->system_thread == SYSTEM_THREAD_SLAVE_SQL && thd->query() == NULL)
+  //if (thd->system_thread == SYSTEM_THREAD_SLAVE_SQL && thd->query() == NULL)
+ if (is_slave_applier(thd) && thd->query() == NULL)
     rc= 0;
   else
     rc= HA_ERR_END_OF_FILE;
@@ -181,12 +192,12 @@ void qa_blackhole::position(const uchar *record)
 int qa_blackhole::info(uint flag)
 {
   DBUG_ENTER("qa_blackhole::info");
-  //printf("inside the qa_blackhole::info\n");
-  memset((char*) &stats, 0, sizeof(stats));
+  printf("inside the qa_blackhole::info\n");
+  memset(&stats, 0, sizeof(stats));
   if (flag & HA_STATUS_VARIABLE)
   {
-  //printf("inside the if cond in qa_blackhole::info\n");
-    stats.records=10000;
+  printf("inside the if cond in qa_blackhole::info\n");
+    stats.records=1000;
     stats.deleted=99;
   }
   if (flag & HA_STATUS_AUTO)
@@ -246,7 +257,8 @@ int qa_blackhole::index_read_map(uchar * buf, const uchar * key,
   DBUG_ENTER("qa_blackhole::index_read");
   MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
   THD *thd= ha_thd();
-  if (thd->system_thread == SYSTEM_THREAD_SLAVE_SQL && thd->query() == NULL)
+  //if (thd->system_thread == SYSTEM_THREAD_SLAVE_SQL && thd->query() == NULL)
+  if (is_slave_applier(thd) && thd->query() == NULL)
     rc= 0;
   else
     rc= HA_ERR_END_OF_FILE;
@@ -264,11 +276,12 @@ int qa_blackhole::index_read_idx_map(uchar * buf, uint idx, const uchar * key,
   DBUG_ENTER("qa_blackhole::index_read_idx");
   MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
   THD *thd= ha_thd();
-  if (thd->system_thread == SYSTEM_THREAD_SLAVE_SQL && thd->query() == NULL)
+  //if (thd->system_thread == SYSTEM_THREAD_SLAVE_SQL && thd->query() == NULL)
+  if (is_slave_applier(thd) && thd->query() == NULL)
     rc= 0;
   else
-    rc = 0;
-	//rc= HA_ERR_END_OF_FILE;
+    //rc = 0;
+    rc= HA_ERR_END_OF_FILE;
   MYSQL_INDEX_READ_ROW_DONE(rc);
   table->status= rc ? STATUS_NOT_FOUND : 0;
   DBUG_RETURN(rc);
@@ -282,7 +295,8 @@ int qa_blackhole::index_read_last_map(uchar * buf, const uchar * key,
   DBUG_ENTER("qa_blackhole::index_read_last");
   MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
   THD *thd= ha_thd();
-  if (thd->system_thread == SYSTEM_THREAD_SLAVE_SQL && thd->query() == NULL)
+  //if (thd->system_thread == SYSTEM_THREAD_SLAVE_SQL && thd->query() == NULL)
+  if (is_slave_applier(thd) && thd->query() == NULL)
     rc= 0;
   else
     rc= HA_ERR_END_OF_FILE;
@@ -409,11 +423,13 @@ void init_qa_blackhole_psi_keys()
   const char* category= "blackhole";
   int count;
 
-  if (PSI_server == NULL)
+  /*if (PSI_server == NULL)
     return;
-
+*/
   count= array_elements(all_blackhole_mutexes);
-  PSI_server->register_mutex(category, all_blackhole_mutexes, count);
+  //PSI_server->register_mutex(category, all_blackhole_mutexes, count);
+  mysql_mutex_register(category, all_blackhole_mutexes, count);
+
 }
 #endif
 
@@ -431,7 +447,7 @@ static int qa_blackhole_init(void *p)
   blackhole_hton->create= blackhole_create_handler;
   blackhole_hton->flags= HTON_CAN_RECREATE;
 
-  //printf("initializes the blackhole\n");
+  printf("initializes the blackhole\n");
 
   mysql_mutex_init(bh_key_mutex_blackhole,
                    &blackhole_mutex, MY_MUTEX_INIT_FAST);

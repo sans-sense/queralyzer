@@ -91,7 +91,7 @@ void IndexMetaData::serialize(Json::Value &root)
 
 bool JsonSerializer::serialize(JsonSerializable *pObj, std::string &output)
 {
-  if(pObj==NULL)
+/*  if(pObj==NULL)
 	return false;
   Json::Value serializeRoot;
   pObj->serialize(serializeRoot);
@@ -99,11 +99,30 @@ bool JsonSerializer::serialize(JsonSerializable *pObj, std::string &output)
   Json::StyledWriter writer;
   output = writer.write(serializeRoot);
   return true;
+*/
+  if(pObj==NULL)
+        return false;
+  // treat pObj as an array
+  Json::ValueType vt = Json::arrayValue;
+  Json::Value serializeArrayRoot(vt);
+
+  Json::Value serializeRoot;
+  int num_of_elements = sizeof(pObj)/sizeof(JsonSerializable);
+  for(int i=0; i<num_of_elements; i++)
+  {
+        (pObj[i]).serialize(serializeRoot);
+        serializeArrayRoot[i] = serializeRoot;
+  }
+
+  Json::StyledWriter writer;
+  output = writer.write(serializeArrayRoot);
+  return true;
+
 }
 
 bool JsonSerializer::deserialize(JsonSerializable *pObj, std::string &input)
 {
-  if(pObj==NULL)
+/*  if(pObj==NULL)
 	return false;
   Json::Value deserializeRoot;
   Json::Reader reader;
@@ -114,6 +133,29 @@ bool JsonSerializer::deserialize(JsonSerializable *pObj, std::string &input)
 
   pObj->deserialize(deserializeRoot);
   return true;
+*/
+
+  if(pObj==NULL)
+        return false;
+  // treat pObj as an array
+  Json::ValueType vt = Json::arrayValue;
+  Json::Value deserializeArrayRoot(vt);
+
+  Json::Value deserializeRoot;
+  Json::Reader reader;
+  if(!reader.parse(input, deserializeArrayRoot))
+  {
+        return false;
+  }
+
+  int num_of_elements = sizeof(pObj)/sizeof(JsonSerializable);
+  for(int i=0; i<num_of_elements; i++)
+  {
+        deserializeRoot = deserializeArrayRoot[i];
+        (pObj[i]).deserialize(deserializeRoot);
+  }
+  return true;
+
 }
 
 void JsonSerializer::deserializeArray(Json::Value &rootArray, std::string* copyValues, unsigned int arrayLength)
