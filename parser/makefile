@@ -1,16 +1,16 @@
 # plain simple makefile to build q_parsertest
 
-OUT = ../lib/libqparser.a
-lib :=/home/prabinb/queralyzer/lib
+OUT = $(QA_HOME)/lib/libqparser.a
+lib := $(QA_HOME)/lib
 
 CXX = g++
 LEX = flex
 YACC = bison
 
-LDLIBS   := -L$(lib) -lqjsonserializer -ljson_linux-gcc-4.7_libmt 
+LDLIBS   := -L$(lib) -lqjsonserializer -L$(QA_JSONCPP_HOME)/libs/linux-gcc-4.7/ -ljson_linux-gcc-4.7_libmt 
 
 CXXFLAGS = -W -Wall -Wextra -ansi -g
-LDFLAGS  = 
+LDFLAGS  := 
 
 HEADERS = q_table.h q_parser.h
 

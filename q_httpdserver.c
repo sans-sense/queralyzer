@@ -47,7 +47,9 @@ void table_data_html(httpd *server)
 		get_tableData(tableData, &tableCount);
 		if(tableData==NULL)
 			return;
-		
+		JsonSerializer::serialize(tableData, getTableDataString);
+		httpdPrintf(server, "%s\n", getTableDataString.c_str());
+	/*	
 		for (int i=0; i<tableCount; i++)
 		{
 			std::string eachTable;	
@@ -61,6 +63,7 @@ void table_data_html(httpd *server)
 		output+="]";
 		std::cout<<output<<std::endl;
 		httpdPrintf(server, "%s\n", output.c_str());
+	*/
 		
 	}
 	else if (!strcmp(httpdRequestMethodName(server), "POST"))

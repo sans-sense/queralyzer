@@ -1,12 +1,12 @@
 # plain simple makefile to build q_parsertest
 
-OUT = ../lib/libqjsonserializer.a
-inc := /home/prabinb/queralyzer/inc
-lib :=/home/prabinb/queralyzer/lib
+OUT = $(QA_HOME)/lib/libqjsonserializer.a
+inc := $(QA_JSONCPP_HOME)/include/json/
+lib := $(QA_JSONCPP_HOME)/libs/linux-gcc-4.7/
 CPP := g++
 
 CPPFLAGS := -Wall -Wextra -ansi -g 
-LDFLAGS  :=  
+LDFLAGS  := 
 
 LDLIBS   := -L$(lib) -ljson_linux-gcc-4.7_libmt
 
