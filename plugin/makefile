@@ -29,14 +29,6 @@ sources := $(wildcard *.cc)
 objects := $(patsubst %c,%o,$(sources))
 targets := $(basename $(sources))
 
-#all: ha_blackhole.a 
-
-#ha_blackhole.o: ha_blackhole.cc
-#	$(CPP) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
-
-#ha_blackhole.a : ha_blackhole.o  
-#	$(CPP) $(LDFLAGS) ha_blackhole.o $(LDLIBS) -o $@
-
 all: $(targets)
 
 clean:

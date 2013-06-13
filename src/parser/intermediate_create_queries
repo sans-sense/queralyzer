@@ -1,0 +1,2 @@
+create table if not exists hg ( abc int ) engine=qa_blackhole;
+
