@@ -7,7 +7,7 @@ lib      := $(QA_MYSQL_HOME)/libmysqld
 inc_params=$(foreach d, $(inc), -I$d)
 
 CC       := gcc
-CPPFLAGS := -g $(inc_params) -D_THREAD_SAFE -D_REENTRANT  -Dblackhole_EXPORTS -DHAVE_CONFIG_H -DMYSQL_DYNAMIC_PLUGIN -fno-rtti  -fPIC
+CPPFLAGS := -g $(inc_params) -D_THREAD_SAFE -DSAFE_MUTEX -D_REENTRANT  -Dblackhole_EXPORTS -DHAVE_CONFIG_H -DMYSQL_DYNAMIC_PLUGIN -fno-rtti  -fPIC
 #CXX_DEFINES = -Dblackhole_EXPORTS -DHAVE_CONFIG_H -DMYSQL_DYNAMIC_PLUGIN
 CFLAGS   := -g -W -Wall 
 LDFLAGS  := -static-libgcc 
