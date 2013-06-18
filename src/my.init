@@ -1,14 +1,16 @@
 [server]
 basedir=/usr/local/mysql
 datadir=/usr/local/mysql/data2
-#default-character-set=latin1
 
+#default-character-set=system_character_set
+#character-set-server=utf8
+#collation-server=utf8_unicode_ci
 skip-grant-tables=0
 innodb=OFF
 default-storage-engine=MyISAM
 #plugin-name=qa_blackhole
 plugin-load=qa_blackhole=ha_blackhole
-plugin-dir=/home/prabinb/queralyzer/src/plugin/
+plugin-dir=/home/prabinb/queralyzer/plugin/
 log-output=FILE
 general-log=ON
 general-log-file=../logs/gen.log

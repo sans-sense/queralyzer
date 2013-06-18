@@ -2638,10 +2638,10 @@ type_datetime_precision:
         ;
 
 %%
-int queralyzer_parser(const char * queryBuffer, 
-		      std::vector<std::string>* createQueriesVector,
-		      TableMetaData **tableData,
-		      IndexMetaData **indexData)
+int queralyzer_parser (const char *queryBuffer,
+		std::vector <std::string> &createQueriesVector,
+		std::map<std::string, TableMetaData*> &tableData,
+		std::map<std::string, IndexMetaData*> &indexData)
 {
 	using namespace std;
 	//yydebug = 1;
@@ -2655,7 +2655,7 @@ int queralyzer_parser(const char * queryBuffer,
 	{
 		string create_queries;
 		qTable *qt = qTableAliasMap_it->second;
-                if(!(qt->tableName.empty()))
+		if(!(qt->tableName.empty()))
 		{
 			create_queries = "create table if not exists ";
 			create_queries += qt->tableName;
@@ -2664,28 +2664,23 @@ int queralyzer_parser(const char * queryBuffer,
 			//cout<<"Table Alias: "<<qt->tableAlias<<endl;
 			set<string>::iterator columnSet_it;
 			int columnCount=qt->columnSet.size();
+			TableMetaData *tableDataTemp = new TableMetaData();
 
 			//std::cout<<qt->tableName<<std::endl;
-			if(tableData != NULL)
-			{
-	                        (*tableData)[tableCount].tableName =qt->tableName;
-        	                (*tableData)[tableCount].storageEngine="qa_blackhole";
-	                        (*tableData)[tableCount].schemaName="Dummy";
-	                        (*tableData)[tableCount].createOption="Normal";
-	                        (*tableData)[tableCount].rowCount = 10000; 
-				(*tableData)[tableCount].columnCount = columnCount;
-				(*tableData)[tableCount].tableColumns = new std::string[columnCount];
-				std::cout<<((*tableData)[tableCount]).tableName<<std::endl;
-			}	
+			tableDataTemp->tableName =qt->tableName;
+			tableDataTemp->storageEngine="qa_blackhole";
+			tableDataTemp->schemaName="Dummy";
+			tableDataTemp->createOption="Normal";
+			tableDataTemp->rowCount = 10000; 
+			tableDataTemp->columnCount = columnCount;
+			tableDataTemp->tableColumns = new std::string[columnCount];
+			//std::cout<<tableDataTemp->tableName<<std::endl;
 			int i = 0;
 			for(columnSet_it=qt->columnSet.begin(); columnSet_it!=qt->columnSet.end(); ++columnSet_it)
 			{
 				//cout<<*columnSet_it<<" ";
 				create_queries += *columnSet_it;
-				if(tableData != NULL)
-				{
-					(*tableData)[tableCount].tableColumns[i++]=*columnSet_it;
-				}
+				tableDataTemp->tableColumns[i++]=*columnSet_it;
 				create_queries += " int";
 				if(columnCount>1)
 				{
@@ -2694,9 +2689,10 @@ int queralyzer_parser(const char * queryBuffer,
 				}
 			}
 			create_queries += " ) engine=qa_blackhole;\n";
-			createQueriesVector->push_back(create_queries);
+			createQueriesVector.push_back(create_queries);
 			//std::cout<<create_queries<<" q_parser.yy"<<std::endl;
 			tableCount++;
+			tableData.insert(std::pair<std::string, TableMetaData*>(tableDataTemp->tableName, tableDataTemp));
 		}
 		qTableAliasMap.erase(qTableAliasMap_it);
 	}

@@ -198,7 +198,7 @@ int qa_blackhole::info(uint flag)
   {
   printf("inside the if cond in qa_blackhole::info\n");
     stats.records=1000;
-    stats.deleted=99;
+    stats.deleted=0;
   }
   if (flag & HA_STATUS_AUTO)
     stats.auto_increment_value= 1;

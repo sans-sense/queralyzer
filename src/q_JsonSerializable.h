@@ -9,14 +9,14 @@ class JsonSerializable
 {
 private:
 public:
-  JsonSerializable (void)
-  {
-  }
-   ~JsonSerializable (void)
-  {
-  }
-  virtual void serialize (Json::Value & root) = 0;
-  virtual void deserialize (Json::Value & root) = 0;
+	JsonSerializable (void)
+{
+}
+	~JsonSerializable (void)
+	{
+	}
+	virtual bool serialize (Json::Value & root) = 0;
+	virtual bool deserialize (Json::Value & root) = 0;
 };
 
 #endif

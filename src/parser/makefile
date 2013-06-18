@@ -28,13 +28,13 @@ q_scanner.cc: q_scanner.ll
 %.o: %.cc
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-$(OUT): q_parser.o q_scanner.o
-	ar rcs $(OUT) q_parser.o q_scanner.o
+$(OUT): q_parser.o q_scanner.o ../meta_data.o
+	ar rcs $(OUT) q_parser.o q_scanner.o ../meta_data.o
 
 # Link executable
 
-q_parsertest: q_parsertest.o q_parser.o q_scanner.o
-	$(CXX) $(LDFLAGS) q_parsertest.o q_parser.o q_scanner.o $(LDLIBS) -o $@ 
+q_parsertest: q_parsertest.o q_parser.o q_scanner.o ../meta_data.o
+	$(CXX) $(LDFLAGS) q_parsertest.o q_parser.o q_scanner.o ../meta_data.o $(LDLIBS) -o $@ 
 
 clean:
 	rm -f q_parsertest *.o $(OUT) 

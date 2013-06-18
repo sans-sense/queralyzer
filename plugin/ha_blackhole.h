@@ -30,7 +30,7 @@ struct st_blackhole_share {
   THR_LOCK lock;
   uint use_count;
   uint table_name_length;
-  char table_name[31];
+  char table_name[1];
 };
 
 
@@ -60,7 +60,7 @@ public:
   {
     return(HA_NULL_IN_KEY | HA_CAN_FULLTEXT | HA_CAN_SQL_HANDLER |
            HA_BINLOG_STMT_CAPABLE | HA_BINLOG_ROW_CAPABLE |
-           HA_CAN_INDEX_BLOBS | HA_AUTO_PART_KEY | HA_READ_OUT_OF_SYNC |
+           HA_CAN_INDEX_BLOBS | HA_AUTO_PART_KEY | HA_READ_OUT_OF_SYNC | 
            HA_FILE_BASED | HA_CAN_GEOMETRY | HA_CAN_INSERT_DELAYED | HA_STATS_RECORDS_IS_EXACT);
   }
   ulong index_flags(uint inx, uint part, bool all_parts) const
