@@ -51,16 +51,12 @@ EmbeddedMYSQL::initializeMYSQL ()
 
 		if (!mysql_real_connect (mysql, NULL, NULL, NULL, "test", 0, NULL, 0))
 		{
-			std::
-			cout << "mysql_real_connect failed: " << mysql_error (mysql) <<
-			std::endl;
+			std::cout << "mysql_real_connect failed: " << mysql_error (mysql) <<std::endl;
 			isInitialized = false;
 			return -1;
 		}
 
-		if (mysql_query
-				(mysql,
-						"create table IF NOT EXISTS test_aps (id int primary key, name varchar(100))"))
+		if (mysql_query (mysql,"create table IF NOT EXISTS test_aps (id int primary key, name varchar(100))"))
 		{
 			isInitialized = false;
 			return -1;
@@ -85,25 +81,53 @@ EmbeddedMYSQL::deinitializeMYSQL ()
 }
 
 int
-EmbeddedMYSQL::executeMYSQL (std::string query_str)
+EmbeddedMYSQL::createTableMYSQL (std::string table_name)
 {
 	if (isInitialized == false)
 	{
-		std::
-		cerr <<
-		"MYSQL is not initialised properly, unable to process queries";
+		std::cout << "MYSQL is not initialised properly, unable to process queries";
 	}
-	if (mysql_query (mysql, query_str.c_str ()))
+
+        TableMetaData *table_found = NULL;
+        table_found = table_data_map[table_name];
+
+        if(table_found == NULL)
+        {
+ 	       std::cout<<"ERROR while searching the table in table map"<<std::endl;
+               return 1;
+        }
+        int column_count = table_found->columnCount;
+        std::string create_query;
+        std::string drop_query;
+	drop_query = "drop table if exists ";
+	drop_query += table_name;
+	drop_query += ";\n";
+        create_query = "create table if not exists ";
+        create_query += table_found->tableName;
+        create_query += " ( ";
+        while(column_count!=0)
+        {
+ 	       create_query += table_found->tableColumns[column_count-1];
+               create_query += " int";
+               if(column_count>1)
+               {
+                        create_query += ",";
+               }
+               column_count -= 1;
+        }
+        create_query += " ) engine=qa_blackhole;\n";
+	/* Avoiding risk, dropping the table if it exists */
+	if (mysql_query (mysql, drop_query.c_str ()))
 	{
-		std::cerr << "problems running " << query_str << " error " <<
-				mysql_error (mysql);
+		std::cout << "problems running " << drop_query << " error " << mysql_error (mysql);
 		return 1;
 	}
-	else
+	if (mysql_query (mysql, create_query.c_str ()))
 	{
-		//mysql_free_result(results);
-		return 0;
+		std::cout << "problems running " << create_query << " error " << mysql_error (mysql);
+		return 1;
 	}
+	return 0;
 
 }
 
@@ -113,14 +137,11 @@ EmbeddedMYSQL::executeMYSQL (std::string query_str,
 {
 	if (isInitialized == false)
 	{
-		std::
-		cerr <<
-		"MYSQL is not initialised properly, unable to process queries";
+		std::cout << "MYSQL is not initialised properly, unable to process queries";
 	}
 	if (mysql_query (mysql, query_str.c_str ()))
 	{
-		std::cerr << "problems running " << query_str << " error " <<
-				mysql_error (mysql);
+		std::cout << "problems running " << query_str << " error " << mysql_error (mysql);
 		return 1;
 	}
 	else
@@ -168,15 +189,9 @@ EmbeddedMYSQL::executeMYSQL (std::string query_str,
 							*(row + 9) ? (char *) *(row + 9) : "NULL";
 					explain_data_map.insert(std::pair<std::string, ExplainMetaData*>(key, explain_data));
 					i++;
-					std::cout<<"printing the value of i: "<<i<<std::endl;
+					//std::cout<<"printing the value of i: "<<i<<std::endl;
 				}
 			}
-			/*std::map<std::string, JsonSerializable*>::iterator it;
-int i = 0;
-for (it = explain_data_map.begin(); it!= explain_data_map.end(); ++it)
-{
-std::cout<<it->first<<std::endl;
-}*/
 
 
 		}
@@ -233,4 +248,13 @@ int
 EmbeddedMYSQL::parseMYSQL (std::string query_str, std::vector < std::string > & create_queries_vector)
 {
 	return (queralyzer_parser (query_str.c_str (), create_queries_vector, table_data_map, index_data_map));
+}
+
+void
+EmbeddedMYSQL::resetMYSQL ()
+{
+	results=NULL;
+	table_data_map.clear();
+	index_data_map.clear();
+	return;
 }

@@ -40,13 +40,20 @@ void query_html (httpd * server)
 			std::string mysql_json_output;
 			query->getQueryOutput (mysql_json_output);
 			httpdPrintf (server, "%s\n", mysql_json_output.c_str ());
-			std::cout << mysql_json_output << std::endl;
+			//std::cout << mysql_json_output << std::endl;
 		}
 		else
 		{
-			httpdSetResponse (server, "403 Forbidden");
+			httpdSetResponse (server, "500");
+			httpdPrintf (server, "%s\n", "Error while executing the Query");		
 		}
 
+	}
+	else
+	{
+		httpdSetResponse (server, "500");
+		httpdPrintf (server, "%s\n", "Error while parsing the Query");		
+		std::cout<<"Error while parsing the Query"<<std::endl;
 	}
 	return;
 }
@@ -59,7 +66,7 @@ void table_data_html (httpd * server)
 		std::string getTableDataString;
 		embedded_mysql->getTableMetaDataMYSQL (getTableDataString);
 		httpdPrintf (server, "%s\n", getTableDataString.c_str ());
-		std::cout << getTableDataString << std::endl;
+		//std::cout << getTableDataString << std::endl;
 	}
 	else if (!strcmp (httpdRequestMethodName (server), "POST"))
 	{
@@ -67,6 +74,7 @@ void table_data_html (httpd * server)
 		updateString = httpdGetVariableByName (server, "tablemetadata");
 		if (updateString == NULL)
 		{
+			httpdSetResponse (server, "500");
 			httpdPrintf (server, "Missing form data!");
 			return;
 		}
@@ -79,6 +87,15 @@ void table_data_html (httpd * server)
 void index_data_html (httpd * server)
 {
 	httpdSetResponse (server, "501 Not Implemented");
+	httpdPrintf (server, "Not Implemented");
+	std::cout<<"Not Implemented"<<std::endl;
+	return;
+}
+
+void reset_html (httpd * server)
+{
+	EmbeddedMYSQL *embedded_mysql = EmbeddedMYSQL::getInstance ();
+	embedded_mysql->resetMYSQL();
 	return;
 }
 
@@ -120,6 +137,8 @@ int main ()
 			table_data_html);
 	httpdAddCContent (server, "/", "indexmetadata", HTTP_TRUE, NULL,
 			index_data_html);
+	httpdAddCContent (server, "/", "reset", HTTP_TRUE, NULL,
+			reset_html);
 	/*
 	 ** Go into our service loop
 	 */

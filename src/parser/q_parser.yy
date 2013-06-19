@@ -2639,7 +2639,7 @@ type_datetime_precision:
 
 %%
 int queralyzer_parser (const char *queryBuffer,
-		std::vector <std::string> &createQueriesVector,
+		std::vector <std::string> &createTablesVector,
 		std::map<std::string, TableMetaData*> &tableData,
 		std::map<std::string, IndexMetaData*> &indexData)
 {
@@ -2653,13 +2653,13 @@ int queralyzer_parser (const char *queryBuffer,
 	int tableCount = 0;
 	for (qTableAliasMap_it = qTableAliasMap.begin(); qTableAliasMap_it!=qTableAliasMap.end(); ++qTableAliasMap_it)
 	{
-		string create_queries;
+		//string create_queries;
 		qTable *qt = qTableAliasMap_it->second;
 		if(!(qt->tableName.empty()))
 		{
-			create_queries = "create table if not exists ";
-			create_queries += qt->tableName;
-			create_queries += " ( ";
+			//create_queries = "create table if not exists ";
+			//create_queries += qt->tableName;
+			//create_queries += " ( ";
 			//cout<<"Table Name: "<<qt->tableName<<endl;
 			//cout<<"Table Alias: "<<qt->tableAlias<<endl;
 			set<string>::iterator columnSet_it;
@@ -2679,17 +2679,17 @@ int queralyzer_parser (const char *queryBuffer,
 			for(columnSet_it=qt->columnSet.begin(); columnSet_it!=qt->columnSet.end(); ++columnSet_it)
 			{
 				//cout<<*columnSet_it<<" ";
-				create_queries += *columnSet_it;
+				//create_queries += *columnSet_it;
 				tableDataTemp->tableColumns[i++]=*columnSet_it;
-				create_queries += " int";
+				//create_queries += " int";
 				if(columnCount>1)
 				{
-					create_queries += ",";
+					//create_queries += ",";
 					columnCount -= 1;
 				}
 			}
-			create_queries += " ) engine=qa_blackhole;\n";
-			createQueriesVector.push_back(create_queries);
+			//create_queries += " ) engine=qa_blackhole;\n";
+			createTablesVector.push_back(tableDataTemp->tableName);
 			//std::cout<<create_queries<<" q_parser.yy"<<std::endl;
 			tableCount++;
 			tableData.insert(std::pair<std::string, TableMetaData*>(tableDataTemp->tableName, tableDataTemp));

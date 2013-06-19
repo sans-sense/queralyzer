@@ -73,7 +73,7 @@ const char **qa_blackhole::bas_ext() const
 int qa_blackhole::open(const char *name, int mode, uint test_if_locked)
 {
   DBUG_ENTER("qa_blackhole::open");
-	printf("INside the qa_blackhole::open\n");
+  //printf("fn: qa_blackhole::open\n");
   if (!(share= get_share(name)))
     DBUG_RETURN(HA_ERR_OUT_OF_MEM);
 
@@ -92,7 +92,7 @@ int qa_blackhole::create(const char *name, TABLE *table_arg,
                          HA_CREATE_INFO *create_info)
 {
   DBUG_ENTER("qa_blackhole::create");
-  printf("Creating new table: inside func qa_blackhole::create\n");
+  //printf("fn: qa_blackhole::create\n");
   DBUG_RETURN(0);
 }
 
@@ -192,11 +192,11 @@ void qa_blackhole::position(const uchar *record)
 int qa_blackhole::info(uint flag)
 {
   DBUG_ENTER("qa_blackhole::info");
-  printf("inside the qa_blackhole::info\n");
+  //printf("fn:A qa_blackhole::info\n");
   memset(&stats, 0, sizeof(stats));
   if (flag & HA_STATUS_VARIABLE)
   {
-  printf("inside the if cond in qa_blackhole::info\n");
+  //printf("fn:B qa_blackhole::info\n");
     stats.records=1000;
     stats.deleted=0;
   }

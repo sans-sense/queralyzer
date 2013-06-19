@@ -29,7 +29,7 @@ Query::parseQuery ()
 	else
 	{
 		EmbeddedMYSQL *embedded_mysql = EmbeddedMYSQL::getInstance ();
-		return (embedded_mysql->parseMYSQL (query_str, create_queries_vector));
+		return (embedded_mysql->parseMYSQL (query_str, create_tables_vector));
 	}
 
 }
@@ -37,23 +37,22 @@ Query::parseQuery ()
 int
 Query::initialiseQueryExecution ()
 {
-	std::vector < std::string >::iterator create_queries_it;
-	if (create_queries_vector.empty ())
+	std::vector < std::string >::iterator create_tables_it;
+	if (create_tables_vector.empty ())
 	{
-		std::cerr << "Failed during initialising Query Execution";
+		std::cout << "Failed during initialising Query Execution";
 		return 1;
 	}
 	EmbeddedMYSQL *embedded_mysql = EmbeddedMYSQL::getInstance ();
-	for (create_queries_it = create_queries_vector.begin ();
-			create_queries_it != create_queries_vector.end ();)
+	for (create_tables_it = create_tables_vector.begin ();
+			create_tables_it != create_tables_vector.end ();)
 	{
-		if (embedded_mysql->executeMYSQL (*create_queries_it))
+		if (embedded_mysql->createTableMYSQL (*create_tables_it))
 		{
-			std::cerr << "Problem while running query:" << '\n' <<
-					*create_queries_it;
+			std::cout << "Problem while table:" << '\n' << *create_tables_it<<std::endl;
 			return 1;
 		}
-		create_queries_it = create_queries_vector.erase (create_queries_it);
+		create_tables_it = create_tables_vector.erase (create_tables_it);
 	}
 	return 0;
 }

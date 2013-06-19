@@ -9,10 +9,10 @@ class Query
 {
 private:
 	std::string query_str;
-	std::string * query_tables;
-	std::string * query_indexes;
+	//std::string * query_tables;
+	//std::string * query_indexes;
 	std::map<std::string, ExplainMetaData*> explain_data_map;
-	std::vector < std::string > create_queries_vector;
+	std::vector < std::string > create_tables_vector;
 	std::string output_str;
 	bool data_updated;
 	Query ();

@@ -32,10 +32,8 @@ public:
 	static EmbeddedMYSQL *getInstance ();
 	int initializeMYSQL ();
 	int deinitializeMYSQL ();
-	int executeMYSQL (std::string query_str);
-	/* this is overloaded for the select statements as we don't want to mix
- MYSQL functions inside the Query class.
-	 */
+	int EmbeddedMYSQL::createTableMYSQL (std::string table_name);
+	
 	int executeMYSQL (std::string query_str, std::map<std::string, ExplainMetaData*> &explain_data_map);
 
 	void getTableMetaDataMYSQL (std::string & table_json_output);
@@ -43,4 +41,6 @@ public:
 	void getIndexMetaDataMYSQL (std::string & index_json_output);
 	void setIndexMetaDataMYSQL (std::string & index_json_input);
 	int parseMYSQL (std::string query_str, std::vector<std::string> & create_queries_vector);
+	void resetMYSQL();
+	
 };
