@@ -2692,7 +2692,14 @@ int queralyzer_parser (const char *queryBuffer,
 			createTablesVector.push_back(tableDataTemp->tableName);
 			//std::cout<<create_queries<<" q_parser.yy"<<std::endl;
 			tableCount++;
-			tableData.insert(std::pair<std::string, TableMetaData*>(tableDataTemp->tableName, tableDataTemp));
+			std::pair<std::map<std::string, TableMetaData*>::iterator, bool> table_inserted;
+			table_inserted = tableData.insert(std::pair<std::string, TableMetaData*>(tableDataTemp->tableName, tableDataTemp));
+			if (!table_inserted.second)
+			{
+				tableData.erase(table_inserted.first);
+				delete table_inserted.first->second;
+				tableData.insert(std::pair<std::string, TableMetaData*>(tableDataTemp->tableName, tableDataTemp));
+			}
 		}
 		qTableAliasMap.erase(qTableAliasMap_it);
 	}

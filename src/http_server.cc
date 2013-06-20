@@ -40,7 +40,7 @@ void query_html (httpd * server)
 			std::string mysql_json_output;
 			query->getQueryOutput (mysql_json_output);
 			httpdPrintf (server, "%s\n", mysql_json_output.c_str ());
-			//std::cout << mysql_json_output << std::endl;
+			std::cout << mysql_json_output << std::endl;
 		}
 		else
 		{

@@ -97,16 +97,16 @@ IndexMetaData::deserialize (Json::Value & root)
 bool
 ExplainMetaData::serialize (Json::Value & root)
 {
-	root["id"] = id;
-	root["select_type"] = select_type;
-	root["table"] = table;
-	root["type"] = type;
-	root["possible_keys"] = possible_keys;
-	root["key"] = key;
-	root["key_len"] = key_len;
-	root["ref"] = ref;
+	root["id"] = (id == "NULL") ? Json::Value::null : id;
+	root["select_type"] = (select_type == "NULL") ? Json::Value::null : select_type;
+	root["table"] = (table == "NULL") ? Json::Value::null : table;
+	root["type"] = (type == "NULL") ? Json::Value::null : type;
+	root["possible_keys"] = (possible_keys == "NULL") ? Json::Value::null : possible_keys;
+	root["key"] = (key == "NULL") ? Json::Value::null : key;
+	root["key_len"] = (key_len == "NULL") ? Json::Value::null : key_len;
+	root["ref"] = (ref == "NULL") ? Json::Value::null : ref;
 	root["rows"] = rows;
-	root["Extra"] = Extra;
+	root["Extra"] = (Extra == "NULL") ? Json::Value::null : Extra;
 
 	return true;
 }
