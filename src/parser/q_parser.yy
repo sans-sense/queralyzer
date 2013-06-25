@@ -2703,7 +2703,7 @@ int queralyzer_parser (const char *queryBuffer,
 		}
 		qTableAliasMap.erase(qTableAliasMap_it);
 	}
-	return parseResult;
+	return (parseResult == 0) ? 0 : 5; // Maintaining custom error numbers. See http_server.cc file
 }
 void yyerror(string s)
 {

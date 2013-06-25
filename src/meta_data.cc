@@ -2,7 +2,7 @@
 #include "q_JsonSerializable.h"
 #include "meta_data.h"
 
-bool
+void
 TableMetaData::serialize (Json::Value & root)
 {
 	root["tableName"] = tableName;
@@ -14,12 +14,11 @@ TableMetaData::serialize (Json::Value & root)
 	Json::ValueType vt = Json::arrayValue;
 	Json::Value columnArray (vt);
 
-	JsonSerializer::serializeArray (columnArray, tableColumns, columnCount);
+	serializeArray (columnArray, tableColumns, columnCount);
 	root["tableColumns"] = columnArray;
-	return true;
 }
 
-bool
+void
 TableMetaData::deserialize(Json::Value & root)
 {
 	tableName = root.get ("tableName", "").asString ();
@@ -33,9 +32,13 @@ TableMetaData::deserialize(Json::Value & root)
 	Json::Value columnArray (vt);
 	columnArray = root["tableColumns"];
 
-	JsonSerializer::deserializeArray (columnArray, tableColumns, columnCount);
-	return true;
+	deserializeArray (columnArray, tableColumns, columnCount);
 
+}
+
+std::string TableMetaData::getName()
+{
+  return tableName;
 }
 
 TableMetaData & TableMetaData::operator= (const TableMetaData & other)
@@ -55,7 +58,7 @@ TableMetaData & TableMetaData::operator= (const TableMetaData & other)
 	return *this;
 }
 
-bool
+void
 IndexMetaData::serialize (Json::Value & root)
 {
 	root["indexName"] = indexName;	//for primary key it is always PRIMARY
@@ -70,12 +73,11 @@ IndexMetaData::serialize (Json::Value & root)
 	Json::ValueType vt = Json::arrayValue;
 	Json::Value columnArray (vt);
 
-	JsonSerializer::serializeArray (columnArray, indexColumns, columnCount);
+	serializeArray (columnArray, indexColumns, columnCount);
 	root["indexColumns"] = columnArray;
-	return true;
 }
 
-bool
+void
 IndexMetaData::deserialize (Json::Value & root)
 {
 	indexName = root.get ("indexName", "").asString ();
@@ -90,11 +92,15 @@ IndexMetaData::deserialize (Json::Value & root)
 	Json::ValueType vt = Json::arrayValue;
 	Json::Value columnArray (vt);
 	columnArray = root["indexColumns"];
-	JsonSerializer::deserializeArray (columnArray, indexColumns, columnCount);
-	return true;
+	deserializeArray (columnArray, indexColumns, columnCount);
 }
 
-bool
+std::string IndexMetaData::getName()
+{
+  return indexName;
+}
+
+void
 ExplainMetaData::serialize (Json::Value & root)
 {
 	root["id"] = (id == "NULL") ? Json::Value::null : id;
@@ -107,11 +113,9 @@ ExplainMetaData::serialize (Json::Value & root)
 	root["ref"] = (ref == "NULL") ? Json::Value::null : ref;
 	root["rows"] = rows;
 	root["Extra"] = (Extra == "NULL") ? Json::Value::null : Extra;
-
-	return true;
 }
 
-bool
+void
 ExplainMetaData::deserialize (Json::Value & root)
 {
 	/* Not Required */
@@ -126,201 +130,11 @@ ExplainMetaData::deserialize (Json::Value & root)
 	ref = root.get ("ref", "").asString ();
 	rows = root.get ("rows", 0).asInt ();
 	Extra = root.get ("Extra", "").asString ();
-*/
-	return true;
+    */
 }
 
-
-bool
-JsonSerializer::serializeArray (std::map<std::string, TableMetaData*> &obj_map, std::string & output)
+std::string ExplainMetaData::getName()
 {
-	Json::ValueType vt = Json::arrayValue;
-	Json::Value serializeArrayRoot (vt);
-	Json::Value serializeRoot;
-	std::map<std::string, TableMetaData*>::iterator it;
-	int obj_count = 0;
-	for (it = obj_map.begin(); it!= obj_map.end(); ++it)
-	{
-		if(((it->second) != NULL) && ((it->second)->serialize (serializeRoot)))
-		{
-			serializeArrayRoot[obj_count++] = serializeRoot;
-		}
-	}
-	Json::StyledWriter writer;
-	output = writer.write (serializeArrayRoot);
-	return true;
-}
-
-
-bool
-JsonSerializer::deserializeArray (std::map<std::string, TableMetaData*> &obj_map, std::string & input )
-{
-	Json::ValueType vt = Json::arrayValue;
-	Json::Value deserializeArrayRoot (vt);
-
-	Json::Value deserializeRoot;
-	Json::Reader reader;
-	if (!reader.parse (input, deserializeArrayRoot))
-	{
-		return false;
-	}
-	int obj_count = deserializeArrayRoot.size();
-	int i = 0;
-	deserializeRoot = deserializeArrayRoot[i++];
-	while (i<obj_count)
-	{
-		TableMetaData *new_table_data = new TableMetaData();
-		if(new_table_data->deserialize(deserializeRoot))
-		{
-			obj_map.insert(std::pair<std::string, TableMetaData*>(new_table_data->tableName, new_table_data));
-		}
-		deserializeRoot = deserializeArrayRoot[i++];
-	}
-	return true;
-}
-
-
-bool
-JsonSerializer::serializeArray (std::map<std::string, IndexMetaData*> &obj_map, std::string & output)
-{
-	Json::ValueType vt = Json::arrayValue;
-	Json::Value serializeArrayRoot (vt);
-	Json::Value serializeRoot;
-	std::map<std::string, IndexMetaData*>::iterator it;
-	int obj_count = 0;
-	for (it = obj_map.begin(); it!= obj_map.end(); ++it)
-	{
-		if(((it->second) != NULL) && ((it->second)->serialize (serializeRoot)))
-		{
-			serializeArrayRoot[obj_count++] = serializeRoot;
-		}
-	}
-	Json::StyledWriter writer;
-	output = writer.write (serializeArrayRoot);
-	return true;
-}
-
-
-bool
-JsonSerializer::deserializeArray (std::map<std::string, IndexMetaData*> &obj_map, std::string & input )
-{
-	Json::ValueType vt = Json::arrayValue;
-	Json::Value deserializeArrayRoot (vt);
-
-	Json::Value deserializeRoot;
-	Json::Reader reader;
-	if (!reader.parse (input, deserializeArrayRoot))
-	{
-		return false;
-	}
-	int obj_count = deserializeArrayRoot.size();
-	int i = 0;
-	deserializeRoot = deserializeArrayRoot[i++];
-	while (i<obj_count)
-	{
-		IndexMetaData *new_index_data = new IndexMetaData();
-		if(new_index_data->deserialize(deserializeRoot))
-		{
-			obj_map.insert(std::pair<std::string, IndexMetaData*>(new_index_data->indexName, new_index_data));
-		}
-		deserializeRoot = deserializeArrayRoot[i++];
-	}
-	return true;
-}
-
-
-bool
-JsonSerializer::serializeArray (std::map<std::string, ExplainMetaData*> &obj_map, std::string & output)
-{
-	Json::ValueType vt = Json::arrayValue;
-	Json::Value serializeArrayRoot (vt);
-	Json::Value serializeRoot;
-	std::map<std::string, ExplainMetaData*>::iterator it;
-	int obj_count = 0;
-	for (it = obj_map.begin(); it!= obj_map.end(); ++it)
-	{
-		if(((it->second) != NULL) && ((it->second)->serialize (serializeRoot)))
-		{
-			serializeArrayRoot[obj_count++] = serializeRoot;
-		}
-	}
-	Json::StyledWriter writer;
-	output = writer.write (serializeArrayRoot);
-	return true;
-}
-
-/*
-bool 
-JsonSerializer::serialize (std::map<std::string, JsonSerializable*> &obj_map, std::string & output)
-{
-	Json::ValueType vt = Json::arrayValue;
-	Json::Value serializeArrayRoot (vt);
-	Json::Value serializeRoot;
-	std::map<std::string, JsonSerializable*>::iterator it;
-	int obj_count = 0;
-	for (it = obj_map.begin(); it!= obj_map.end(); ++it)
-	{
-		if(((it->second) != NULL) && ((it->second)->serialize (obj_map, serializeRoot)))
-		{
-			serializeArrayRoot[obj_count++] = serializeRoot;
-		}
-	}
-	Json::StyledWriter writer;
-	output = writer.write (serializeArrayRoot);
-	return true;
-}
-
-bool
-JsonSerializer::deserialize (std::map<std::string, JsonSerializable*> &obj_map, std::string & input)
-{
-	// treat pObj as an array
-	Json::ValueType vt = Json::arrayValue;
-	Json::Value deserializeArrayRoot (vt);
-
-	Json::Value deserializeRoot;
-	Json::Reader reader;
-	if (!reader.parse (input, deserializeArrayRoot))
-	{
-		return false;
-	}
-	int obj_count = 0;
-	deserializeRoot = deserializeArrayRoot[obj_count++];
-	while (deserializeRoot != NULL)
-	{
-		(pObj[i]).deserialize (deserializeRoot);
-		deserializeRoot = deserializeArrayRoot[obj_count++];
-	}
-	return true;
-}
-
-*/
-void
-JsonSerializer::deserializeArray (Json::Value & rootArray,
-		std::string * copyValues,
-		unsigned int arrayLength)
-{
-	copyValues = new std::string[arrayLength];
-	int i;
-	while (i < arrayLength)
-	{
-		copyValues[i] = rootArray[i].asString ();
-		i++;
-	}
-	return;
-}
-
-void
-JsonSerializer::serializeArray (Json::Value & rootArray,
-		std::string * inputValues,
-		unsigned int arrayLength)
-{
-
-	int i;
-	while (i < arrayLength)
-	{
-		rootArray[i] = inputValues[i];
-		i++;
-	}
-
-	return;
+  /* Dummy Never used */
+  return "DUMMY";
 }

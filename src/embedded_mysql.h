@@ -21,7 +21,6 @@ private:
 	std::map<std::string, IndexMetaData*> index_data_map;
 	EmbeddedMYSQL ():results (NULL)
 	{
-
 	}
 	EmbeddedMYSQL (EmbeddedMYSQL const &)
 	{

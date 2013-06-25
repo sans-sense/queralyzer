@@ -8,14 +8,34 @@
 
 extern "C"
 {
-void dummy_html (httpd * server)
-{
+  char *custom_error_messages[] = { // MYSQL errors
+                                      "dummy_no_error",
+                                      "Error, Mysql not initialized properly",
+                                      "Error, while creating new tables",
+                                      "Error, while running the input query",
+                                      // Query Initialization and parsing
+                                      "Error, during Query Initialization",
+                                      "Error, while query parsing the input query"
+  };
+
+  int display_error_if_any(int result, httpd * server)
+  {
+    if(result == 0)
+      return result;
+    httpdSetResponse (server, "500");    
+    printf("%s\n", custom_error_messages[result]);
+    httpdPrintf(server, "%s\n", custom_error_messages[result]);
+    return 1;
+   }
+
+  void dummy_html (httpd * server)
+  {
 	httpdPrintf (server, "Welcome to the httpd queralyzer");
 	httpdPrintf (server, "<P><FORM ACTION=query METHOD=POST>\n");
 	httpdPrintf (server, "Enter your query <INPUT NAME=query SIZE=4096>\n");
 	httpdPrintf (server, "<INPUT TYPE=SUBMIT VALUE=Click!><P></FORM>\n");
 	return;
-}
+  }
 
 void query_html (httpd * server)
 {
@@ -33,27 +53,15 @@ void query_html (httpd * server)
 	if (query == NULL)
 		printf ("Problem while creating Query object\n");
 
-	if (!(query->parseQuery ()) && !(query->initialiseQueryExecution ()))
+	if (!display_error_if_any(query->parseQuery (), server) && !display_error_if_any(query->initialiseQueryExecution (), server))
 	{
-		if (!query->executeQuery ())
+      if (!display_error_if_any(query->executeQuery (), server))
 		{
 			std::string mysql_json_output;
 			query->getQueryOutput (mysql_json_output);
 			httpdPrintf (server, "%s\n", mysql_json_output.c_str ());
 			std::cout << mysql_json_output << std::endl;
 		}
-		else
-		{
-			httpdSetResponse (server, "500");
-			httpdPrintf (server, "%s\n", "Error while executing the Query");		
-		}
-
-	}
-	else
-	{
-		httpdSetResponse (server, "500");
-		httpdPrintf (server, "%s\n", "Error while parsing the Query");		
-		std::cout<<"Error while parsing the Query"<<std::endl;
 	}
 	return;
 }
@@ -95,7 +103,11 @@ void index_data_html (httpd * server)
 void reset_html (httpd * server)
 {
 	EmbeddedMYSQL *embedded_mysql = EmbeddedMYSQL::getInstance ();
-	embedded_mysql->resetMYSQL();
+	if (!strcmp (httpdRequestMethodName (server), "POST"))
+	{
+    	embedded_mysql->resetMYSQL();	
+		httpdPrintf(server, "RESET DONE");
+    }
 	return;
 }
 
