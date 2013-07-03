@@ -48,7 +48,7 @@ void query_html (httpd * server)
 		return;
 	}
 	char *query_input = variable->value;
-
+    printf("%s\n",query_input);
 	Query *query = new Query (query_input);
 	if (query == NULL)
 		printf ("Problem while creating Query object\n");
@@ -74,7 +74,7 @@ void table_data_html (httpd * server)
 		std::string getTableDataString;
 		embedded_mysql->getTableMetaDataMYSQL (getTableDataString);
 		httpdPrintf (server, "%s\n", getTableDataString.c_str ());
-		//std::cout << getTableDataString << std::endl;
+		std::cout << getTableDataString << std::endl;
 	}
 	else if (!strcmp (httpdRequestMethodName (server), "POST"))
 	{
@@ -87,7 +87,9 @@ void table_data_html (httpd * server)
 			return;
 		}
 		std::string updateTableDataString = updateString->value;
+        std::cout<<updateTableDataString<<std::endl;
 		embedded_mysql->setTableMetaDataMYSQL (updateTableDataString);
+		httpdPrintf(server, "UPDATE DONE"); //dummy
 	}
 	return;
 }
@@ -106,7 +108,7 @@ void reset_html (httpd * server)
 	if (!strcmp (httpdRequestMethodName (server), "POST"))
 	{
     	embedded_mysql->resetMYSQL();	
-		httpdPrintf(server, "RESET DONE");
+		httpdPrintf(server, "RESET DONE"); //dummy
     }
 	return;
 }
@@ -138,6 +140,7 @@ int main ()
 	httpdAddWildcardContent (server, "/css", NULL, "css");
 	httpdAddWildcardContent (server, "/img", NULL, "img");
 	httpdAddWildcardContent (server, "/js", NULL, "js");
+	httpdAddWildcardContent (server, "/codemirror", NULL, "codemirror");
 	httpdAddWildcardContent (server, "/js/lib", NULL, "js/lib");
 	httpdAddWildcardContent (server, "/js/app", NULL, "js/app");
 	httpdAddWildcardContent (server, "/bootstrap", NULL, "bootstrap");

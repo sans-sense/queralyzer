@@ -25,15 +25,28 @@
 //extern struct yy_buffer_state;
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
 extern int yyparse();
+extern void load_symbols();
 extern YY_BUFFER_STATE yy_scan_string(const char *str);
+
+char yyerrtext[4024];
 
 using namespace std;
 int yylex();
 void yyerror(string s);
-int queryCount=0;
+int queryCount = 0;
 extern int yydebug;
-map<string, qTable*> qTableAliasMap;
-map<string, qTable*>::iterator qTableAliasMap_it;
+
+/* A mapping for table alias and table meta data.
+ * Created during parsing the sql query.
+ */
+map < string, qTable * >qTableAliasMap;
+map < string, qTable * >::iterator qTableAliasMap_it;
+/* A multi-mapping for table name and table aliases.
+ * Created during parsing the sql query.
+ */
+multimap < string, string > qTableNameMultiMap;
+multimap < string, string >::iterator qTableNameMultiMap_it;
+void removeDuplicateTableAliases();
 %}
 %union {char *cptr; int val; qTable *qt; }
 %token  END_QUERY 0 "end of line"
@@ -656,7 +669,7 @@ map<string, qTable*>::iterator qTableAliasMap_it;
 %token  YEAR_SYM                      /* SQL-2003-R */
 %token  ZEROFILL
 %type <cptr> 
-	ident IDENT IDENT_sys 
+	ident IDENT IDENT_sys keyword 
 	table_ident table_factor
 	simple_ident_q simple_ident ident_list
 	select_item expr simple_expr bit_expr
@@ -1338,53 +1351,40 @@ use_partition:
 table_factor:
           table_ident opt_use_partition opt_table_alias opt_key_definition
 	  {
-	        if($3 == NULL)
+		printf("table_factor:opt_table_alias: %x\n", $3);
+		if ($3 == NULL)
 		{
-			cout<<"A table alias is a must"<<endl;
-	          	YYABORT;	
+		    cout << "A table alias is a must" << endl;
+		    YYABORT;
 		}
+		qTableNameMultiMap.insert(pair < string, string > ($1, $3));
 		qTableAliasMap_it = qTableAliasMap.find($3);
-                if (qTableAliasMap_it != qTableAliasMap.end())
-                {
-                        qTable *qt_found=qTableAliasMap_it->second;
-                        qt_found->tableName=$1;
-                        /* Handling the cases where different table aliases 
-                           is used for same table (in sub-queries)
-                        */
-                        /* TODO:- Improve this */
-                        qTable *qt_search_duplicates = NULL;
-                        qTableAliasMap_it=qTableAliasMap.begin();
-                        for(;qTableAliasMap_it!=qTableAliasMap.end();)
-                        {
-                                if (qTableAliasMap_it->second->tableName == $1)
-                                {
-                                        qt_search_duplicates=qTableAliasMap_it->second;
-					if (qt_search_duplicates!=qt_found)
-					{
-						/* Found a duplicate, copy all the column name
-						   and delete the object
-						*/
-		                                set<string>::iterator columnSet_it;
-						for (columnSet_it=qt_search_duplicates->columnSet.begin(); 
-						columnSet_it!=qt_search_duplicates->columnSet.end();
-						++columnSet_it)
-						{
-							qt_found->columnSet.insert(*columnSet_it);
-						}
-						qTableAliasMap.erase(qTableAliasMap_it);
-					}
-                                }
-                                ++qTableAliasMap_it;
-                        }
+		if (qTableAliasMap_it != qTableAliasMap.end())
+		{
+		    qTable *qt_found = qTableAliasMap_it->second;
 
-                }
-                else
-                {
-			qTable *qt_new=new qTable();
-			qt_new->tableAlias=$3;
-			qt_new->tableName=$1;
-			qTableAliasMap.insert(pair<string,qTable*>($3, qt_new));
-		}				
+		    /*
+		     * This if condition was added to handle detect different table with
+		     * same alias name. Currently it is not supported. 
+		     */
+		    if (!(qt_found->tableName.empty())
+			&& (qt_found->tableName != $1))
+		    {
+			cout <<
+			    "Same Alias name for more than one table is currently not supported";
+			YYABORT;
+		    }
+		    qt_found->tableName = $1;
+		}
+		else
+		{
+		    qTable *qt_new = new qTable();
+
+		    qt_new->tableAlias = $3;
+		    qt_new->tableName = $1;
+		    qTableAliasMap.insert(pair < string, qTable * >($3,
+			    qt_new));
+		}
 	  }
         | select_derived_init get_select_lex select_derived2
           /*
@@ -1576,9 +1576,11 @@ table_alias:
         ;
 
 opt_table_alias:
-          /* empty */ 
-        | table_alias ident
+          table_alias ident
 	  {
+	        if($2==NULL)
+        		YYABORT;
+		printf("opt_table_alias:ident: %s\n", $2);
 		$$=$2;
 	  }
         ;
@@ -1942,10 +1944,11 @@ simple_ident:
           {
 		//cout<<"A table alias is a must while mentioning column names"<<endl;
 	       	//YYABORT;	
-		$$=$1;
+		//$$=$1;
 		//printf("field name is %s\n", $1);
           }
-        | simple_ident_q
+        |
+	   simple_ident_q
 	  {
 		$$=$1;
 	  } 
@@ -1962,69 +1965,81 @@ simple_ident_nospvar:
 simple_ident_q:
           ident '.' ident
           {
-	        if($1 == NULL)
+		if ($1 == NULL)
 		{
-			cout<<"Expecting a table alias while using column names"<<endl;
-	          	YYABORT;	
+		    cout << "Expecting a table alias while using column names"
+			<< endl;
+		    YYABORT;
 		}
 		qTableAliasMap_it = qTableAliasMap.find($1);
 		if (qTableAliasMap_it != qTableAliasMap.end())
 		{
-                        qTable *qt_found=qTableAliasMap_it->second;
-                        qt_found->columnSet.insert($3);
+		    qTable *qt_found = qTableAliasMap_it->second;
+
+		    qt_found->columnSet.insert($3);
 		}
 		else
 		{
-			qTable *qt_new=new qTable();
-                        qt_new->tableAlias=$1;
-                        qt_new->columnSet.insert($3);
-                        qTableAliasMap.insert(pair<string,qTable*>($1, qt_new));
+		    qTable *qt_new = new qTable();
+
+		    qt_new->tableAlias = $1;
+		    qt_new->columnSet.insert($3);
+		    qTableAliasMap.insert(pair < string, qTable * >($1,
+			    qt_new));
 		}
-		$$=$3;
+		$$ = $3;
           }
         | '.' ident '.' ident
 	  {
-	        if($2 == NULL)
+		if ($2 == NULL)
 		{
-                        cout<<"Expecting a table alias while using column names"<<endl;
-	          	YYABORT;	
+		    cout << "Expecting a table alias while using column names"
+			<< endl;
+		    YYABORT;
 		}
-                qTableAliasMap_it = qTableAliasMap.find($2);
-                if (qTableAliasMap_it != qTableAliasMap.end())
-                {
-                        qTable *qt_found=qTableAliasMap_it->second;
-                        qt_found->columnSet.insert($4);
-                }
-                else
-                {
-                        qTable *qt_new=new qTable();
-                        qt_new->tableAlias=$2;
-                        qt_new->columnSet.insert($4);
-                        qTableAliasMap.insert(pair<string,qTable*>($2, qt_new));
-                }
-		$$=$4;
+		qTableAliasMap_it = qTableAliasMap.find($2);
+		if (qTableAliasMap_it != qTableAliasMap.end())
+		{
+		    qTable *qt_found = qTableAliasMap_it->second;
+
+		    qt_found->columnSet.insert($4);
+		}
+		else
+		{
+		    qTable *qt_new = new qTable();
+
+		    qt_new->tableAlias = $2;
+		    qt_new->columnSet.insert($4);
+		    qTableAliasMap.insert(pair < string, qTable * >($2,
+			    qt_new));
+		}
+		$$ = $4;
 	  }
         | ident '.' ident '.' ident
 	  {
-	        if($3 == NULL)
+		if ($3 == NULL)
 		{
-                        cout<<"Expecting a table alias while using column names"<<endl;
-	          	YYABORT;	
+		    cout << "Expecting a table alias while using column names"
+			<< endl;
+		    YYABORT;
 		}
-                qTableAliasMap_it = qTableAliasMap.find($3);
-                if (qTableAliasMap_it != qTableAliasMap.end())
-                {
-                        qTable *qt_found=qTableAliasMap_it->second;
-                        qt_found->columnSet.insert($5);
-                }
-                else
-                {
-                        qTable *qt_new=new qTable();
-                        qt_new->tableAlias=$3;
-                        qt_new->columnSet.insert($5);
-                        qTableAliasMap.insert(pair<string,qTable*>($3, qt_new));
-                }
-		$$=$5;
+		qTableAliasMap_it = qTableAliasMap.find($3);
+		if (qTableAliasMap_it != qTableAliasMap.end())
+		{
+		    qTable *qt_found = qTableAliasMap_it->second;
+
+		    qt_found->columnSet.insert($5);
+		}
+		else
+		{
+		    qTable *qt_new = new qTable();
+
+		    qt_new->tableAlias = $3;
+		    qt_new->columnSet.insert($5);
+		    qTableAliasMap.insert(pair < string, qTable * >($3,
+			    qt_new));
+		}
+		$$ = $5;
 	  }
         ;
 
@@ -2106,10 +2121,12 @@ TEXT_STRING_filesystem:
 ident:
           IDENT_sys 
 	  {
+		printf("ident: %s\n", $1);
                 $$=$1;
 	  } 
         | keyword
           {
+		printf("ident:keyword: %x\n", $1);
           }
         ;
 
@@ -2638,75 +2655,149 @@ type_datetime_precision:
         ;
 
 %%
-int queralyzer_parser (const char *queryBuffer,
-		std::vector <std::string> &createTablesVector,
-		std::map<std::string, TableMetaData*> &tableData,
-		std::map<std::string, IndexMetaData*> &indexData)
-{
-	using namespace std;
-	//yydebug = 1;
-	//yyin=queryBuffer;
-	yy_scan_string(queryBuffer);
-	int parseResult = yyparse();
-	//yy_delete_buffer(queryBuffer);
-	set<string>::iterator it;
-	int tableCount = 0;
-	for (qTableAliasMap_it = qTableAliasMap.begin(); qTableAliasMap_it!=qTableAliasMap.end(); ++qTableAliasMap_it)
-	{
-		//string create_queries;
-		qTable *qt = qTableAliasMap_it->second;
-		if(!(qt->tableName.empty()))
-		{
-			//create_queries = "create table if not exists ";
-			//create_queries += qt->tableName;
-			//create_queries += " ( ";
-			//cout<<"Table Name: "<<qt->tableName<<endl;
-			//cout<<"Table Alias: "<<qt->tableAlias<<endl;
-			set<string>::iterator columnSet_it;
-			int columnCount=qt->columnSet.size();
-			TableMetaData *tableDataTemp = new TableMetaData();
 
-			//std::cout<<qt->tableName<<std::endl;
-			tableDataTemp->tableName =qt->tableName;
-			tableDataTemp->storageEngine="qa_blackhole";
-			tableDataTemp->schemaName="Dummy";
-			tableDataTemp->createOption="Normal";
-			tableDataTemp->rowCount = 10000; 
-			tableDataTemp->columnCount = columnCount;
-			tableDataTemp->tableColumns = new std::string[columnCount];
-			//std::cout<<tableDataTemp->tableName<<std::endl;
-			int i = 0;
-			for(columnSet_it=qt->columnSet.begin(); columnSet_it!=qt->columnSet.end(); ++columnSet_it)
-			{
-				//cout<<*columnSet_it<<" ";
-				//create_queries += *columnSet_it;
-				tableDataTemp->tableColumns[i++]=*columnSet_it;
-				//create_queries += " int";
-				if(columnCount>1)
-				{
-					//create_queries += ",";
-					columnCount -= 1;
-				}
-			}
-			//create_queries += " ) engine=qa_blackhole;\n";
-			createTablesVector.push_back(tableDataTemp->tableName);
-			//std::cout<<create_queries<<" q_parser.yy"<<std::endl;
-			tableCount++;
-			std::pair<std::map<std::string, TableMetaData*>::iterator, bool> table_inserted;
-			table_inserted = tableData.insert(std::pair<std::string, TableMetaData*>(tableDataTemp->tableName, tableDataTemp));
-			if (!table_inserted.second)
-			{
-				tableData.erase(table_inserted.first);
-				delete table_inserted.first->second;
-				tableData.insert(std::pair<std::string, TableMetaData*>(tableDataTemp->tableName, tableDataTemp));
-			}
-		}
-		qTableAliasMap.erase(qTableAliasMap_it);
-	}
-	return (parseResult == 0) ? 0 : 5; // Maintaining custom error numbers. See http_server.cc file
-}
-void yyerror(string s)
+int
+queralyzer_parser(const char *queryBuffer,
+    std::vector < std::string > &createTablesVector,
+    std::map < std::string, TableMetaData * >&tableData,
+    std::map < std::string, IndexMetaData * >&indexData)
 {
-  std::cout<< s <<std::endl;
+    using namespace std;
+
+    // yydebug = 1;
+    // yyin=queryBuffer;
+    yy_scan_string(queryBuffer);
+    load_symbols();
+    yyerrtext[0] = '\0';
+    int parseResult = yyparse();
+
+    // yy_delete_buffer(queryBuffer);
+    set < string >::iterator it;
+    int tableCount = 0;
+
+    /*
+     * Removing the duplicate table aliases 
+     */
+    removeDuplicateTableAliases();
+    for (qTableAliasMap_it = qTableAliasMap.begin();
+	qTableAliasMap_it != qTableAliasMap.end(); ++qTableAliasMap_it)
+    {
+	// string create_queries;
+	qTable *qt = qTableAliasMap_it->second;
+
+	if (!(qt->tableName.empty()))
+	{
+	    // create_queries = "create table if not exists ";
+	    // create_queries += qt->tableName;
+	    // create_queries += " ( ";
+	    // cout<<"Table Name: "<<qt->tableName<<endl;
+	    // cout<<"Table Alias: "<<qt->tableAlias<<endl;
+	    set < string >::iterator columnSet_it;
+	    int columnCount = qt->columnSet.size();
+	    TableMetaData *tableDataTemp = new TableMetaData();
+
+	    // std::cout<<qt->tableName<<std::endl;
+	    tableDataTemp->tableName = qt->tableName;
+	    tableDataTemp->storageEngine = "qa_blackhole";
+	    tableDataTemp->schemaName = "Dummy";
+	    tableDataTemp->createOption = "Normal";
+	    tableDataTemp->rowCount = "10000";
+	    tableDataTemp->columnCount = columnCount;
+	    tableDataTemp->tableColumns = new std::string[columnCount];
+	    // std::cout<<tableDataTemp->tableName<<std::endl;
+	    int i = 0;
+
+	    for (columnSet_it = qt->columnSet.begin();
+		columnSet_it != qt->columnSet.end(); ++columnSet_it)
+	    {
+		// cout<<*columnSet_it<<" ";
+		// create_queries += *columnSet_it;
+		tableDataTemp->tableColumns[i++] = *columnSet_it;
+		// create_queries += " int";
+		if (columnCount > 1)
+		{
+		    // create_queries += ",";
+		    columnCount -= 1;
+		}
+	    }
+	    // create_queries += " ) engine=qa_blackhole;\n";
+	    createTablesVector.push_back(tableDataTemp->tableName);
+	    // std::cout<<create_queries<<" q_parser.yy"<<std::endl;
+	    tableCount++;
+	    std::pair < std::map < std::string, TableMetaData * >::iterator,
+		bool > table_inserted;
+	    table_inserted =
+		tableData.insert(std::pair < std::string,
+		TableMetaData * >(tableDataTemp->tableName, tableDataTemp));
+	    if (!table_inserted.second)
+	    {
+		tableData.erase(table_inserted.first);
+		delete table_inserted.first->second;
+
+		tableData.insert(std::pair < std::string,
+		    TableMetaData * >(tableDataTemp->tableName,
+			tableDataTemp));
+	    }
+	}
+	qTableAliasMap.erase(qTableAliasMap_it);
+    }
+    return (parseResult == 0) ? 0 : 5;	// Maintaining custom error numbers. 
+					// See http_server.cc file
+}
+
+void 
+yyerror(string s)
+{
+    printf("ERROR, line %s\n", yyerrtext);
+    std::cout<< s <<std::endl;
+}
+
+void
+removeDuplicateTableAliases()
+{
+    for (qTableAliasMap_it = qTableAliasMap.begin();
+	qTableAliasMap_it != qTableAliasMap.end(); ++qTableAliasMap_it)
+    {
+	qTable *qt = qTableAliasMap_it->second;
+
+	if (!(qt->tableName.empty()))
+	{
+	    qTable *qt_duplicates = NULL;
+
+	    pair < multimap < string, string >::iterator,
+		multimap < string, string >::iterator > found_tables;
+	    found_tables = qTableNameMultiMap.equal_range(qt->tableName);
+	    for (qTableNameMultiMap_it = found_tables.first;
+		qTableNameMultiMap_it != found_tables.second;
+		++qTableNameMultiMap_it)
+	    {
+		map < string, qTable * >::iterator qDuplicateTableAliasMap_it;
+		qDuplicateTableAliasMap_it =
+		    qTableAliasMap.find(qTableNameMultiMap_it->second);
+		if ((qDuplicateTableAliasMap_it != qTableAliasMap.end())
+		    && ((qTableNameMultiMap_it->second) !=
+			qTableAliasMap_it->first))
+		{
+		    qt_duplicates = qDuplicateTableAliasMap_it->second;
+		    /*
+		     * Found a duplicate, copy all the column name and
+		     * delete the object 
+		     */
+		    set < string >::iterator columnSet_it;
+		    for (columnSet_it = qt_duplicates->columnSet.begin();
+			columnSet_it != qt_duplicates->columnSet.end();
+			++columnSet_it)
+		    {
+			qt->columnSet.insert(*columnSet_it);
+		    }
+		    delete qt_duplicates;
+
+		    qt_duplicates = NULL;
+		    qTableAliasMap.erase(qDuplicateTableAliasMap_it);
+		}
+	    }
+	}
+    }
+
 }
 

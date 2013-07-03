@@ -25,7 +25,7 @@ TableMetaData::deserialize(Json::Value & root)
 	schemaName = root.get ("schemaName", "").asString ();
 	storageEngine = root.get ("storageEngine", "").asString ();
 	createOption = root.get ("createOption", "").asString ();
-	rowCount = root.get ("rowCount", 0).asInt ();
+	rowCount = root.get ("rowCount", "0").asString ();
 	columnCount = root.get ("columnCount", 0).asInt ();
 
 	Json::ValueType vt = Json::arrayValue;
@@ -86,7 +86,7 @@ IndexMetaData::deserialize (Json::Value & root)
 	schemaName = root.get ("schemaName", "").asString ();
 	storageEngine = root.get ("storageEngine", "").asString ();
 	columnCount = root.get ("columnCount", 0).asInt ();
-	cardinality = root.get ("cardinality", 0).asInt ();
+	cardinality = root.get ("cardinality", "0").asString ();
 	nonUnique = root.get ("nonUnique", 0).asBool ();
 	isNullable = root.get ("isNullable", 0).asBool ();
 	Json::ValueType vt = Json::arrayValue;

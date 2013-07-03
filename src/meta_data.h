@@ -38,19 +38,20 @@ static void deserializeMap (std::map<std::string, T*> &obj_map, std::string & js
 	}
 	int obj_count = deserializeArrayRoot.size();
 	int i = 0;
-	deserializeRoot = deserializeArrayRoot[i++];
+	//deserializeRoot = deserializeArrayRoot[i++];
 	while (i<obj_count)
 	{
+        deserializeRoot = deserializeArrayRoot[i++];
 		T *new_data = new T();
 		new_data->deserialize(deserializeRoot);
 		obj_map.insert(std::pair<std::string, T*>(new_data->getName(), new_data));
-		deserializeRoot = deserializeArrayRoot[i++];
+		//deserializeRoot = deserializeArrayRoot[i++];
 	}
 }
 
 void
 static deserializeArray (Json::Value & rootArray,
-		std::string * copyValues,
+		std::string* &copyValues,
 		unsigned int arrayLength)
 {
 	copyValues = new std::string[arrayLength];
@@ -64,7 +65,7 @@ static deserializeArray (Json::Value & rootArray,
 
 void
 static serializeArray (Json::Value & rootArray,
-		std::string * inputValues,
+		std::string* &inputValues,
 		unsigned int arrayLength)
 {
 
@@ -79,7 +80,7 @@ static serializeArray (Json::Value & rootArray,
 class ExplainMetaData:public JsonSerializable
 {
 public:
-    ExplainMetaData (void) :rows(0)
+    ExplainMetaData (void)
     {
     }
     ~ExplainMetaData (void);
@@ -91,7 +92,7 @@ public:
 	std::string key;
 	std::string key_len;
 	std::string ref;
-	int rows;
+    std::string rows;
 	std::string Extra;
 
 	void serialize (Json::Value & root);
@@ -103,7 +104,7 @@ public:
 class TableMetaData:public JsonSerializable
 {
 public:
-	TableMetaData (void): rowCount(0), columnCount(0)
+	TableMetaData (void): columnCount(0)
 	{
     }
     ~TableMetaData (void)
@@ -115,7 +116,7 @@ public:
 	std::string schemaName;
 	std::string storageEngine;
 	std::string createOption;
-	int rowCount;
+    std::string rowCount; //as long is not supported in jsoncpp library being used
 	int columnCount;
 
 	void serialize (Json::Value & root);
@@ -127,7 +128,7 @@ public:
 class IndexMetaData:public JsonSerializable
 {
 public:
-  IndexMetaData (void): columnCount(0), cardinality(0), nonUnique(false), isNullable(false)
+  IndexMetaData (void): columnCount(0), nonUnique(false), isNullable(false)
     {
     }
     ~IndexMetaData ()
@@ -141,7 +142,7 @@ public:
 	std::string schemaName;
 	std::string storageEngine;
 	int columnCount;
-	int cardinality;
+    std::string cardinality; //as long is not supported in jsoncpp library being used
 	bool nonUnique;
 	bool isNullable;
 
