@@ -103,7 +103,9 @@ static SYMBOL symbols[]=
 {"SESSION_USER", SYM(USER)},
 {"STD", SYM(STD_SYM)},
 {"STDDEV", SYM(STD_SYM)},
-{"STDDEV_POP", SYM(STD_SYM)}
+{"STDDEV_POP", SYM(STD_SYM)},
+{"NULL", SYM(NULL_SYM)},
+{"IS", SYM(IS)}
 };
 
 void load_symbols()

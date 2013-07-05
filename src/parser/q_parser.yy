@@ -47,6 +47,7 @@ map < string, qTable * >::iterator qTableAliasMap_it;
 multimap < string, string > qTableNameMultiMap;
 multimap < string, string >::iterator qTableNameMultiMap_it;
 void removeDuplicateTableAliases();
+void clearParserData();
 %}
 %union {char *cptr; int val; qTable *qt; }
 %token  END_QUERY 0 "end of line"
@@ -2741,6 +2742,7 @@ queralyzer_parser(const char *queryBuffer,
 	}
 	qTableAliasMap.erase(qTableAliasMap_it);
     }
+    clearParserData();
     return (parseResult == 0) ? 0 : 5;	// Maintaining custom error numbers. 
 					// See http_server.cc file
 }
@@ -2750,6 +2752,18 @@ yyerror(string s)
 {
     printf("ERROR, line %s\n", yyerrtext);
     std::cout<< s <<std::endl;
+}
+
+void 
+clearParserData()
+{
+    for (qTableAliasMap_it = qTableAliasMap.begin();
+	qTableAliasMap_it != qTableAliasMap.end(); ++qTableAliasMap_it)
+    {
+        delete qTableAliasMap_it->second;
+    }
+    qTableAliasMap.clear();
+    qTableNameMultiMap.clear();
 }
 
 void
