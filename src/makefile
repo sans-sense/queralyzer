@@ -1,14 +1,20 @@
 # we can set this in the environment or hard code it here
-QA_MYSQL_HOME := /home/prabinb/Downloads/source/mysql-5.6.10/
-export QA_MYSQL_HOME
+ifndef QA_MYSQL_HOME
+  QA_MYSQL_HOME = /home/prabinb/Downloads/source/mysql-5.6.10/
+  export QA_MYSQL_HOME
+endif
 
-QA_JSONCPP_HOME := /home/prabinb/Downloads/source/jsoncpp-src-0.5.0/
-export QA_JSONCPP_HOME
+ifndef QA_JSONCPP_HOME
+  QA_JSONCPP_HOME = /home/prabinb/Downloads/source/jsoncpp-src-0.5.0/
+  export QA_JSONCPP_HOME
+endif
 
-HTTPD_HOME := /usr/local/
+#HTTPD_HOME := /usr/local/
 
-QA_HOME := /home/prabinb/queralyzer/
-export QA_HOME
+ifndef QA_HOME
+  QA_HOME = /home/prabinb/queralyzer/
+  export QA_HOME
+endif
 
 # we use the embedded server so we may need to build it from scratch
 inc      := $(QA_MYSQL_HOME)/include 

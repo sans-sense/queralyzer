@@ -1,254 +1,273 @@
 #include <sstream>
 #include "embedded_mysql.h"
-extern int queralyzer_parser (const char *queryBuffer,
-                              std::vector <std::string> &createQueriesVector,
-                              std::map<std::string, TableMetaData*> &tableData,
-                              std::map<std::string, IndexMetaData*> &indexData);
-bool
-EmbeddedMYSQL::isInstantiated = false;
+extern int queralyzer_parser(const char *queryBuffer,
+    std::vector < std::string > &createQueriesVector,
+    std::map < std::string, TableMetaData * >&tableData,
+    std::map < std::string, IndexMetaData * >&indexData);
+bool EmbeddedMYSQL::isInstantiated = false;
 EmbeddedMYSQL *
-EmbeddedMYSQL::my_embedded_mysql = NULL;
-bool
-EmbeddedMYSQL::isInitialized = false;
+    EmbeddedMYSQL::my_embedded_mysql = NULL;
+
+bool EmbeddedMYSQL::isInitialized = false;
 MYSQL *
-EmbeddedMYSQL::mysql = NULL;
+    EmbeddedMYSQL::mysql = NULL;
 
 EmbeddedMYSQL *
-EmbeddedMYSQL::getInstance ()
+EmbeddedMYSQL::getInstance()
 {
-  if (isInstantiated)
-	{
-      return my_embedded_mysql;
-	}
-  else
-	{
-      my_embedded_mysql = new EmbeddedMYSQL ();
-      isInstantiated = true;
-      isInitialized = false;
-      return my_embedded_mysql;
-	}
+    if (isInstantiated)
+    {
+	return my_embedded_mysql;
+    }
+    else
+    {
+	my_embedded_mysql = new EmbeddedMYSQL();
+	isInstantiated = true;
+	isInitialized = false;
+	return my_embedded_mysql;
+    }
 }
 
 int
-EmbeddedMYSQL::initializeMYSQL ()
+EmbeddedMYSQL::initializeMYSQL()
 {
-  if (mysql)
+    if (mysql)
+	return 0;
+    /*
+     * Currently these are hard coded, implmentation may be changed in
+     * future 
+     */
+    char *server_options[] = { "mysql_test",
+	"--defaults-file=my.init",
+	NULL
+    };
+    int num_elements = (sizeof(server_options) / sizeof(char *)) - 1;
+    char *server_groups[] = { "server", "client", NULL };
+
+    mysql_library_init(num_elements, server_options, server_groups);
+    mysql = mysql_init(NULL);
+    if (mysql)
+    {
+	mysql_options(mysql, MYSQL_READ_DEFAULT_GROUP, "libmysqld_client");
+	mysql_options(mysql, MYSQL_OPT_USE_EMBEDDED_CONNECTION, NULL);
+
+	if (!mysql_real_connect(mysql, NULL, NULL, NULL, "test", 0, NULL, 0))
+	{
+	    std::
+		cout << "mysql_real_connect failed: " << mysql_error(mysql) <<
+		std::endl;
+	    isInitialized = false;
+	    return 1;
+	}
+
+	if (mysql_query(mysql,
+		"create table IF NOT EXISTS test_aps (id int primary key, name varchar(100))"))
+	{
+	    isInitialized = false;
+	    return 1;
+	}
+	isInitialized = true;
+	return 0;
+    }
+    else
+    {
+	std::cout << "mysql was never inited succesfully" << std::endl;
+	isInitialized = false;
+	return 1;
+    }
+}
+
+int
+EmbeddedMYSQL::deinitializeMYSQL()
+{
+    mysql_close(mysql);
+    mysql_library_end();
     return 0;
-  /* Currently these are hard coded, implmentation may be changed in future */
-  char *server_options[] = { "mysql_test",
-                             "--defaults-file=my.init",
-                             NULL
-  };
-  int num_elements = (sizeof (server_options) / sizeof (char *)) - 1;
-  char *server_groups[] = { "server", "client", NULL };
-
-  mysql_library_init (num_elements, server_options, server_groups);
-  mysql = mysql_init (NULL);
-  if (mysql)
-	{
-      mysql_options (mysql, MYSQL_READ_DEFAULT_GROUP, "libmysqld_client");
-      mysql_options (mysql, MYSQL_OPT_USE_EMBEDDED_CONNECTION, NULL);
-
-      if (!mysql_real_connect (mysql, NULL, NULL, NULL, "test", 0, NULL, 0))
-		{
-          std::cout << "mysql_real_connect failed: " << mysql_error (mysql) <<std::endl;
-          isInitialized = false;
-          return 1;
-		}
-
-      if (mysql_query (mysql,"create table IF NOT EXISTS test_aps (id int primary key, name varchar(100))"))
-		{
-          isInitialized = false;
-          return 1;
-		}
-      isInitialized = true;
-      return 0;
-	}
-  else
-	{
-      std::cout << "mysql was never inited succesfully" << std::endl;
-      isInitialized = false;
-      return 1;
-	}
 }
 
 int
-EmbeddedMYSQL::deinitializeMYSQL ()
+EmbeddedMYSQL::createTableMYSQL(std::string table_name)
 {
-  mysql_close (mysql);
-  mysql_library_end ();
-  return 0;
-}
-
-int
-EmbeddedMYSQL::createTableMYSQL (std::string table_name)
-{
-  if (isInitialized == false)
-	{
-      std::cout << "MYSQL is not initialised properly, unable to process queries";
-      return 1;
-	}
-  if (table_name.empty())
-	{
-      std::cout << "Table Name is empty";
-      return 2;
-	}
-
-  TableMetaData *table_found = NULL;
-  table_found = table_data_map[table_name];
-
-  if(table_found == NULL)
+    if (isInitialized == false)
     {
-      std::cout<<"ERROR while searching the table in table map"<<std::endl;
-      return 2;
+	std::
+	    cout <<
+	    "MYSQL is not initialised properly, unable to process queries";
+	return 1;
     }
-  int column_count = table_found->columnCount;
-  std::string create_query;
-  std::string drop_query;
-  drop_query = "drop table if exists ";
-  drop_query += table_name;
-  drop_query += ";\n";
-  create_query = "create table if not exists ";
-  create_query += table_found->tableName;
-  create_query += " ( ";
-  while(column_count!=0)
+    if (table_name.empty())
     {
-      create_query += table_found->tableColumns[column_count-1];
-      create_query += " int";
-      if(column_count>1)
-        {
-          create_query += ",";
-        }
-      column_count -= 1;
+	std::cout << "Table Name is empty";
+	return 2;
     }
-  create_query += " ) engine=qa_blackhole;\n";
-  /* Avoiding risk, dropping the table if it exists */
-  if (mysql_query (mysql, drop_query.c_str ()))
+
+    TableMetaData *table_found = NULL;
+
+    table_found = table_data_map[table_name];
+
+    if (table_found == NULL)
+    {
+	std::cout << "ERROR while searching the table in table map" << std::
+	    endl;
+	return 2;
+    }
+    int column_count = table_found->columnCount;
+
+    std::string create_query;
+    std::string drop_query;
+    drop_query = "drop table if exists ";
+    drop_query += table_name;
+    drop_query += ";\n";
+    create_query = "create table if not exists ";
+    create_query += table_found->tableName;
+    create_query += " ( ";
+    while (column_count != 0)
+    {
+	create_query += table_found->tableColumns[column_count - 1];
+	create_query += " int";
+	if (column_count > 1)
 	{
-      std::cout << "problems running " << drop_query << " error " << mysql_error (mysql);
-      return 2;
+	    create_query += ",";
 	}
-  if (mysql_query (mysql, create_query.c_str ()))
-	{
-      std::cout << "problems running " << create_query << " error " << mysql_error (mysql);
-      return 2;
-	}
-  return 0;
+	column_count -= 1;
+    }
+    create_query += " ) engine=qa_blackhole;\n";
+    /*
+     * Avoiding risk, dropping the table if it exists 
+     */
+    if (mysql_query(mysql, drop_query.c_str()))
+    {
+	std::
+	    cout << "problems running " << drop_query << " error " <<
+	    mysql_error(mysql);
+	return 2;
+    }
+    if (mysql_query(mysql, create_query.c_str()))
+    {
+	std::
+	    cout << "problems running " << create_query << " error " <<
+	    mysql_error(mysql);
+	return 2;
+    }
+    return 0;
 
 }
 
 int
-EmbeddedMYSQL::executeMYSQL (std::string query_str,
-                             std::map<std::string, ExplainMetaData*> &explain_data_map)
+EmbeddedMYSQL::executeMYSQL(std::string query_str,
+    std::map < std::string, ExplainMetaData * >&explain_data_map)
 {
-  if (isInitialized == false)
-	{
-      std::cout << "MYSQL is not initialised properly, unable to process queries";
-	}
-  if (query_str.empty())
+    if (isInitialized == false)
     {
-      std::cout << "Cannot process empty query";
-      return 3;
+	std::
+	    cout <<
+	    "MYSQL is not initialised properly, unable to process queries";
     }
-  if (mysql_query (mysql, query_str.c_str ()))
+    if (query_str.empty())
+    {
+	std::cout << "Cannot process empty query";
+	return 3;
+    }
+    if (mysql_query(mysql, query_str.c_str()))
+    {
+	std::
+	    cout << "problems running " << query_str << " error " <<
+	    mysql_error(mysql);
+	return 3;
+    }
+    if (mysql_field_count(mysql) > 0)
+    {
+	results = mysql_store_result(mysql);
+	// used to determine if the query returned any results
+	if (!results)
 	{
-      std::cout << "problems running " << query_str << " error " << mysql_error (mysql);
-      return 3;
+	    // Contains null result
+	    return 0;
 	}
-  if (mysql_field_count (mysql) > 0)
+	/*
+	 * Store the values in explain_data 
+	 */
+	int i = 10;
+	MYSQL_ROW row;
+
+	while (row = mysql_fetch_row(results))
 	{
-      results = mysql_store_result (mysql);
-      // used to determine if the query returned any results
-      if (!results)
-        {
-          //Contains null result
-          return 0;
-        }
-      /* Store the values in explain_data */
-      int i = 10;
-      MYSQL_ROW row;
-      while (row = mysql_fetch_row (results))
-        {
-          ExplainMetaData *explain_data = new ExplainMetaData();
+	    ExplainMetaData *explain_data = new ExplainMetaData();
 
-          std::stringstream ss;
-          ss << i;
-          std::string key = "ROW"+ ss.str();
-          //char key[3];
-          //snprintf(key, 3, "%03d", i);
-          //std::string key = "ROW" + std::to_string(i);
+	    std::stringstream ss;
+	    ss << i;
+	    std::string key = "ROW" + ss.str();
+	    // char key[3];
+	    // snprintf(key, 3, "%03d", i);
+	    // std::string key = "ROW" + std::to_string(i);
 
-          explain_data->id =
-            *(row + 0) ? (char *) *(row + 0) : "NULL";
-          explain_data->select_type =
-            *(row + 1) ? (char *) *(row + 1) : "NULL";
-          explain_data->table =
-            *(row + 2) ? (char *) *(row + 2) : "NULL";
-          explain_data->type =
-            *(row + 3) ? (char *) *(row + 3) : "NULL";
-          explain_data->possible_keys =
-            *(row + 4) ? (char *) *(row + 4) : "NULL";
-          explain_data->key =
-            *(row + 5) ? (char *) *(row + 5) : "NULL";
-          explain_data->key_len =
-            *(row + 6) ? (char *) *(row + 6) : "NULL";
-          explain_data->ref =
-            *(row + 7) ? (char *) *(row + 7) : "NULL";
-          explain_data->rows =
-            *(row + 8) ? (char *) *(row + 8) : "NULL";
-          explain_data->Extra =
-            *(row + 9) ? (char *) *(row + 9) : "NULL";
-          explain_data_map.insert(std::pair<std::string, ExplainMetaData*>(key, explain_data));
-          i++;
-          //std::cout<<"printing the value of i: "<<i<<std::endl;
-        }
+	    explain_data->id = *(row + 0) ? (char *) *(row + 0) : "NULL";
+	    explain_data->select_type =
+		*(row + 1) ? (char *) *(row + 1) : "NULL";
+	    explain_data->table = *(row + 2) ? (char *) *(row + 2) : "NULL";
+	    explain_data->type = *(row + 3) ? (char *) *(row + 3) : "NULL";
+	    explain_data->possible_keys =
+		*(row + 4) ? (char *) *(row + 4) : "NULL";
+	    explain_data->key = *(row + 5) ? (char *) *(row + 5) : "NULL";
+	    explain_data->key_len = *(row + 6) ? (char *) *(row + 6) : "NULL";
+	    explain_data->ref = *(row + 7) ? (char *) *(row + 7) : "NULL";
+	    explain_data->rows = *(row + 8) ? (char *) *(row + 8) : "NULL";
+	    explain_data->Extra = *(row + 9) ? (char *) *(row + 9) : "NULL";
+	    explain_data_map.insert(std::pair < std::string,
+		ExplainMetaData * >(key, explain_data));
+	    i++;
+	    // std::cout<<"printing the value of i: "<<i<<std::endl;
+	}
     }
-  mysql_free_result (results);
-  return 0;
+    mysql_free_result(results);
+    return 0;
 }
 
 
 void
-EmbeddedMYSQL::getTableMetaDataMYSQL (std::string & table_json_output)
+EmbeddedMYSQL::getTableMetaDataMYSQL(std::string & table_json_output)
 {
-  serializeMap (table_data_map, table_json_output);
+    serializeMap(table_data_map, table_json_output);
 }
 
 void
-EmbeddedMYSQL::setTableMetaDataMYSQL (std::string & table_json_input)
+EmbeddedMYSQL::setTableMetaDataMYSQL(std::string & table_json_input)
 {
-  /* Doesn't wanted to clear the complete map, but since the
-     libhttpd server doesn;t handle the DELETE / PUT request,
-     there is no other way to update the existing the map other 
-     then deleting and recreating the whole map.
-  */
-  table_data_map.clear();
-  deserializeMap (table_data_map, table_json_input);
+    /*
+     * Doesn't wanted to clear the complete map, but since the libhttpd
+     * server doesn;t handle the DELETE / PUT request, there is no other way 
+     * to update the existing map other then deleting and recreating
+     * the whole map. Same applies to Index Meta Data.
+     */
+    table_data_map.clear();
+    deserializeMap(table_data_map, table_json_input);
 }
 
 void
-EmbeddedMYSQL::getIndexMetaDataMYSQL (std::string & index_json_output)
+EmbeddedMYSQL::getIndexMetaDataMYSQL(std::string & index_json_output)
 {
-  serializeMap (index_data_map, index_json_output);
+    serializeMap(index_data_map, index_json_output);
 }
 
 void
-EmbeddedMYSQL::setIndexMetaDataMYSQL (std::string & index_json_input)
+EmbeddedMYSQL::setIndexMetaDataMYSQL(std::string & index_json_input)
 {
-  index_data_map.clear();
-  deserializeMap (index_data_map, index_json_input);
+    index_data_map.clear();
+    deserializeMap(index_data_map, index_json_input);
 }
 
 int
-EmbeddedMYSQL::parseMYSQL (std::string query_str, std::vector < std::string > & create_queries_vector)
+EmbeddedMYSQL::parseMYSQL(std::string query_str,
+    std::vector < std::string > &create_queries_vector)
 {
-  return (queralyzer_parser (query_str.c_str (), create_queries_vector, table_data_map, index_data_map));
+    return (queralyzer_parser(query_str.c_str(), create_queries_vector,
+	    table_data_map, index_data_map));
 }
 
 void
-EmbeddedMYSQL::resetMYSQL ()
+EmbeddedMYSQL::resetMYSQL()
 {
-  results=NULL;
-  table_data_map.clear();
-  index_data_map.clear();
+    results = NULL;
+    table_data_map.clear();
+    index_data_map.clear();
 }
