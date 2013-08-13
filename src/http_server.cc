@@ -149,7 +149,8 @@ extern "C"
 	httpdAddFileContent(server, "/", "index.html", HTTP_TRUE, NULL,
 	    "index.html");
 	httpdAddWildcardContent(server, "/css", NULL, "css");
-	httpdAddWildcardContent(server, "/img", NULL, "img");
+        httpdAddWildcardContent (server, "/data", NULL, "data");
+        httpdAddWildcardContent(server, "/img", NULL, "img");
 	httpdAddWildcardContent(server, "/js", NULL, "js");
 	httpdAddWildcardContent(server, "/codemirror", NULL, "codemirror");
 	httpdAddWildcardContent(server, "/js/lib", NULL, "js/lib");

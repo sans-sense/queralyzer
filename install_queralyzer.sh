@@ -1,12 +1,20 @@
 #!/bin/bash
+echo "#########################################################################"
+echo "The Following libraries/packages are required for queralyzer/mysql installation."
+echo "If not present, please install them manually via apt-get"
+echo "curl, cmake, g++, gcc, bison, scons, libaio1, build-essential, libreadline6-dev, libncurses5-dev"
+echo "#########################################################################"
 echo "Installing queralyzer...."
-echo "Choose the mode of installation: auto / custom :"
+
+echo "Choose the mode of installation: auto (default) / custom :"
+echo "I prefer auto mode."
 read i_mode
 
 if [ "$i_mode" == "custom" ]; then
     echo "Enter the path for installing queralyzer project"
     read q_dir
     echo "If MySQL-5.6 source code is present, please enter the path, else type 'no' "
+    echo "For example if mysql is installed in /usr/local/mysql, just enter '/' (root) as usr/local/mysql is the set prefix for any standard installtion."
     read sql_dir
 
     # create the directory if doesn't exists
@@ -14,12 +22,12 @@ if [ "$i_mode" == "custom" ]; then
         if [ -L "$q_dir" ]; then
             # if symbolic link remove it.
             rm ${q_dir}
-        fi
+            fi
     else
         mkdir ${q_dir}
     fi
 
-elif [ "$i_mode" == "auto" ]; then
+else
     q_dir=~/queralyzer_project
     sql_dir=~/queralyzer_project/mysql-source
     cd;
@@ -27,9 +35,7 @@ elif [ "$i_mode" == "auto" ]; then
     echo "Queralyzer project is being set in path: '$q_dir'"
     mkdir -p ${sql_dir}
     echo "MySQL source is being downloaded into path: '$sql_dir'"
-else
-    echo "Stop fooling around! Start over again!"
-    exit 1;
+    i_mode=auto
 fi
 
 
@@ -39,6 +45,9 @@ cd ${q_dir}
 git clone -b queralyzer_version_0.1 https://github.com/sans-sense/queralyzer.git
 cd queralyzer
 git pull
+# creating the logs directory for queralyzer. And the libs directory.
+mkdir ${q_dir}/queralyzer/logs
+mkdir ${q_dir}/queralyzer/lib
 
 # currently the UI project is not merged, hence cloning it too
 cd ${q_dir}
@@ -87,9 +96,24 @@ cd ${sql_dir}
 cp -f ${q_dir}/queralyzer/mysql-5.6.10_patches/sql/* ${sql_dir}/sql/.
 
 echo "Building the mysql, it may fail if dependant library are not present."
-cmake -DWITH_EMBEDDED_SERVER=true -DWITH_DEBUG=1 -CMAKE_INSTALL_PREFIX=${q_dir}/mysql-installation .
+cmake -DWITH_EMBEDDED_SERVER=true -DWITH_DEBUG=1 -DCMAKE_INSTALL_PREFIX=${q_dir}/mysql-installation .
+
 make 
-make install DESTDIR=${q_dir}/mysql-installation
+if [ $? -ne 0 ]; then
+    echo "make failed during mysql build"
+    exit 1;
+fi
+make install
+#DESTDIR=${q_dir}/mysql-installation
+if [ $? -ne 0 ]; then
+    echo "mysql installation failed"
+    exit 1;
+fi
+
+sql_ins_dir=${q_dir}/mysql-installation
+
+# Once the installation is done, create the data directory to be used by queralyzer.
+mkdir -p ${q_dir}/mysql-installation/data2/test
 
 # Downloading and installing the dependant library for queralyzer
 echo "Downloading the required dependant library for queralyzer"
@@ -125,9 +149,16 @@ export QA_HOME
 
 make clean;
 make;
-
+echo "##############################################################################################################"
 echo "Queralyzer is installed"
 echo "The required binary is ${q_dir}/queralyzer/src/queralyzer "
+echo "Important: Before running the executable edit the file ${q_dir}/queralyzer/src/my.init"
+echo "Set the variable 'basedir' with the mysql installation path (mostly it will be ${sql_ins_dir})"
+echo "Set the variable 'datadir' with the mysql installation path (mostly it will be ${sql_ins_dir}/data2)"
+echo "Now to run the application use 'gdb ./queralyzer'"
+echo "To access the UI browse the path http://127.0.0.1:1234/index.html"
+echo "mysql logs would be generated at path ${q_dir}/queralyzer/logs"
+echo "##############################################################################################################"
 
 
 
