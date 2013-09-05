@@ -6,7 +6,7 @@ body {
 .transformation_gadget{
  height: auto;	
 }
-.page_header {
+.pageheader {
     position: absolute;
     width: 600px;
     left: 450px;
@@ -15,7 +15,7 @@ body {
     font-weight: bold;
 }
 
-.form_data{
+.formdata{
 	background-color: rgb(129, 228, 247);
     width: 80%;
     text-align: left;
@@ -54,14 +54,14 @@ textarea{
     overflow: auto;
 }
 
-#jsonContent{
+#jsonFormattedContent{
 	position:relative;
     top:20px; 
     left: 29px;
     padding: 10px 10px 0;
 }
 
-#treeStructure{
+#jsonTreeStructure{
 	background-color:rgb(239, 239, 245);
 	position:relative;
     top:40px; 
@@ -69,6 +69,12 @@ textarea{
     padding: 10px 20px 0;
     border: 1px solid;
     border-radius: 30px
+}
+
+.info{
+	color: red;
+	left: 60px;
+	font-size: 15px;
 }
 
 header div.headerWrapper {
