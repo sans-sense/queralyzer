@@ -1,259 +1,77 @@
+<!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
 <title>Transformation Gadget</title>
-<link rel="stylesheet"
-	href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" />
-<style type="text/css">
-body {
-	font-family: sans-serif;
-	background: #C2DFFF;
-	text-align: center;
-}
+<link href="bootstrap/css/font-awesome.css" rel="stylesheet">
+<link href="bootstrap/css/bootstrap-combined.no-icons.min.css"
+	rel="stylesheet">
+<link href="css/queralyzer.css" rel="stylesheet">
 
-table.gadgetTable {
-	font-family: verdana, arial, sans-serif;
-	font-size: 11px;
-	color: black;
-	border-width: 1px;
-	border-color: #1589FF;
-	border-collapse: collapse;
-}
-
-table.gadgetTable tr {
-	background-color: #1589FF;
-}
-
-table.gadgetTable td {
-	border-width: 1px;
-	padding: 20px;
-	border-style: solid;
-	border-color: #1589FF;
-	font-weight: bold;
-	text-overflow: ellipsis;
-}
-
-table.options {
-	font-family: verdana, arial, sans-serif;
-	font-size: 13px;
-	color: black;
-	border-width: 1px;
-	border-color: #1589FF;
-	border-collapse: collapse;
-}
-
-table {
-	width: 400px;
-	margin: 10px auto;
-	margin-left: auto;
-	margin-right: auto;
-}
-
-h2 {
-	font: bold 2.0em "Times New Roman", Times, serif;
-	color: #1589FF;
-}
-</style>
-<script
-	src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-<script type="text/javascript"
-	src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+<script src="js/lib/d3.min.js" type="text/javascript"></script>
+<script src="js/lib/jquery.min.js"></script>
+<script src="js/app/TypeFactory.js" type="text/javascript"></script>
+<script src="js/app/ExplainTree.js" type="text/javascript"></script>
+<script src="js/app/App.js" type="text/javascript"></script>
+<script src="js/app/transformation.js" type="text/javascript"></script>
+<script src="bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
 <script type="text/javascript">
-	/*
-	This API will format given file content into JSON Objects and provide output in textbox.
-	 */
-	function convert() {
-		$('#info').html("");
-		document.getElementById('jsonContent').value = "";
-		if (document.getElementById('fileContent').value == "") {
-			$('#info').html("Error : Empty data could not be tranformed!!!");
-			return false;
-		}
-		var fileContent = document.getElementById('fileContent').value;
-		var records = fileContent.split("\n");
-		var JSONObjects = new Array();
-		var headers;
-
-		if (startsWith(records[0], '+--')) {
-			var formatedData = format(fileContent);
-			var dataLines = formatedData.split("\n");
-			if (dataLines.length > 1) {
-				headers = dataLines[1].split("|");
-				headers = headers.splice(1, headers.length);
-				if (validate(headers)) {
-					for (i = 3, j = 0; i < dataLines.length - 2; i++, j++) {
-						var entry = dataLines[i].split("|");
-						entry = entry.splice(1, entry.length);
-						JSONObjects[j] = prepareJSONObj(entry);
-					}
-				}
-			} else {
-				$('#info')
-						.html("Error : Empty data could not be tranformed!!!");
-			}
-
-		} else {
-			headers = records[0].split("\t");
-			if (validate(headers)) {
-				for (i = 1; i < records.length; i++) {
-					var entry = records[i].split("\t");
-					if (entry.length >= 10) {
-						JSONObjects[i - 1] = prepareJSONObj(entry);
-					}
-				}
-			}
-		}
-		document.getElementById('jsonContent').value = JSON.stringify(
-				JSONObjects, null, 4);
-	}
-
-	/*
-	Checking String starts with "".
-	 */
-	function startsWith(actualString, str) {
-		if (actualString.slice(0, str.length) == str) {
-			return true;
-		}
-		return false;
-	}
-
-	/*
-	It will formate the give file content into understandble format.
-	 */
-	function format(fileContent) {
-		var data = fileContent.split("\n");
-		var str = "";
-		var headerLines = 1;
-		for (i = 0; i < data.length; i++) {
-			str += data[i];
-			var headerCount = str.split("+");
-			if ((headerCount.length - 2) == 10) {
-				headerLines = i + 1;
-				break;
-			}
-		}
-		str = "";
-		for (i = 0; i < data.length; i = i + headerLines) {
-			for (j = i; j < i + headerLines; j++) {
-				str += data[j];
-			}
-			str += "\n";
-		}
-		return str;
-	}
-
-	/*
-	This API will prepare JSON object for the given plan.
-	 */
-	function prepareJSONObj(entry) {
-		var jsonObj = new Object();
-		jsonObj.id = $.trim(entry[0]);
-		jsonObj.select_type = $.trim(entry[1]);
-		jsonObj.table = $.trim(entry[2]);
-		jsonObj.type = $.trim(entry[3]);
-		jsonObj.possible_keys = $.trim(checkNullity(entry[4]));
-		jsonObj.key = $.trim(checkNullity(entry[5]));
-		jsonObj.key_len = $.trim(checkNullity(entry[6]));
-		jsonObj.ref = $.trim(checkNullity(entry[7]));
-		jsonObj.rows = $.trim(entry[8]);
-		jsonObj.Extra = $.trim(checkNullity(entry[9]));
-		return jsonObj;
-	}
-
-	/*
-	If value is null then formating null to NULL.
-	 */
-	function checkNullity(value) {
-		if (value == "(null)") {
-			return "NULL";
-		}
-		return value;
-	}
-
-	/*
-	This API will validate headers of the given access plan.
-	 */
-	function validate(headers) {
-		if (headers.length < 10) {
-			$('#info').html("Error : Expected no of headers are 10 ");
-			return false;
-		}
-		if ($.trim(headers[0]) != "id" || $.trim(headers[1]) != "select_type"
-				|| $.trim(headers[2]) != "table"
-				|| $.trim(headers[3]) != "type"
-				|| $.trim(headers[4]) != "possible_keys"
-				|| $.trim(headers[5]) != "key"
-				|| $.trim(headers[6]) != "key_len"
-				|| $.trim(headers[7]) != "ref" || $.trim(headers[8]) != "rows"
-				|| $.trim(headers[9]) != "Extra") {
-			$('#info')
-					.html(
-							"Error : Expected order of headers are \"id\" \"select_type\" \"table\" \"type\" \"possible_keys\" \"key\" \"key_len\" \"ref\" \"rows\" \"Extra\"");
-			return false;
-		}
-		return true;
-	}
-
-	/*
-	This API will read a file and post file content into textbox.
-	 */
-	function readFile() {
-		document.getElementById('fileContent').value = "";
-		document.getElementById('jsonContent').value = "";
-
-		var files = document.getElementById('browse').files;
-		if (!files.length) {
-			alert('Please select a file!');
-			return false;
-			;
-		}
-		var file = files[0];
-		var start = 0;
-		var stop = file.size - 1;
-		var reader = new FileReader();
-		var blob = file.slice(start, stop + 1);
-		reader.readAsBinaryString(blob);
-		reader.onloadend = function(evt) {
-			if (evt.target.readyState == FileReader.DONE) {
-				document.getElementById('fileContent').value = evt.target.result;
-			}
-		};
-		document.getElementById('transform').disabled = false;
-	}
-
-</script>
+ 	$(function () {
+		 $('#reset').click(function () {
+			 queralyzer.transformation.reset();
+         });
+		 
+         $('#browse').on('change', function () {
+        	 document.getElementsByName('jsonContent')[0].value = "";
+        	 queralyzer.transformation.readfile();
+        	 document.getElementsByName('transform')[0].disabled = false;
+         });
+         
+         $('#transform').click(function (){
+        	 $('#info').html("");
+        	 document.getElementsByName('jsonContent')[0].value = "";
+        	 if (document.getElementsByName('fileContent')[0].value == "") {
+     			$('#info').html("Error : Empty data could not be tranformed!!!");
+     			return false;
+     		}
+        	 queralyzer.transformation.transfrom();
+         });
+    		
+	}); 
+	</script>
 <body>
-	<h2>Transformation Gadget</h2>
-	<table class="gadgetTable">
-		<tr>
-			<td>Choose File</td>
+	<header>
+		<div class="headerWrapper">
+			<img src="img/pramati.png" style="height: 24px; float: left;">
+			<a class="logo" href=""></a>
+			<button id="reset" class="btn btn-primary pull-right">Reset</button>
+		</div>
+	</header>
 
-			<td><input type="file" id="browse" class="btn btn-primary"
-				name="fileupload" onChange="readFile()" /></td>
-		</tr>
-		<tr>
-			<td>File Content</td>
-			<td><textarea rows="10" cols="100" name="fileContent"
-					id="fileContent"></textarea></td>
-		</tr>
-		<tr>
-			<td></td>
-			<td><input type="button" name="transform" id="transform"
-				value="Transform" onclick="convert()" disabled="disabled"
-				class="btn btn-primary" /></td>
-
-		</tr>
-		<tr>
-			<td>JSON Content</td>
-			<td><textarea rows="15" cols="100" name="jsonContent"
-					id="jsonContent"></textarea></td>
-		</tr>
-
-	</table>
-	<center>
-		<div id="info" style="color: red;"></div>
-	</center>
-
-
+	<div class="transformation_gadget">
+		<div class="page_header">Transformation Gadget</div>
+		<div class="form_data">
+			<div id="fileupload">
+				Choose File <input type="file" id="browse" class="btn btn-primary"
+					name="fileupload" />
+			</div>
+			<div id="fileContent">
+				File Content
+				<textarea name="fileContent" class="textarea" id="fileContent"></textarea>
+				<br>
+				<br>
+				<br> <input type="button" name="transform" id="transform"
+					value="Transform" disabled="disabled" class="btn btn-primary" />
+				<div id="info" style="color: red; left: 60px; font-size: 15px;"></div>
+			</div>
+			<div id="jsonContent">
+				JSON Content
+				<textarea class="textarea" name="jsonContent" id="jsonContent"></textarea>
+			</div>
+			<div id="treeStructure">
+				JSON in Tree structure
+				<div id="jsontreeview"></div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>
