@@ -1,33 +1,26 @@
-queralyzer.transformation  = (function () {
-	
-	/*
-	Checking String starts with "".
-	 */
-	function startsWith(actualString, str) {
-		if (actualString.slice(0, str.length) == str) {
-			return true;
-		}
-		return false;
-	}
+queralyzer.Transformation = (function() {
 
 	/*
 	It will format the give file content into understandable format.
 	 */
 	function format(fileContent) {
-		var data = fileContent.split("\n");
-		var str = "";
-		var headerLines = 1;
-		for (var i = 0; i < data.length; i++) {
+		var data, str, i, j, headerLines;
+
+		data = fileContent.split("\n");
+		str = "";
+		headerLines = 1;
+		i = 0;
+		for (i in data) {
 			str += data[i];
 			var headerCount = str.split("+");
 			if ((headerCount.length - 2) == 10) {
-				headerLines = i + 1;
+				headerLines = parseInt(i) + 1;
 				break;
 			}
 		}
 		str = "";
-		for (var i = 0; i < data.length; i = i + headerLines) {
-			for (var j = i; j < i + headerLines; j++) {
+		for (i = 0; i < data.length; i = i + headerLines) {
+			for (j = i; j < i + headerLines; j++) {
 				str += data[j];
 			}
 			str += "\n";
@@ -35,50 +28,69 @@ queralyzer.transformation  = (function () {
 		return str;
 	}
 
-	/*
-	This API will prepare JSON object for the given plan.
-	 */
-	function prepareJSONObj(entry) {
-		var jsonObj = new Object();
-		jsonObj.id = $.trim(entry[0]);
-		jsonObj.select_type = $.trim(entry[1]);
-		jsonObj.table = $.trim(entry[2]);
-		jsonObj.type = $.trim(entry[3]);
-		jsonObj.possible_keys = $.trim(checkNullity(entry[4]));
-		jsonObj.key = $.trim(checkNullity(entry[5]));
-		jsonObj.key_len = $.trim(checkNullity(entry[6]));
-		jsonObj.ref = $.trim(checkNullity(entry[7]));
-		jsonObj.rows = $.trim(entry[8]);
-		jsonObj.Extra = $.trim(checkNullity(entry[9]));
-		return jsonObj;
+	function prepareJsonEntry(entry) {
+		var jsonContent;
+		if (entry !== null && entry.length >= 10) {
+			return jsonContent = {
+				"id" : entry[0],
+				"select_type" : entry[1],
+				"table" : entry[2],
+				"type" : entry[3],
+				"possible_keys" : checkNullity(entry[4]),
+				"key" : checkNullity(entry[5]),
+				"key_len" : checkNullity(entry[6]),
+				"ref" : checkNullity(entry[7]),
+				"rows" : entry[8],
+				"Extra" : checkNullity(entry[9])
+			};
+		}
+		return null;
 	}
 
-	/*
-	If value is null then formating null to NULL.
-	 */
 	function checkNullity(value) {
-		if (value == "(null)") {
+		if (value === "(null)") {
 			return "NULL";
 		}
 		return value;
 	}
 
+	function trimElements(entry) {
+		var i;
+		for (i in entry) {
+			entry[i] = $.trim(entry[i]);
+		}
+		return entry;
+	}
+
+	function fileStartsWith(actualString, str) {
+		if (actualString.slice(0, str.length) == str) {
+			return true;
+		}
+		return false;
+	}
+
+	function checkHeaders(entry) {
+		var headers, i;
+		headers = [ "id", "select_type", "table", "type", "possible_keys",
+				"key", "key_len", "ref", "rows", "Extra" ];
+		i = 0;
+		for (i in headers) {
+			if (headers[i] !== entry[i]) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	/*
-	This API will validate headers of the given access plan.
+	 * This API will validate headers of the given access plan.
 	 */
-	function validate(headers) {
+	function validateHeaders(headers) {
 		if (headers.length < 10) {
 			$('#info').html("Error : Expected no of headers are 10 ");
 			return false;
 		}
-		if ($.trim(headers[0]) != "id" || $.trim(headers[1]) != "select_type"
-				|| $.trim(headers[2]) != "table"
-				|| $.trim(headers[3]) != "type"
-				|| $.trim(headers[4]) != "possible_keys"
-				|| $.trim(headers[5]) != "key"
-				|| $.trim(headers[6]) != "key_len"
-				|| $.trim(headers[7]) != "ref" || $.trim(headers[8]) != "rows"
-				|| $.trim(headers[9]) != "Extra") {
+		if (!checkHeaders(trimElements(headers))) {
 			$('#info')
 					.html(
 							"Error : Expected order of headers are \"id\" \"select_type\" \"table\" \"type\" \"possible_keys\" \"key\" \"key_len\" \"ref\" \"rows\" \"Extra\"");
@@ -87,75 +99,103 @@ queralyzer.transformation  = (function () {
 		return true;
 	}
 
-	
-	return {
-	reset: function ()
-	{
-		document.getElementsByName('fileupload')[0].value = "";
-		document.getElementsByName('fileContent')[0].value = "";
-		document.getElementsByName('jsonContent')[0].value = "";
-		document.getElementsByName('jsontreeview')[0]= "";
-		document.getElementsByName('transform')[0].disabled = true;
-	},
-	readfile: function (file,container)
-	{
-		var files = document.getElementById('browse').files;
-		if (!files.length) {
-			alert('Please select a file!');
-			return false;
-			;
-		}
-		var file = files[0];
-		var start = 0;
-		var stop = file.size - 1;
-		var reader = new FileReader();
-		var blob = file.slice(start, stop + 1);
-		reader.readAsBinaryString(blob);
-		reader.onloadend = function(evt) {
-			if (evt.target.readyState == FileReader.DONE) {
-				document.getElementsByName('fileContent')[0].value = evt.target.result;
-			}
-		};
-	},
-	transfrom: function ()
-	{
-		var fileContent = document.getElementsByName('fileContent')[0].value;
-		var records = fileContent.split("\n");
-		var JSONObjects = new Array();
-		var headers;
+	/*
+	 * This API will handle access plan generated on Ms Sql client(eg +---+---+--+).
+	 */
+	function handleDashedContent(fileContent) {
+		var formatedData, headers, records, i, j, entries;
 
-		if (startsWith(records[0], '+--')) {
-			var formatedData = format(fileContent);
-			var dataLines = formatedData.split("\n");
-			if (dataLines.length > 1) {
-				headers = dataLines[1].split("|");
-				headers = headers.splice(1, headers.length);
-				if (validate(headers)) {
-					for (i = 3, j = 0; i < dataLines.length - 2; i++, j++) {
-						var entry = dataLines[i].split("|");
-						entry = entry.splice(1, entry.length);
-						JSONObjects[j] = prepareJSONObj(entry);
-					}
+		formatedData = format(fileContent);
+		records = formatedData.split("\n");
+		entries = new Array();
+
+		if (records.length > 1) {
+			headers = records[1].split("|");
+			headers = headers.splice(1, headers.length);
+			if (validateHeaders(headers)) {
+				for (i = 3, j = 0; i < records.length - 2; i++, j++) {
+					var entry = records[i].split("|");
+					entry = entry.splice(1, entry.length);
+					entry = trimElements(entry);
+					entries[j] = prepareJsonEntry(entry);
 				}
-			} else {
-				$('#info')
-						.html("Error : Empty data could not be tranformed!!!");
 			}
-
+			return entries;
 		} else {
-			headers = records[0].split("\t");
-			if (validate(headers)) {
-				for (var i=1; i < records.length; i++) {
-					var entry = records[i].split("\t");
-					if (entry.length >= 10) {
-						JSONObjects[i - 1] = prepareJSONObj(entry);
-					}
+			$('#info').html("Error : Empty data could not be tranformed!!!");
+			return null;
+		}
+	}
+
+	/*
+	 * This API will handle access plan of type CSV,Text..
+	 */
+	function handleCSVContent(records) {
+		var headers, entries;
+
+		entries = new Array();
+		headers = records[0].split("\t");
+
+		if (validateHeaders(headers)) {
+			for ( var i = 1; i < records.length; i++) {
+				var entry = records[i].split("\t");
+				if (entry.length >= 10) {
+					entries[i - 1] = prepareJsonEntry(entry);
 				}
 			}
 		}
-		document.getElementsByName('jsonContent')[0].value = JSON.stringify(
-				JSONObjects, null, 4);
-		queralyzer.App.renderTree(JSONObjects); 
+		return entries;
 	}
+
+	return {
+
+		reset : function() {
+			$('[name="fileupload"]')[0].value = "";
+			$('[name="fileContent"]')[0].value = "";
+			$('[name="jsonContent"]')[0].value = "";
+			$("#jsontreeview").empty();
+			$('[name="transform"]')[0].disabled = true;
+		},
+
+		readfile : function() {
+			var file, files, startIndex, stopIndex, reader, blob;
+
+			files = document.getElementById('browse').files;
+			if (!files.length) {
+				alert('Please select a file!');
+				return false;
+			}
+
+			file = files[0];
+			startIndex = 0;
+			stopIndex = file.size - 1;
+			reader = new FileReader();
+			blob = file.slice(startIndex, stopIndex + 1);
+
+			reader.readAsBinaryString(blob);
+			reader.onloadend = function(evt) {
+				if (evt.target.readyState == FileReader.DONE) {
+					document.getElementsByName('fileContent')[0].value = evt.target.result;
+				}
+			};
+		},
+
+		transfrom : function() {
+			var fileContent, records, accessPlanEntries;
+
+			fileContent = document.getElementsByName('fileContent')[0].value;
+			records = fileContent.split("\n");
+			accessPlanEntries = new Array();
+
+			if (fileStartsWith(records[0], '+--')) {
+				accessPlanEntries = handleDashedContent(fileContent);
+			} else {
+				accessPlanEntries = handleCSVContent(records)
+			}
+			document.getElementsByName('jsonContent')[0].value = JSON
+					.stringify(accessPlanEntries, null, 4);
+			queralyzer.App.renderTree(accessPlanEntries);
+		}
+
 	};
 })();
