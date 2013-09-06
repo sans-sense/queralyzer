@@ -38,6 +38,7 @@ header div.headerWrapper {
 	width: 80%;
 	margin-left: 10%;
 	margin-top: 4%;
+	padding-bottom: 10px;
 }
 
 .fileupload {
@@ -69,18 +70,6 @@ header div.headerWrapper {
 	width: 13%;
 }
 
-#jsonFormattedContent {
-	margin-left: 10%;
-	padding: 1%;
-	font-weight: bold;
-}
-
-#jsonContent {
-	margin-left: 5%;
-	width: 78%;
-	min-height: 219px;
-}
-
 #jsonTreeStructure {
 	margin-left: 25%;
 	font-weight: bold;
@@ -101,4 +90,9 @@ header div.headerWrapper {
 .icon-minus {
 	font-size: 10px;
 	margin-right: 5px;
+}
+
+#info {
+	color: red;
+	margin-top: 8px;
 }

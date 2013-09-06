@@ -23,18 +23,17 @@
 		});
 
 		$('#browse').on('change', function() {
-			document.getElementsByName('jsonContent')[0].value = "";
 			$("#jsontreeview").empty();
 			queralyzer.Transformation.readfile();
-			document.getElementsByName('transform')[0].disabled = false;
+			$('[name="transform"]')[0].disabled = false;
 		});
 
 		$('#transform')
 				.click(
 						function() {
 							$('#info').html("");
-							document.getElementsByName('jsonContent')[0].value = "";
-							if (document.getElementsByName('fileData')[0].value == "") {
+							$('[name="fileData"]')
+							if ($('[name="fileData"]')[0].value == "") {
 								$('#info')
 										.html(
 												"Error : Empty data could not be tranformed!!!");
@@ -56,33 +55,24 @@
 
 	<div class="transformationgadget">
 		<div class="pageheader">Transformation Gadget</div>
-		 <div class="formdata">
-	
-		  <div class="fileupload">
+		<div class="formdata">
+			<div class="fileupload">
 				Choose File <input type="file" id="browse" class="btn btn-primary"
 					name="fileupload" />
 			</div>
-			
 			<div id="fileContent">
 				File Content
 				<textarea name="fileData" class="fileData"
 					placeholder="Display access plan from the given file."></textarea>
-				 <input type="button" name="transform"
-					id="transform" value="Transform" disabled="disabled"
-					class="btn btn-primary" />
+				<input type="button" name="transform" id="transform"
+					value="Transform" disabled="disabled" class="btn btn-primary" />
 				<div id="info"></div>
-			</div>
-			
-			<div id="jsonFormattedContent">
-				JSON Content
-				<textarea class="textarea" name="jsonContent" id="jsonContent"
-					placeholder="Display acess plan in JSON formatted format."></textarea>
 			</div>
 			<div id="jsonTreeStructure">
 				JSON in Tree structure
 				<div id="jsontreeview"></div>
 			</div>
-		</div> 
+		</div>
 	</div>
 </body>
 </html>

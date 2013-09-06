@@ -1,7 +1,7 @@
 queralyzer.Transformation = (function() {
 
 	/*
-	It will format the give file content into understandable format.
+	 * It will format the give file content into understandable format.
 	 */
 	function format(fileContent) {
 		var data, str, i, j, headerLines;
@@ -100,7 +100,8 @@ queralyzer.Transformation = (function() {
 	}
 
 	/*
-	 * This API will handle access plan generated on Ms Sql client(eg +---+---+--+).
+	 * This API will handle access plan generated on Ms Sql client(eg
+	 * +---+---+--+).
 	 */
 	function handleDashedContent(fileContent) {
 		var formatedData, headers, records, i, j, entries;
@@ -152,7 +153,6 @@ queralyzer.Transformation = (function() {
 		reset : function() {
 			$('[name="fileupload"]')[0].value = "";
 			$('[name="fileData"]')[0].value = "";
-			$('[name="jsonContent"]')[0].value = "";
 			$("#jsontreeview").empty();
 			$('[name="transform"]')[0].disabled = true;
 		},
@@ -183,6 +183,8 @@ queralyzer.Transformation = (function() {
 		transfrom : function() {
 			var fileContent, records, accessPlanEntries;
 
+			$("#jsontreeview").empty();
+
 			fileContent = document.getElementsByName('fileData')[0].value;
 			records = fileContent.split("\n");
 			accessPlanEntries = new Array();
@@ -192,8 +194,6 @@ queralyzer.Transformation = (function() {
 			} else {
 				accessPlanEntries = handleCSVContent(records)
 			}
-			document.getElementsByName('jsonContent')[0].value = JSON
-					.stringify(accessPlanEntries, null, 4);
 			queralyzer.App.renderTree(accessPlanEntries);
 		}
 
