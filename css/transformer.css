@@ -1,0 +1,104 @@
+body {
+	background: url("../img/default-bg.png") repeat scroll 0 0 transparent;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+.tree {
+	padding: 5px;
+}
+
+.logo {
+	background: url("../img/logo.png") no-repeat scroll 0 0 transparent;
+	float: left;
+	height: 24px;
+	width: 117px;
+	display: block;
+	text-decoration: none !important;
+	border: none;
+}
+
+header div.headerWrapper {
+	border-bottom: 2px solid #3D9EFF;
+	min-height: 30px;
+	padding: 10px 20px 0;
+}
+
+.pageheader {
+	display: block;
+	color: rgb(45, 198, 236);
+	font-size: 28px;
+	font-weight: bold;
+	margin-left: 37%;
+	margin-top: 2%;
+}
+
+.formdata {
+	height: auto;
+	background-color: rgb(186, 232, 243);
+	width: 80%;
+	margin-left: 10%;
+	margin-top: 4%;
+}
+
+.fileupload {
+	margin-left: 10%;
+	padding: 1%;
+	font-weight: bold;
+}
+
+#browse {
+	margin-left: 20%;
+	width: 30%;
+}
+
+#fileContent {
+	margin-left: 10%;
+	padding: 1%;
+	font-weight: bold;
+}
+
+.fileData {
+	margin-left: 6.5%;
+	width: 78%;
+	min-height: 219px;
+}
+
+#transform {
+	margin-left: 30%;
+	margin-top: 1%;
+	width: 13%;
+}
+
+#jsonFormattedContent {
+	margin-left: 10%;
+	padding: 1%;
+	font-weight: bold;
+}
+
+#jsonContent {
+	margin-left: 5%;
+	width: 78%;
+	min-height: 219px;
+}
+
+#jsonTreeStructure {
+	margin-left: 25%;
+	font-weight: bold;
+	margin-right: 5%;
+}
+
+#jsontreeview {
+	padding: 20px 0px 15px 20px;
+	border-radius: 2%;
+	background-color: rgb(229, 229, 240);
+}
+
+.icon-plus {
+	font-size: 10px;
+	margin-right: 5px;
+}
+
+.icon-minus {
+	font-size: 10px;
+	margin-right: 5px;
+}

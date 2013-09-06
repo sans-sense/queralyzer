@@ -151,7 +151,7 @@ queralyzer.Transformation = (function() {
 
 		reset : function() {
 			$('[name="fileupload"]')[0].value = "";
-			$('[name="fileContent"]')[0].value = "";
+			$('[name="fileData"]')[0].value = "";
 			$('[name="jsonContent"]')[0].value = "";
 			$("#jsontreeview").empty();
 			$('[name="transform"]')[0].disabled = true;
@@ -175,7 +175,7 @@ queralyzer.Transformation = (function() {
 			reader.readAsBinaryString(blob);
 			reader.onloadend = function(evt) {
 				if (evt.target.readyState == FileReader.DONE) {
-					document.getElementsByName('fileContent')[0].value = evt.target.result;
+					document.getElementsByName('fileData')[0].value = evt.target.result;
 				}
 			};
 		},
@@ -183,7 +183,7 @@ queralyzer.Transformation = (function() {
 		transfrom : function() {
 			var fileContent, records, accessPlanEntries;
 
-			fileContent = document.getElementsByName('fileContent')[0].value;
+			fileContent = document.getElementsByName('fileData')[0].value;
 			records = fileContent.split("\n");
 			accessPlanEntries = new Array();
 
