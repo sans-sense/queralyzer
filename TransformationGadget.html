@@ -25,7 +25,6 @@
 		$('#browse').on('change', function() {
 			$("#jsontreeview").empty();
 			queralyzer.Transformation.readfile();
-			$('[name="transform"]')[0].disabled = false;
 		});
 
 		$('#transform')
@@ -56,21 +55,21 @@
 	<div class="transformationgadget">
 		<div class="pageheader">Transformation Gadget</div>
 		<div class="formdata">
-			<div class="fileupload">
-				Choose File <input type="file" id="browse" class="btn btn-primary"
-					name="fileupload" />
-			</div>
-			<div id="fileContent">
-				File Content
+			<div id="accessPlan">
+				Access Plan
 				<textarea name="fileData" class="fileData"
-					placeholder="Display access plan from the given file."></textarea>
+					placeholder="Paste your access plan here or choose your access plan file."></textarea>
 				<input type="button" name="transform" id="transform"
-					value="Transform" disabled="disabled" class="btn btn-primary" />
+					value="Transform" class="btn btn-primary" />
+				<input type="file" id="browse" class="btn btn-primary"
+					name="fileupload" />
 				<div id="info"></div>
 			</div>
 			<div id="jsonTreeStructure">
-				JSON in Tree structure
-				<div id="jsontreeview"></div>
+				Access Plan in tree structure
+				<div id="jsontreeview">
+                Displays Access Plan in tree structure.
+				</div>
 			</div>
 		</div>
 	</div>

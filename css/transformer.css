@@ -26,7 +26,7 @@ header div.headerWrapper {
 .pageheader {
 	display: block;
 	color: rgb(45, 198, 236);
-	font-size: 28px;
+	font-size: 25px;
 	font-weight: bold;
 	margin-left: 37%;
 	margin-top: 2%;
@@ -34,25 +34,22 @@ header div.headerWrapper {
 
 .formdata {
 	height: auto;
-	background-color: rgb(186, 232, 243);
+	color: white;
 	width: 80%;
-	margin-left: 10%;
+	margin-left: 5%;
 	margin-top: 4%;
 	padding-bottom: 10px;
 }
 
-.fileupload {
-	margin-left: 10%;
-	padding: 1%;
-	font-weight: bold;
-}
-
 #browse {
-	margin-left: 20%;
-	width: 30%;
+	margin-left: 25%;
+	width: 25%;
+	height: 10%;
+	margin-top: 1%;
+	line-height: 23px;
 }
 
-#fileContent {
+#accessPlan {
 	margin-left: 10%;
 	padding: 1%;
 	font-weight: bold;
@@ -67,7 +64,7 @@ header div.headerWrapper {
 #transform {
 	margin-left: 30%;
 	margin-top: 1%;
-	width: 13%;
+	width: 12%;
 }
 
 #jsonTreeStructure {
@@ -78,8 +75,10 @@ header div.headerWrapper {
 
 #jsontreeview {
 	padding: 20px 0px 15px 20px;
-	border-radius: 2%;
+	border-radius: 4%;
 	background-color: rgb(229, 229, 240);
+	min-height: 200px;
+	color: rgb(182, 182, 192);
 }
 
 .icon-plus {

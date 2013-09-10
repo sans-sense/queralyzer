@@ -154,7 +154,7 @@ queralyzer.Transformation = (function() {
 			$('[name="fileupload"]')[0].value = "";
 			$('[name="fileData"]')[0].value = "";
 			$("#jsontreeview").empty();
-			$('[name="transform"]')[0].disabled = true;
+			$("#info").empty();
 		},
 
 		readfile : function() {
