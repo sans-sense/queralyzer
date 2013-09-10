@@ -1,6 +1,6 @@
 ## Aim :
 
-Transforming give query access plan into JSON tree structure.
+Transforming given query access plan into JSON tree structure.
 
 ## Description :
 

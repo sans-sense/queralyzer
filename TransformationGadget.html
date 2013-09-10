@@ -24,6 +24,7 @@
 
 		$('#browse').on('change', function() {
 			$("#jsontreeview").empty();
+			$("#jsontreeview").append("Displays Access Plan in tree structure.")
 			queralyzer.Transformation.readfile();
 		});
 
@@ -48,6 +49,7 @@
 		<div class="headerWrapper">
 			<img src="img/pramati.png" style="height: 24px; float: left;">
 			<a class="logo" href=""></a>
+			<a href="help.html" class="help">Help</a>
 			<button id="reset" class="btn btn-primary pull-right">Reset</button>
 		</div>
 	</header>
@@ -58,7 +60,7 @@
 			<div id="accessPlan">
 				Access Plan
 				<textarea name="fileData" class="fileData"
-					placeholder="Paste your access plan here or choose your access plan file."></textarea>
+					placeholder="Paste access plan here or choose access plan file."></textarea>
 				<input type="button" name="transform" id="transform"
 					value="Transform" class="btn btn-primary" />
 				<input type="file" id="browse" class="btn btn-primary"

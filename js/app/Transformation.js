@@ -154,6 +154,7 @@ queralyzer.Transformation = (function() {
 			$('[name="fileupload"]')[0].value = "";
 			$('[name="fileData"]')[0].value = "";
 			$("#jsontreeview").empty();
+			$("#jsontreeview").append("Displays Access Plan in tree structure.")
 			$("#info").empty();
 		},
 
@@ -184,7 +185,8 @@ queralyzer.Transformation = (function() {
 			var fileContent, records, accessPlanEntries;
 
 			$("#jsontreeview").empty();
-
+			$("#jsontreeview").append("Displays Access Plan in tree structure.")
+			
 			fileContent = document.getElementsByName('fileData')[0].value;
 			records = fileContent.split("\n");
 			accessPlanEntries = new Array();
