@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Transformation Gadget</title>
+<title>Access Plan To Tree Formatter</title>
 
-<link href="bootstrap/css/font-awesome.css" rel="stylesheet">
+ <link href="bootstrap/css/font-awesome.css" rel="stylesheet"> 
 <link href="bootstrap/css/bootstrap-combined.no-icons.min.css"
 	rel="stylesheet">
 <link href="css/transformer.css" rel="stylesheet">
+
 
 <script src="js/lib/d3.min.js" type="text/javascript"></script>
 <script src="js/lib/jquery.min.js"></script>
@@ -47,33 +48,33 @@
 <body>
 	<header>
 		<div class="headerWrapper">
-			<img src="img/pramati.png" style="height: 24px; float: left;">
-			<a class="logo" href=""></a>
-			<a href="help.html" class="help">Help</a>
-			<button id="reset" class="btn btn-primary pull-right">Reset</button>
+		<div class="caption">Access Plan To Tree Formatter</div>
+		<div class="help"><a href="help.html">Help</a></div>
 		</div>
 	</header>
-
-	<div class="transformationgadget">
-		<div class="pageheader">Transformation Gadget</div>
-		<div class="formdata">
-			<div id="accessPlan">
-				Access Plan
-				<textarea name="fileData" class="fileData"
-					placeholder="Paste access plan here or choose access plan file."></textarea>
-				<input type="button" name="transform" id="transform"
-					value="Transform" class="btn btn-primary" />
-				<input type="file" id="browse" class="btn btn-primary"
-					name="fileupload" />
-				<div id="info"></div>
-			</div>
-			<div id="jsonTreeStructure">
-				Access Plan in tree structure
-				<div id="jsontreeview">
-                Displays Access Plan in tree structure.
-				</div>
-			</div>
-		</div>
+	
+	<div class="accessplan">
+		<fieldset class="accessplanborder">
+			<legend class="accessplanborder">Access Plan</legend>
+			<textarea name="fileData" class="fileData"
+				placeholder="Paste access plan here or choose access plan file."></textarea>
+			<input type="file" id="browse" class="btn btn-primary"
+				name="fileupload" />
+			<div id="info"></div>
+		</fieldset>
 	</div>
+	<div class="actions"><input type="button" name="transform" id="transform"
+					value="Format"  class="btn btn-primary"/>
+					<input type="button" name="reset" id="reset" value="Reset" class="btn btn-primary" />
+					</div>
+	
+	<div class="treeview">
+	<fieldset class="accessplanborder">
+			<legend class="accessplanborder">Tree structure</legend>
+				<div id="jsontreeview">
+                Displays access plan in tree structure.
+				</div>
+				</fieldset>
+				</div>
 </body>
 </html>

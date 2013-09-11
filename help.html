@@ -1,59 +1,62 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Transformation Gadget</title>
+<title>Instruction Manual</title>
 <link href="bootstrap/css/font-awesome.css" rel="stylesheet">
 <link href="bootstrap/css/bootstrap-combined.no-icons.min.css"
 	rel="stylesheet">
 <link href="css/transformer.css" rel="stylesheet">
 <body>
-	<header>
+    <header>
 		<div class="headerWrapper">
-			<img src="img/pramati.png" style="height: 24px; float: left;">
-			<a class="logo" href=""></a>
-			<a href="TransformationGadget.html" class="gohome">>> go home</a>
+		<div class="caption">Access Plan To Tree Formatter</div>
+		<div class="home"><a href="accessplanformatter.html">Home</a></div>
 		</div>
 	</header>
-
-	<div class="transformationgadget">
-		<div class="helpheader">Transformation Gadget Help Document</div>
+	<div class="accessplandoc">
+		<div class="helpheader">Instruction Manual</div>
 		<div class="helpcontent">
 			<strong>Description :</strong> 
-			<p>Transformation Gadget is used to transform query access plan into tree structure.
-			It is a stand alone html page which takes input as access plan and convert it into JSON objects and then displays JSON objects in tree structure.
+			<p>This application is used to format complex query access plan into easily understandable tree format.
+			    It takes access plan as input and format it in tree structure as output.
 			</p>
 			<br>
 			<strong>Installation :</strong> 
-			<p>Download this project 
-			    <ul>
-			    <li><a href="https://github.com/sans-sense/queralyzer/archive/gh-pages.zip" style="font-size: 0.8em; font-weight: 400; color: #084BB1;">https://github.com/sans-sense/queralyzer/archive/gh-pages.zip</a>
-			    </li>
-			    </ul>
-			     and open Transformation.html page in any browser.</p>
+			<p>Download this project <a href="https://github.com/sans-sense/queralyzer/archive/gh-pages.zip" style="color : blue; font-size:14px">here</a>
+			     and render index page in any browser.</p>
 			<br>
-			<strong>Use :</strong>
-			<p>Provide access plan in the text box or choose a file which contains access plan,and then click on transform button to convert access plan into tree structure.</p>
+			<strong>Usage :</strong>
+			<p>You can provide access plan in two ways
+			      <ul>
+			      <li type=circle> Paste access plan in the text box  or
+			      <li type=circle> Select a file which contains access plan.
+			      </ul>
+			And click on format button to see tree structure of the given access plan.</p>
 			<br>
 			<strong>Inputs :</strong>
-			<p>Below are the types of supported inputs</p>
+			<p>Below are the types of supported access plan inputs</p>
 			<ul>
-			<li>CSV or Text file generated on DB client software.<br>
-			Note : While exporting CSV file,ensure that lines terminated by "\n" and fields terminated by "\t" like<br><br>
-			id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra	<br>
-1	PRIMARY	&lt;derived2&gt;	ALL	(null)	(null)	(null)	(null)	1000000000	Using where	<br>
-1	PRIMARY	&lt;derived4&gt;	ref	&lt;auto_key0&gt;	&lt;auto_key0&gt;	5	current_table.id	10	(null)	<br>
-			<li>Access plan of type<br><br>
-			+----+-------------+---------+--------+---------------+---------------+---------+--------------------------+------+-------+ <br>
-			| id | select_type | table | type | possible_keys | key | key_len | ref | rows | Extra | <br>
-			+----+-------------+---------+--------+---------------+---------------+---------+--------------------------+------+-------+ <br>
-			| 1 | SIMPLE | history | index | idx_sc_date | idx_sc_date | 35 | NULL | 740 | | <br>
-			| 1 | SIMPLE | stock | eq_ref | idx_stockcode | idx_stockcode | 32 | pfolio.history.stockcode | 1 | | <br>
-			+----+-------------+---------+--------+---------------+---------------+---------+--------------------------+------+-------+<br>
+			<li type=circle>CSV or text file generated on any DB client software.<br>
+			Note : While exporting access plan in CSV file,ensure that lines terminated by "\n" and fields terminated by "\t" like<br><br>
+			<div class="csvformat">
+			<img class="img" src="img/accessplan_in_csv.png" />
+			</div>
+			<li type=circle>Access plan of type<br><br>
+			<div class="clientformat">
+			<img class="img" src="img/accessplan_from_client.png" />
+			</div>
 			</ul>
 			<br>
 			<strong>Output :</strong>
-			<p>Tree structure for the given access plan.</p>
+			<p>Tree structure for the given access plan.
+			<br>
+			A sample tree structure </p>
+			<div class="finaltree">
+			<img class="img" src="img/treeStructure.png" />
+			</div>
 		</div>
 	</div>
+	
+	
 </body>
 </html>
