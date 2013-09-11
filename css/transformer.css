@@ -112,8 +112,6 @@ a:hover {
 }
 
 .treeview {
-	float: right;
-	width: 47%;
 	padding: 20px 0px 15px 0px;
 	min-height: 200px;
 	color: #63AA9C;
