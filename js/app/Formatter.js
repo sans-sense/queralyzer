@@ -185,6 +185,7 @@ queralyzer.Formatter = (function() {
 			var fileContent, records, accessPlanEntries;
 
 			fileContent = document.getElementsByName('fileData')[0].value;
+			fileContent = fileContent.replace(/^\s+|\s+$/g,'');
 			records = fileContent.split("\n");
 			accessPlanEntries = new Array();
 
