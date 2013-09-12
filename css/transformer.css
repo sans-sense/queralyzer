@@ -3,6 +3,7 @@ body {
 	background-color: #ECEAE0;
 }
 
+}
 .tree {
 	padding: 5px;
 }
@@ -15,13 +16,15 @@ header div.headerWrapper {
 }
 
 .caption {
-	font-size: 25px;
-	font-weight: bold;
 	color: white;
 	background-color: #221E1D;
-	width: 30%;
-	margin-left: 35%;
+	width: 40%;
+	margin-left: 30%;
 	margin-top: 10px;
+	font-family: 'Tangerine', serif;
+	font-size: 48px;
+	text-shadow: 4px 4px 4px #aaa;
+	font-weight: bold;
 }
 
 .help {
@@ -32,10 +35,16 @@ header div.headerWrapper {
 
 #browse {
 	height: 24px;
-    line-height: 15px;
-    margin-left: 47%;
-    margin-top: 1%;
-    width: 43%;
+	line-height: 15px;
+	margin-left: 48%;
+	margin-top: 1%;
+	width: 40%;
+	background-size: 30px;
+	padding: 5px 30px 5px 5px;
+	background-position: right;
+	border-radius: 5px;
+	background-color: #3093c7;
+	color: white;
 }
 
 .fileData {
@@ -46,6 +55,12 @@ header div.headerWrapper {
 #transform {
 	margin-top: 215px;
 	width: 100%;
+	background-size: 30px;
+	padding: 5px 30px 5px 5px;
+	background-position: right;
+	border-radius: 5px;
+	background-color: #4280EE;
+	color: white;
 }
 
 #jsontreeview {
@@ -69,24 +84,21 @@ a:link {
 	color: white;
 	font-size: 1em;
 	font-weight: 500;
-	font-family: arial, helvetica, sans-serif;
-	text-decoration: none;
+	font-family: 'Trade Winds', serif;
 }
 
 a:visited {
 	color: #BDE0F1;
 	font-size: 1em;
 	font-weight: 500;
-	font-family: arial, helvetica, sans-serif;
-	text-decoration: none;
+	font-family: 'Trade Winds', serif;
 }
 
 a:hover {
 	color: #1EA0E0;
 	font-size: 1em;
 	font-weight: 500;
-	font-family: arial, helvetica, sans-serif;
-	text-decoration: none;
+	font-family: 'Trade Winds', serif;
 }
 
 .home {
@@ -126,6 +138,10 @@ legend.accessplanborder {
 	border-bottom: none;
 	color: #E9633B;
 	margin-top: 15px;
+	font-family: 'Trade Winds', serif;
+	font-size: 28px;
+	text-shadow: 4px 4px 4px #aaa;
+	font-weight: bold;
 }
 
 fieldset.accessplanborder {
@@ -139,21 +155,52 @@ fieldset.accessplanborder {
 }
 
 .helpcontent {
-	 margin: 5% 10% 0;
-	 font-family: 'Goudy Bookletter 1911', Georgia, Times, serif;
-    font-size: 15px;
-    line-height: 25px;
+	margin: 3% 10% 0;
+	border-radius: 10px;
+	border: 2px solid;
+	padding: 10px;
+	border: 2px solid;
+	border-color: #437268;
+	font-family: 'Gentium Basic', serif;
+	font-size: 19px;
+	color: rgb(20, 20, 20);
 }
 
 .helpheader {
-	 font-family: 'Raleway',Helvetica,Arial,sans-serif;
-    font-size: 25px;
-    font-weight: bold;
-    line-height: 40px;
-    margin-left: 43%;
+	font-family: 'Trade Winds', serif;
+	font-size: 33px;
+	text-shadow: 4px 4px 4px #aaa;
+	font-weight: bold;
+	line-height: 40px;
+	margin-left: 37%;
+	color: #E9633B;
+	margin-top: 15px;
 }
 
 .img {
-	border-radius : 5px;
-	margin-left : 5%;
+	border-radius: 5px;
+	margin-left: 5%;
+	max-width: 90%;
+}
+
+p {
+	margin: 0;
+	text-align: left;
+	margin-left: 12px;
+	line-height: 30px;
+}
+
+ul,ol {
+	margin: 0 0 10px 35px;
+}
+
+.button {
+	padding: 5px 30px 5px 5px;
+	border: 1px solid #443E3E;
+	color: #000;
+	text-decoration: none;
+	background: #dcdcdc url(img/arrow.png) no-repeat scroll 5px center;
+	background-size: 30px;
+	background-position: right;
+	background-color: red;
 }
