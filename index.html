@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Queralyzer</title>
+
+    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.no-icons.min.css"
+          rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://rawgithub.com/Shiti/queralyzerUI/master/css/queralyzer.css">
+    <link rel="stylesheet" href="css/formatter.css">
+
+    <script src="https://rawgithub.com/Shiti/queralyzerUI/master/js/lib/d3.min.js" type="text/javascript"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+
+    <script src="https://rawgithub.com/Shiti/queralyzerUI/master/js/app/TypeFactory.js" type="text/javascript"></script>
+    <script src="https://rawgithub.com/Shiti/queralyzerUI/master/js/app/ExplainTree.js" type="text/javascript"></script>
+    <script src="https://rawgithub.com/Shiti/queralyzerUI/master/js/app/App.js" type="text/javascript"></script>
+    <script src="https://rawgithub.com/Shiti/queralyzerUI/master/bootstrap/js/bootstrap.min.js"
+            type="text/javascript"></script>
+    <script src="js/app/Formatter.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+	$(function() {
+
+		$(".queryEditor").height(window.innerHeight * 0.9 + "px");
+		$(".fileData").height(window.innerHeight * 0.65 + "px");
+		$(".tree").height(window.innerHeight * 0.9 + "px");
+		$(".result").height(window.innerHeight * 0.8 + "px");
+
+		$('#reset').click(function(e) {
+			e.preventDefault();
+			queralyzer.Formatter.reset();
+		});
+
+		$('#browse').on('change', function() {
+			$('#info').empty();
+			queralyzer.Formatter.readfile();
+		});
+		$('#submitButton')
+				.click(
+						function(e) {
+							e.preventDefault();
+							$('#info').empty();
+							$("#treeContainer").empty();
+							$("#rowContainer").empty();
+							$('[name="fileData"]')
+							if ($('[name="fileData"]')[0].value == "") {
+								$('#info')
+										.html(
+												"Error : Empty data could not be tranformed!!!");
+								return false;
+							}
+							queralyzer.Formatter.transfrom();
+						});
+
+		$("#help")
+				.load(
+						"https://rawgithub.com/Shiti/queralyzerUI/master/data/help.html");
+	});
+</script>
+</head>
+<body>
+<header>
+    <div class="headerWrapper">
+        <img src="https://rawgithub.com/Shiti/queralyzerUI/master/img/pramati.png" style="height:24px;float:left;">
+        <a class="logo" href="index.html"></a>
+    </div>
+</header>
+<div class="container-fluid">
+    <div class="row-fluid" style="margin:1.6%;width: 98%;">
+        <div class="span5">
+            <div class="boxed queryEditor" style="height: 830.7px;">
+                <form id="queryForm">
+                    <fieldset>
+                        <legend>Access Plan
+                            <button id="submitButton" style="margin-top:5px;" class="pull-right btn btn-success">Run<i
+                                    class="icon-play icon-white"></i></button>
+                            <button id="reset"  style="margin-top:5px;margin-right: 3px;" class="btn btn-primary pull-right ">Reset</button>
+
+                        </legend>
+                        <input type="file" id="browse" name="fileupload" class="btn btn-primary pull-right"/>
+                        <textarea name="fileData" class="fileData"
+                                  placeholder="Paste access plan here or choose access plan file."></textarea>
+                    </fieldset>
+                </form>
+                <div id="info" style="color: red;"></div>
+            </div>
+        </div>
+        <div class="span7" style="margin-left: 0.5%;">
+            <div id="result" class="boxed tree">
+                <div class="tabbable">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#treeContainer" data-toggle="tab">Access Plan</a></li>
+                        <li><a href="#rowContainer" data-toggle="tab">Explain Rows</a></li>
+                        <li><a href="#help" data-toggle="tab">Help</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active result" id="treeContainer">
+                        </div>
+                        <div class="tab-pane result" id="rowContainer">
+                        </div>
+                        <div class="tab-pane result" id="help">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
