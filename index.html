@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Queralyzer</title>
+    <title>Access Plan to Tree Formatter</title>
 
     <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.no-icons.min.css"
           rel="stylesheet">
@@ -23,19 +23,20 @@
 	$(function() {
 
 		$(".queryEditor").height(window.innerHeight * 0.9 + "px");
-		$(".fileData").height(window.innerHeight * 0.65 + "px");
+		$(".accessplan").height(window.innerHeight * 0.64 + "px");
 		$(".tree").height(window.innerHeight * 0.9 + "px");
 		$(".result").height(window.innerHeight * 0.8 + "px");
-
+		
 		$('#reset').click(function(e) {
 			e.preventDefault();
 			queralyzer.Formatter.reset();
 		});
 
-		$('#browse').on('change', function() {
+		$('#fileupload').on('change', function() {
 			$('#info').empty();
 			queralyzer.Formatter.readfile();
 		});
+		
 		$('#submitButton')
 				.click(
 						function(e) {
@@ -43,16 +44,29 @@
 							$('#info').empty();
 							$("#treeContainer").empty();
 							$("#rowContainer").empty();
-							$('[name="fileData"]')
-							if ($('[name="fileData"]')[0].value == "") {
+							$('[name="accessplan"]')
+							if ($('[name="accessplan"]')[0].value == "") {
 								$('#info')
 										.html(
-												"Error : Empty data could not be tranformed!!!");
+												"Error : Empty data could not be formatted!!!");
 								return false;
 							}
-							queralyzer.Formatter.transfrom();
+							queralyzer.Formatter.formatToTree();
 						});
-
+		
+		$('#queryplantab')
+		.click(
+				function() {
+					$('#submitButton')[0].disabled = true;
+					$('[name="accessplan"]')[0].placeholder = accessplantext;
+				});
+		
+		$('#accessplantab')
+		.click(
+				function() {
+					$('#submitButton')[0].disabled = false;
+				});
+		
 		$("#help")
 				.load(
 						"https://rawgithub.com/Shiti/queralyzerUI/master/data/help.html");
@@ -76,14 +90,34 @@
                             <button id="submitButton" style="margin-top:5px;" class="pull-right btn btn-success">Run<i
                                     class="icon-play icon-white"></i></button>
                             <button id="reset"  style="margin-top:5px;margin-right: 3px;" class="btn btn-primary pull-right ">Reset</button>
-
                         </legend>
-                        <input type="file" id="browse" name="fileupload" class="btn btn-primary pull-right"/>
-                        <textarea name="fileData" class="fileData"
-                                  placeholder="Paste access plan here or choose access plan file."></textarea>
-                    </fieldset>
+							<div class="tabbable">
+								<ul class="nav nav-tabs">
+									<li class="active"><a href="#accessplan" data-toggle="tab" id="accessplantab">Access
+											Plan</a></li>
+									<li><a href="#queryplan" data-toggle="tab" id="queryplantab">Query Editor</a></li>
+								</ul>
+								<div class="tab-content">
+									<div class="tab-pane active" id="accessplan">
+										<input type="file" id="fileupload" name="fileupload"
+											class="btn btn-primary pull-right" />
+										<textarea name="accessplan" class="accessplan"
+											placeholder="id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra	
+1	PRIMARY	<derived2>	ALL	(null)	(null)	(null)	(null)	10000000000	Using where	
+1	PRIMARY	<derived5>	ref	<auto_key0>	<auto_key0>	5	total_awarded.id	10	(null)	
+5	DERIVED	<derived6>	ALL	(null)	(null)	(null)	(null)	1000000000	Using where"></textarea>
+											<div id="info" style="color: red;"></div>
+									</div>
+									<div class="tab-pane" id="queryplan">
+										<textarea id="userQuery" name="query"
+											style="width: 97%; word-wrap: break-word;"
+											placeholder="You could paste your query here so that it is easier to correlate."></textarea>
+									</div>
+								</div>
+							</div>
+						</fieldset>
                 </form>
-                <div id="info" style="color: red;"></div>
+                
             </div>
         </div>
         <div class="span7" style="margin-left: 0.5%;">

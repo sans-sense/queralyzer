@@ -87,13 +87,13 @@ queralyzer.Formatter = (function() {
 	 */
 	function validateHeaders(headers) {
 		if (headers.length < 10) {
-			$('#info').html("Error : Expected no of column headers are 10 ");
+			$('#info').html("Error : Expected no of column headers are 10. ");
 			return false;
 		}
 		if (!checkHeaders(trimElements(headers))) {
 			$('#info')
 					.html(
-							"Error : Expected order of column headers are \"id\" \"select_type\" \"table\" \"type\" \"possible_keys\" \"key\" \"key_len\" \"ref\" \"rows\" \"Extra\"");
+							"Error : Expected order of column headers are \"id\" \"select_type\" \"table\" \"type\" \"possible_keys\" \"key\" \"key_len\" \"ref\" \"rows\" \"Extra\".");
 			return false;
 		}
 		return true;
@@ -151,17 +151,18 @@ queralyzer.Formatter = (function() {
 	return {
 
 		reset : function() {
-			$('[name="fileData"]')[0].value = "";
+			$('[name="accessplan"]')[0].value = "";
 			$("#treeContainer").empty();
 			$("#rowContainer").empty();
 			$('[name="fileupload"]')[0].value = "";
+			$("#userQuery").val("");
 			$('#info').empty();
 		},
 
 		readfile : function() {
 			var file, files, startIndex, stopIndex, reader, blob;
 
-			files = document.getElementById('browse').files;
+			files = document.getElementById('fileupload').files;
 			if (!files.length) {
 				alert('Please select a file!');
 				return false;
@@ -176,15 +177,15 @@ queralyzer.Formatter = (function() {
 			reader.readAsBinaryString(blob);
 			reader.onloadend = function(evt) {
 				if (evt.target.readyState == FileReader.DONE) {
-					document.getElementsByName('fileData')[0].value = evt.target.result;
+					$('[name="accessplan"]')[0].value = evt.target.result;
 				}
 			};
 		},
 
-		transfrom : function() {
+		formatToTree : function() {
 			var fileContent, records, accessPlanEntries;
 
-			fileContent = document.getElementsByName('fileData')[0].value;
+			fileContent = $('[name="accessplan"]')[0].value;
 			fileContent = fileContent.replace(/^\s+|\s+$/g,'');
 			records = fileContent.split("\n");
 			accessPlanEntries = new Array();
