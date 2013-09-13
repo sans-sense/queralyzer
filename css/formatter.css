@@ -21,6 +21,7 @@ body {
 	width: 97%;
 	min-height: 450px;
 	margin-top: 5%;
+	color: #666666;
 }
 
 #fileupload {
@@ -28,3 +29,4 @@ body {
 	height: 24px;
 	width: 50%;
 }
+

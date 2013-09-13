@@ -8,6 +8,11 @@
     <link href="//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" href="https://rawgithub.com/Shiti/queralyzerUI/master/css/queralyzer.css">
     <link rel="stylesheet" href="css/formatter.css">
+    <link rel="stylesheet" href="https://rawgithub.com/Shiti/queralyzerUI/master/codemirror/codemirror.css">
+    
+    <script src="https://rawgithub.com/Shiti/queralyzerUI/master/codemirror/codemirror.js"></script>
+    <script src="https://raw.github.com/Shiti/queralyzerUI/master/codemirror/sql.js"></script>
+    <script src="https://rawgithub.com/Shiti/queralyzerUI/master/codemirror/placeholder.js"></script>
 
     <script src="https://rawgithub.com/Shiti/queralyzerUI/master/js/lib/d3.min.js" type="text/javascript"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
@@ -22,10 +27,29 @@
 <script type="text/javascript">
 	$(function() {
 
+		var str = "id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra	\n 1	PRIMARY	<derived2>	ALL	(null)	(null)	(null)	(null)	10000000000	Using where	\n 1	PRIMARY	<derived5>	ref	<auto_key0>	<auto_key0>	5	total_awarded.id	10	(null)";
 		$(".queryEditor").height(window.innerHeight * 0.9 + "px");
 		$(".accessplan").height(window.innerHeight * 0.64 + "px");
 		$(".tree").height(window.innerHeight * 0.9 + "px");
 		$(".result").height(window.innerHeight * 0.8 + "px");
+		
+		var editor = CodeMirror.fromTextArea($("#userQuery")[0], {
+            mode: "text/x-mysql",
+            height: "100%",
+            lineNumbers: true,
+            lineWrapping: true,
+            extraKeys: {
+                "Enter": function () {
+                    if (queralyzer.App.isValidQuery(editor.getValue())){
+                        editor.save();
+                        queralyzer.App.submitQuery();
+                    }
+                  else {
+                        alert("Please check the query");
+                    }
+                }
+            }
+        });
 		
 		$('#reset').click(function(e) {
 			e.preventDefault();
@@ -45,7 +69,7 @@
 							$("#treeContainer").empty();
 							$("#rowContainer").empty();
 							$('[name="accessplan"]')
-							if ($('[name="accessplan"]')[0].value == "") {
+							if ($('[name="accessplan"]')[0].value === "" || $('[name="accessplan"]')[0].value === str) {
 								$('#info')
 										.html(
 												"Error : Empty data could not be formatted!!!");
@@ -58,7 +82,6 @@
 		.click(
 				function() {
 					$('#submitButton')[0].disabled = true;
-					$('[name="accessplan"]')[0].placeholder = accessplantext;
 				});
 		
 		$('#accessplantab')
@@ -70,10 +93,29 @@
 		$("#help")
 				.load(
 						"https://rawgithub.com/Shiti/queralyzerUI/master/data/help.html");
+	 
+		$('#accessplantextarea').attr('value', str);
+ 
+		$('#accessplantextarea').focus(function(){
+			if($(this).val() == str)
+				{
+		          $(this).attr('value', '');
+				}
+			 $('[name="accessplan"]')[0].style.color="black";
+		});
+
+		$('#accessplantextarea').blur(function(){
+		    if($(this).val() ==''){
+		    	$('[name="accessplan"]')[0].style.color= "#666666";
+		        $(this).attr('value', str);
+		    } 
+		}); 
+		$('#accessplantextarea').blur();
 	});
+	
 </script>
 </head>
-<body>
+<body >
 <header>
     <div class="headerWrapper">
         <img src="https://rawgithub.com/Shiti/queralyzerUI/master/img/pramati.png" style="height:24px;float:left;">
@@ -84,41 +126,42 @@
     <div class="row-fluid" style="margin:1.6%;width: 98%;">
         <div class="span5">
             <div class="boxed queryEditor" style="height: 830.7px;">
-                <form id="queryForm">
-                    <fieldset>
-                        <legend>Access Plan
-                            <button id="submitButton" style="margin-top:5px;" class="pull-right btn btn-success">Run<i
-                                    class="icon-play icon-white"></i></button>
-                            <button id="reset"  style="margin-top:5px;margin-right: 3px;" class="btn btn-primary pull-right ">Reset</button>
-                        </legend>
-							<div class="tabbable">
-								<ul class="nav nav-tabs">
-									<li class="active"><a href="#accessplan" data-toggle="tab" id="accessplantab">Access
-											Plan</a></li>
-									<li><a href="#queryplan" data-toggle="tab" id="queryplantab">Query Editor</a></li>
-								</ul>
-								<div class="tab-content">
-									<div class="tab-pane active" id="accessplan">
-										<input type="file" id="fileupload" name="fileupload"
-											class="btn btn-primary pull-right" />
-										<textarea name="accessplan" class="accessplan"
-											placeholder="id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra	
-1	PRIMARY	<derived2>	ALL	(null)	(null)	(null)	(null)	10000000000	Using where	
-1	PRIMARY	<derived5>	ref	<auto_key0>	<auto_key0>	5	total_awarded.id	10	(null)	
-5	DERIVED	<derived6>	ALL	(null)	(null)	(null)	(null)	1000000000	Using where"></textarea>
-											<div id="info" style="color: red;"></div>
-									</div>
-									<div class="tab-pane" id="queryplan">
+					<fieldset>
+						<legend>
+							Access Plan
+							<button id="submitButton" style="margin-top: 5px;"
+								class="pull-right btn btn-success">
+								Run<i class="icon-play icon-white"></i>
+							</button>
+							<button id="reset" style="margin-top: 5px; margin-right: 3px;"
+								class="btn btn-primary pull-right ">Reset</button>
+						</legend>
+						<div class="tabbable">
+							<ul class="nav nav-tabs">
+								<li class="active"><a href="#accessplan" data-toggle="tab"
+									id="accessplantab">Access Plan</a></li>
+								<li><a href="#queryplan" data-toggle="tab"
+									id="queryplantab">Query Editor</a></li>
+							</ul>
+							<div class="tab-content" id="tab-content">
+								<div class="tab-pane active" id="accessplan">
+									<input type="file" id="fileupload" name="fileupload"
+										class="btn btn-primary pull-right" />
+									<textarea name="accessplan" class="accessplan"
+										id="accessplantextarea"></textarea>
+									<div id="info" style="color: red;"></div>
+								</div>
+								<div class="tab-pane" id="queryplan">
+									<form id="queryForm">
 										<textarea id="userQuery" name="query"
 											style="width: 97%; word-wrap: break-word;"
 											placeholder="You could paste your query here so that it is easier to correlate."></textarea>
-									</div>
+									</form>
 								</div>
 							</div>
-						</fieldset>
-                </form>
-                
-            </div>
+						</div>
+					</fieldset>
+				</div>
         </div>
         <div class="span7" style="margin-left: 0.5%;">
             <div id="result" class="boxed tree">

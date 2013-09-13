@@ -3,6 +3,7 @@ queralyzer.Formatter = (function() {
 	/*
 	 * It will format the give file content into understandable format.
 	 */
+	var str = "id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra	\n 1	PRIMARY	<derived2>	ALL	(null)	(null)	(null)	(null)	10000000000	Using where	\n 1	PRIMARY	<derived5>	ref	<auto_key0>	<auto_key0>	5	total_awarded.id	10	(null)";
 	function format(fileContent) {
 		var data, str, i, j, headerLines;
 
@@ -151,7 +152,9 @@ queralyzer.Formatter = (function() {
 	return {
 
 		reset : function() {
-			$('[name="accessplan"]')[0].value = "";
+	
+			$('[name="accessplan"]')[0].value = str;
+			$('[name="accessplan"]')[0].style.color="#666666";
 			$("#treeContainer").empty();
 			$("#rowContainer").empty();
 			$('[name="fileupload"]')[0].value = "";
@@ -178,6 +181,7 @@ queralyzer.Formatter = (function() {
 			reader.onloadend = function(evt) {
 				if (evt.target.readyState == FileReader.DONE) {
 					$('[name="accessplan"]')[0].value = evt.target.result;
+					$('[name="accessplan"]')[0].style.color="black";
 				}
 			};
 		},
@@ -186,16 +190,16 @@ queralyzer.Formatter = (function() {
 			var fileContent, records, accessPlanEntries;
 
 			fileContent = $('[name="accessplan"]')[0].value;
-			fileContent = fileContent.replace(/^\s+|\s+$/g,'');
-			records = fileContent.split("\n");
-			accessPlanEntries = new Array();
+				fileContent = fileContent.replace(/^\s+|\s+$/g, '');
+				records = fileContent.split("\n");
+				accessPlanEntries = new Array();
 
-			if (fileStartsWith(records[0], '+--')) {
-				accessPlanEntries = handleDashedContent(fileContent);
-			} else {
-				accessPlanEntries = handleCSVContent(records)
-			}
-			queralyzer.App.renderTree(accessPlanEntries);
+				if (fileStartsWith(records[0], '+--')) {
+					accessPlanEntries = handleDashedContent(fileContent);
+				} else {
+					accessPlanEntries = handleCSVContent(records)
+				}
+				queralyzer.App.renderTree(accessPlanEntries);
 		}
 
 	};
