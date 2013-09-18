@@ -160,9 +160,8 @@ queralyzer.Formatter = (function() {
 			}
 			
             $(".table-condensed")[0].style.color = "#808080";
-			$("#fileupload")[0].value = "";
 			$('#info').empty();
-			$('#fileupload').focus();
+			$('#browse').focus();
 		},
 
 		readfile : function() {
@@ -183,8 +182,8 @@ queralyzer.Formatter = (function() {
 			reader.readAsBinaryString(blob);
 			reader.onloadend = function(evt) {
 				if (evt.target.readyState == FileReader.DONE) {
-					$('[name="accessplan"]')[0].value = evt.target.result;
-					$('[name="accessplan"]')[0].style.color="black";
+					$(".accessplan")[0].value = evt.target.result;
+					$(".accessplan")[0].style.color="black";
 				}
 			};
 		},

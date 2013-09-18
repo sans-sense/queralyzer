@@ -19,18 +19,13 @@ body {
 	line-height: 1.5;
 	font-size: 14px;
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	overflow-x: hidden;
 }
 
 #userQuery {
 	width: 97%;
 	word-wrap: break-word;
 	margin-top: 5%;
-}
-
-#fileupload {
-	line-height: 30px;
-	height: 24px;
-	width: 40%;
 }
 
 #info {
@@ -40,10 +35,6 @@ body {
 
 #tab-content {
 	overflow: hidden;
-}
-
-#CodeMirror-code {width
-	
 }
 
 .CodeMirror {
@@ -67,3 +58,4 @@ table.table.table-condensed {
 #treeContainer {
 	padding: 10px;
 }
+
