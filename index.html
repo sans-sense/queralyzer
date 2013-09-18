@@ -73,6 +73,7 @@
 		$('#reset').click(function(e) {
 			e.preventDefault();
 			queralyzer.Formatter.reset();
+			editor.setValue("");
 		});
 
 		$('#fileupload').on('change', function() {
