@@ -3,7 +3,10 @@ queralyzer.Formatter = (function() {
 	/*
 	 * It will format the give file content into understandable format.
 	 */
-	var str = "id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra	\n 1	PRIMARY	<derived2>	ALL	(null)	(null)	(null)	(null)	10000000000	Using where	\n 1	PRIMARY	<derived5>	ref	<auto_key0>	<auto_key0>	5	total_awarded.id	10	(null)";
+	var str = "id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra    \n1	SIMPLE	ur	system	(null)	(null)	(null)	(null)	1	(null)    \n1	SIMPLE	b	const	PRIMARY	PRIMARY	4	const	1	(null)    \n1	SIMPLE	p	ref	i2	i2	4	const	1	(null)";
+	var accessplanplaceholder = "- Join using bookmark lookup(index lookup)<br>&nbsp;&nbsp;- Join using bookmark lookup(index lookup) [1]<br>&nbsp;&nbsp;&nbsp;- Join [5]<br>&nbsp;&nbsp;&nbsp;&nbsp;Filter on p [6]<br>&nbsp;&nbsp;&nbsp;&nbsp;Filter on e [6]<br>&nbsp;&nbsp;&nbsp;- Join [5]<br>&nbsp;&nbsp;&nbsp;&nbsp;Filter on p [7]<br>&nbsp;&nbsp;&nbsp;&nbsp;Filter on e [7]<br>&nbsp;&nbsp;- Join using bookmark lookup(index lookup) [1]<br>&nbsp;&nbsp;&nbsp;- Join [2]<br>&nbsp;&nbsp;&nbsp;&nbsp;- Join<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Filter on b [3]<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Filter on p [3]<br>&nbsp;&nbsp;&nbsp;&nbsp;Filter on ur [3]<br>&nbsp;&nbsp;&nbsp;&nbsp;- Join [2]<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Join<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Filter on b [4]<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Filter on p [4]<br>&nbsp;&nbsp;&nbsp;&nbsp;Filter on ur [4]<br>";
+	var queryplaceholder = "select count(distinct b.id_1) as value, p.name, p.id_1  from x_booking b, x_property p, x_upgrade_request ur where b.property_id = p.id_1 and b.id_1 = ur.booking_id  group by b.property_id;";
+	
 	function format(fileContent) {
 		var data, str, i, j, headerLines;
 
@@ -153,13 +156,20 @@ queralyzer.Formatter = (function() {
 
 		reset : function() {
 	
-			$('[name="accessplan"]')[0].value = str;
-			$('[name="accessplan"]')[0].style.color="#666666";
-			$("#treeContainer").empty();
-			$("#rowContainer").empty();
-			$('[name="fileupload"]')[0].value = "";
-			$("#userQuery").val("");
+            $(".accessplan")[0].value = str;
+            $(".accessplan")[0].style.color="#808080";
+			queralyzer.Formatter.formatToTree(str);
+			for(var i=0; i<$(".leaves").length ; i++)
+			{
+			$(".leaves")[i].style.color = "#808080";
+			}
+			
+            $(".table-condensed")[0].style.color = "#808080";
+			$("#fileupload")[0].value = "";
+			$("#userQuery").val(accessplanplaceholder);
+			$("#userQuery")[0].placeholder = queryplaceholder;
 			$('#info').empty();
+			$('#fileupload').focus();
 		},
 
 		readfile : function() {
@@ -186,14 +196,11 @@ queralyzer.Formatter = (function() {
 			};
 		},
 
-		formatToTree : function() {
-			var fileContent, records, accessPlanEntries;
-
-			fileContent = $('[name="accessplan"]')[0].value;
+		formatToTree : function(fileContent) {
+			var records, accessPlanEntries;
 				fileContent = fileContent.replace(/^\s+|\s+$/g, '');
 				records = fileContent.split("\n");
 				accessPlanEntries = new Array();
-
 				if (fileStartsWith(records[0], '+--')) {
 					accessPlanEntries = handleDashedContent(fileContent);
 				} else {

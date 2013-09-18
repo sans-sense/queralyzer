@@ -2,31 +2,68 @@ body {
 	background:
 		url("https://raw.github.com/Shiti/queralyzerUI/master/img/default-bg.png")
 		repeat scroll 0 0 transparent;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 14px;
 }
 
 .logo {
 	background:
 		url("https://raw.github.com/Shiti/queralyzerUI/master/img/logo.png")
 		no-repeat scroll 0 0 transparent;
-	float: left;
-	height: 24px;
-	width: 117px;
-	display: block;
-	text-decoration: none !important;
-	border: none;
 }
 
 .accessplan {
 	width: 97%;
-	min-height: 450px;
+	margin-top: 5px;
+	color: #808080;
+	line-height: 1.5;
+	font-size: 14px;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+#userQuery {
+	width: 97%;
+	word-wrap: break-word;
 	margin-top: 5%;
-	color: #666666;
 }
 
 #fileupload {
 	line-height: 30px;
 	height: 24px;
-	width: 50%;
+	width: 40%;
 }
 
+#info {
+	margin-top: 40px;
+	color: red;
+}
+
+#tab-content {
+	overflow: hidden;
+}
+
+#CodeMirror-code {width
+	
+}
+
+.CodeMirror {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 14px;
+	border: 1.5px solid rgb(187, 181, 181);
+	padding: 3px;
+	border-radius: 5px;
+	margin-top: 5px;
+	line-height: 1.5;
+}
+
+a.leaves {
+	color: #808080;
+}
+
+table.table.table-condensed {
+	color: #808080;
+}
+
+#treeContainer {
+	padding: 10px;
+}
