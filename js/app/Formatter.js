@@ -1,7 +1,8 @@
 queralyzer.Formatter = (function() {
 
-	var str = "id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra    \n1	SIMPLE	ur	system	(null)	(null)	(null)	(null)	1	(null)    \n1	SIMPLE	b	const	PRIMARY	PRIMARY	4	const	1	(null)    \n1	SIMPLE	p	ref	i2	i2	4	const	1	(null)";
-	
+	var sampleaccessplan = "id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra    \n1	SIMPLE	ur	system	(null)	(null)	(null)	(null)	1	(null)    \n1	SIMPLE	b	const	PRIMARY	PRIMARY	4	const	1	(null)    \n1	SIMPLE	p	ref	i2	i2	4	const	1	(null)";
+	var withprefex = "Below is the sample Access plan :\n" + sampleaccessplan;
+
 	function format(fileContent) {
 		var data, str, i, j, headerLines;
 
@@ -146,59 +147,67 @@ queralyzer.Formatter = (function() {
 		}
 		return entries;
 	}
+	
+	/*
+	 * API to read file content and registering events.
+	 */
+	function readFile(file, reader) {
+		reader.readAsText(file, "UTF-8");
+		reader.onload = loaded;
+		reader.onerror = errorHandler;
+	}
+
+	function loaded(evt) {
+		var fileString = evt.target.result;
+		$(".accessplan")[0].value = fileString;
+		$(".accessplan")[0].style.color = "black";
+	}
+	function errorHandler(evt) {
+		if (evt.target.error.code == evt.target.error.NOT_READABLE_ERR) {
+			$('#info').html("Error reading file...");
+		}
+	}
 
 	return {
 
 		reset : function() {
-	
-            $(".accessplan")[0].value = str;
-            $(".accessplan")[0].style.color="#808080";
-			queralyzer.Formatter.formatToTree(str);
-			for(var i=0; i<$(".leaves").length ; i++)
-			{
-			$(".leaves")[i].style.color = "#808080";
+
+			$(".accessplan")[0].value = withprefex;
+			$(".accessplan")[0].style.color = "#808080";
+			formatToTree(sampleaccessplan);
+			for ( var i = 0; i < $(".leaves").length; i++) {
+				$(".leaves")[i].style.color = "#808080";
 			}
-			
-            $(".table-condensed")[0].style.color = "#808080";
+
+			$(".table-condensed")[0].style.color = "#808080";
 			$('#info').empty();
 			$('#browse').focus();
 		},
 
-		readfile : function() {
-			var file, files, startIndex, stopIndex, reader, blob;
-
-			files = document.getElementById('fileupload').files;
-			if (!files.length) {
-				alert('Please select a file!');
-				return false;
+		readfile : function(file) {
+			var reader;
+			try {
+				reader = new FileReader();
+			} catch (e) {
+				$('#info')
+						.html(
+								"Error: seems File API is not supported on your browser");
+				return;
 			}
-
-			file = files[0];
-			startIndex = 0;
-			stopIndex = file.size - 1;
-			reader = new FileReader();
-			blob = file.slice(startIndex, stopIndex + 1);
-
-			reader.readAsBinaryString(blob);
-			reader.onloadend = function(evt) {
-				if (evt.target.readyState == FileReader.DONE) {
-					$(".accessplan")[0].value = evt.target.result;
-					$(".accessplan")[0].style.color="black";
-				}
-			};
+			readFile(file, reader);
 		},
 
 		formatToTree : function(fileContent) {
 			var records, accessPlanEntries;
-				fileContent = fileContent.replace(/^\s+|\s+$/g, '');
-				records = fileContent.split("\n");
-				accessPlanEntries = new Array();
-				if (fileStartsWith(records[0], '+--')) {
-					accessPlanEntries = handleDashedContent(fileContent);
-				} else {
-					accessPlanEntries = handleCSVContent(records)
-				}
-				queralyzer.App.renderTree(accessPlanEntries);
+			fileContent = fileContent.replace(/^\s+|\s+$/g, '');
+			records = fileContent.split("\n");
+			accessPlanEntries = new Array();
+			if (fileStartsWith(records[0], '+--')) {
+				accessPlanEntries = handleDashedContent(fileContent);
+			} else {
+				accessPlanEntries = handleCSVContent(records)
+			}
+			queralyzer.App.renderTree(accessPlanEntries);
 		}
 
 	};

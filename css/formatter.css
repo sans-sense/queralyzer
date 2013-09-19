@@ -59,3 +59,9 @@ table.table.table-condensed {
 	padding: 10px;
 }
 
+.row-fluid {
+	margin-left: 1.6%;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    width: 98%;
+}

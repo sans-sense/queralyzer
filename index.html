@@ -27,19 +27,23 @@
 <script type="text/javascript">
 	$(function() {
 
-		var str = "id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra    \n1	SIMPLE	ur	system	(null)	(null)	(null)	(null)	1	(null)    \n1	SIMPLE	b	const	PRIMARY	PRIMARY	4	const	1	(null)    \n1	SIMPLE	p	ref	i2	i2	4	const	1	(null)";
+		var sampleaccessplan = "id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra    \n1	SIMPLE	ur	system	(null)	(null)	(null)	(null)	1	(null)    \n1	SIMPLE	b	const	PRIMARY	PRIMARY	4	const	1	(null)    \n1	SIMPLE	p	ref	i2	i2	4	const	1	(null)";
+		var withprefex = "Below is the sample Access plan :\n" + sampleaccessplan;
 		var placeholderplan = "- Join using bookmark lookup(index lookup)<br>&nbsp;&nbsp;- Join using bookmark lookup(index lookup) [1]<br>&nbsp;&nbsp;&nbsp;- Join [5]<br>&nbsp;&nbsp;&nbsp;&nbsp;Filter on p [6]<br>&nbsp;&nbsp;&nbsp;&nbsp;Filter on e [6]<br>&nbsp;&nbsp;&nbsp;- Join [5]<br>&nbsp;&nbsp;&nbsp;&nbsp;Filter on p [7]<br>&nbsp;&nbsp;&nbsp;&nbsp;Filter on e [7]<br>&nbsp;&nbsp;- Join using bookmark lookup(index lookup) [1]<br>&nbsp;&nbsp;&nbsp;- Join [2]<br>&nbsp;&nbsp;&nbsp;&nbsp;- Join<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Filter on b [3]<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Filter on p [3]<br>&nbsp;&nbsp;&nbsp;&nbsp;Filter on ur [3]<br>&nbsp;&nbsp;&nbsp;&nbsp;- Join [2]<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Join<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Filter on b [4]<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Filter on p [4]<br>&nbsp;&nbsp;&nbsp;&nbsp;Filter on ur [4]<br>";
-		$(".queryEditor").height(window.innerHeight * 0.9 + "px");
-		$(".tree").height(window.innerHeight * 0.9 + "px");
-		$("#accessplanparent").height(($(".queryEditor").height() - 20) + "px");
-		$("#accessplandata").height(($("#accessplanparent").height() -20) + "px");
+		
+		$(".container-fluid").height(window.innerHeight - 41 + "px");
+		$(".row-fluid").height($(".container-fluid").height() - 50 + "px");
+		$(".queryEditor").height($(".row-fluid").height() + "px");
+		$(".tree").height($(".row-fluid").height() + "px");
+		$("#accessplanparent").height($(".queryEditor").height() + "px");
+		$("#accessplandata").height(($("#accessplanparent").height() - 58) + "px");
 		$(".accessplan").height($("#accessplandata").height() - 130 + "px");
 		$(".result").height(window.innerHeight * 0.8 + "px");
 		$("#treeContainer").height(($(".tree").height() - 78) + "px");
 		$("#rowContainer").height(($(".tree").height() - 78) + "px");
 		$("#help").height(($(".tree").height() - 78) + "px");
 		
-		queralyzer.Formatter.formatToTree(str);
+		queralyzer.Formatter.formatToTree(sampleaccessplan);
 		
 		
 		var editor = CodeMirror.fromTextArea($("#userQuery")[0], {
@@ -77,8 +81,16 @@
 		});
 
 		$('#fileupload').on('change', function() {
+			var files,file;
+			
 			$('#info').empty();
-			queralyzer.Formatter.readfile();
+			files = document.getElementById('fileupload').files;
+			if (!files.length) {
+				alert('Please select a file!');
+				return false;
+			}
+			file = files[0];
+			queralyzer.Formatter.readfile(file);
 		});
 
 		$('#submitButton')
@@ -91,7 +103,7 @@
 							$("#rowContainer").empty();
 							$('[name="accessplan"]')
 							if (accessplan === ""
-									|| accessplan === str) {
+									|| accessplan === sampleaccessplan) {
 								$('#info')
 										.html(
 												"Error : Empty access plan could not be formatted!!!");
@@ -110,16 +122,6 @@
 		.load(
 				"https://rawgithub.com/Shiti/queralyzerUI/master/data/help.html");
 		
-		$('.nav-tabs').bind('keypress', function (eInner) {
-	        if (eInner.keyCode == 13) //if its a enter key
-	        {
-	        	var tabindex = $(this).attr('tabindex');
-	            tabindex++; //increment tabindex
-	            //after increment of tabindex ,make the next element focus
-	            $('*').attr('tabindex', tabindex).focus();
-	        }
-	        });
-		
 		$('#browse').click(function() {
 			$('#fileupload').trigger('click');
 		});
@@ -132,26 +134,36 @@
 			$('#submitButton')[0].disabled = false;
 		});
 
-		$('#accessplantextarea').attr('value', str);
+		$('#accessplantextarea').attr('value', withprefex);
 
 		$('#accessplantextarea').focus(function() {
-			if ($(this).val() == str) {
+			if ($(this).val() === withprefex) {
 				$(this).attr('value', '');
 			}
 			$(".accessplan")[0].style.color = "black";
 		});
 
 		$('#accessplantextarea').blur(function() {
-			if ($(this).val() == '') {
+			if ($(this).val() === '') {
 				$(".accessplan")[0].style.color = "#808080";
-				$(this).attr('value', str);
+				$(this).attr('value', withprefex);
 			}
 		});
 		$('#accessplantextarea').blur();
 
 		$('#browse').focus();
 		
+		$(document).on("keydown", function (e) {
+		    if (e.which === 8 ) {
+		        e.preventDefault();
+		        $('#browse').focus();
+		    }
+		});
+		
 	});
+	
+	
+	
 </script>
 </head>
 <body >
@@ -162,7 +174,7 @@
     </div>
 </header>
 <div class="container-fluid">
-    <div class="row-fluid" style="margin:1.6%;width: 98%;">
+    <div class="row-fluid">
         <div class="span5">
             <div class="boxed queryEditor">
 							<span class="add-on" data-toggle="tooltip" title="Run to format given access plan into tree structure">
@@ -188,7 +200,7 @@
 										id="accessplantextarea"></textarea></span>
 									<input name="fileupload" type="file" id="fileupload" style="position:absolute; top:-100px;">
 									<span class="add-on" data-toggle="tooltip" title="Upload your file which have access plan"> 
-									<button id="browse" class="btn btn-primary pull-right"  ><i class="icon-upload icon-white" style="zoom: 1.3; -moz-transform: scale(1.3);"></i> <u>U</u>pload
+									<button id="browse" class="btn btn-primary pull-right"  ><i class="icon-upload icon-white" style="zoom: 1.3; -moz-transform: scale(1.3);"></i> Upload
 									</button>
 									</span>
 									<div id="info"></div>
@@ -196,7 +208,7 @@
 								<div class="tab-pane" id="queryplandata">
 									<form id="queryForm">
 										<span class="add-on" data-toggle="tooltip" title="Paste your query here so that it is easier to correlate with access plan"><textarea id="userQuery" name="query"          
-											placeholder="select count(distinct b.id_1) as value, p.name, p.id_1  from x_booking b, x_property p, x_upgrade_request ur where b.property_id = p.id_1 and b.id_1 = ur.booking_id  group by b.property_id;"></textarea></span>
+											placeholder="Here is the sample query which is used to correlate with access plan : select count(distinct b.id_1) as value, p.name, p.id_1  from x_booking b, x_property p, x_upgrade_request ur where b.property_id = p.id_1 and b.id_1 = ur.booking_id  group by b.property_id;"></textarea></span>
 									</form>
 								</div>
 							</div>
