@@ -13,10 +13,8 @@
     <script src="https://rawgithub.com/Shiti/queralyzerUI/master/codemirror/codemirror.js"></script>
     <script src="https://rawgithub.com/Shiti/queralyzerUI/master/codemirror/sql.js"></script>
     <script src="https://rawgithub.com/Shiti/queralyzerUI/master/codemirror/placeholder.js"></script>
-
     <script src="https://rawgithub.com/Shiti/queralyzerUI/master/js/lib/d3.min.js" type="text/javascript"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
-
     <script src="https://rawgithub.com/Shiti/queralyzerUI/master/js/app/TypeFactory.js" type="text/javascript"></script>
     <script src="https://rawgithub.com/Shiti/queralyzerUI/master/js/app/ExplainTree.js" type="text/javascript"></script>
     <script src="https://rawgithub.com/Shiti/queralyzerUI/master/js/app/App.js" type="text/javascript"></script>
@@ -32,56 +30,30 @@
 		var placeholderplan = "- Join using bookmark lookup(index lookup)<br>&nbsp;&nbsp;- Join using bookmark lookup(index lookup) [1]<br>&nbsp;&nbsp;&nbsp;- Join [5]<br>&nbsp;&nbsp;&nbsp;&nbsp;Filter on p [6]<br>&nbsp;&nbsp;&nbsp;&nbsp;Filter on e [6]<br>&nbsp;&nbsp;&nbsp;- Join [5]<br>&nbsp;&nbsp;&nbsp;&nbsp;Filter on p [7]<br>&nbsp;&nbsp;&nbsp;&nbsp;Filter on e [7]<br>&nbsp;&nbsp;- Join using bookmark lookup(index lookup) [1]<br>&nbsp;&nbsp;&nbsp;- Join [2]<br>&nbsp;&nbsp;&nbsp;&nbsp;- Join<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Filter on b [3]<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Filter on p [3]<br>&nbsp;&nbsp;&nbsp;&nbsp;Filter on ur [3]<br>&nbsp;&nbsp;&nbsp;&nbsp;- Join [2]<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Join<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Filter on b [4]<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Filter on p [4]<br>&nbsp;&nbsp;&nbsp;&nbsp;Filter on ur [4]<br>";
 		
 		$(".container-fluid").height(window.innerHeight - 41 + "px");
-		$(".row-fluid").height($(".container-fluid").height() - 50 + "px");
-		$(".queryEditor").height($(".row-fluid").height() + "px");
-		$(".tree").height($(".row-fluid").height() + "px");
+		$(".queryEditor").height($(".container-fluid").height() - 50 + "px");
+		$(".tree").height($(".container-fluid").height() - 50 + "px");
 		$("#accessplanparent").height($(".queryEditor").height() + "px");
 		$("#accessplandata").height(($("#accessplanparent").height() - 58) + "px");
 		$(".accessplan").height($("#accessplandata").height() - 130 + "px");
+		
 		$(".result").height(window.innerHeight * 0.8 + "px");
 		$("#treeContainer").height(($(".tree").height() - 78) + "px");
 		$("#rowContainer").height(($(".tree").height() - 78) + "px");
 		$("#help").height(($(".tree").height() - 78) + "px");
 		
-		queralyzer.Formatter.formatToTree(sampleaccessplan);
-		
-		
-		var editor = CodeMirror.fromTextArea($("#userQuery")[0], {
-            mode: "text/x-mysql",
-            lineNumbers: false,
-            lineWrapping: true,
-            extraKeys: {
-                "Enter": function () {
-                    if (queralyzer.App.isValidQuery(editor.getValue())){
-                        editor.save();
-                        queralyzer.App.submitQuery();
-                    }
-                  else {
-                        alert("Please check the query");
-                    }
-                }
-            }
-        });
-		
-		editor.setSize("98%", $(".accessplan").height());
-		editor.getWrapperElement().style["fontFamily"] = "\"Helvetica Neue\", Helvetica, Arial, sans-serif";
-		
-	    if ($.browser.mozilla) {
-			editor.getWrapperElement().style["lineHeight"] = "1.5";
-		} else {
-			editor.getWrapperElement().style["line-height"] = "1.5";
-		}
-	
-	    
+		var formatter = queralyzer.Formatter;
+		var editor = formatter.getcodemirroreditor("#userQuery");
+		formatter.initializeeditor(editor);
+		formatter.formatToTree(sampleaccessplan);
 	
 		$('#reset').click(function(e) {
 			e.preventDefault();
-			queralyzer.Formatter.reset();
+			formatter.reset();
 			editor.setValue("");
 		});
 
 		$('#fileupload').on('change', function() {
-			var files,file;
+			var files;
 			
 			$('#info').empty();
 			files = document.getElementById('fileupload').files;
@@ -89,19 +61,19 @@
 				alert('Please select a file!');
 				return false;
 			}
-			file = files[0];
-			queralyzer.Formatter.readfile(file);
+			formatter.readfile(files[0]);
 		});
 
 		$('#submitButton')
 				.click(
 						function(e) {
-							var accessplan = $(".accessplan")[0].value;
+							var accessplan;
+							
+							accessplan = $(".accessplan")[0].value;
 							e.preventDefault();
 							$('#info').empty();
 							$("#treeContainer").empty();
 							$("#rowContainer").empty();
-							$('[name="accessplan"]')
 							if (accessplan === ""
 									|| accessplan === sampleaccessplan) {
 								$('#info')
@@ -109,7 +81,7 @@
 												"Error : Empty access plan could not be formatted!!!");
 								return false;
 							}
-							queralyzer.Formatter.formatToTree(accessplan);
+							formatter.formatToTree(accessplan);
 							for(var i=0; i<$(".leaves").length ; i++)
 								{
 								$(".leaves")[i].style.color = "black";
@@ -236,25 +208,5 @@
         </div>
     </div>
 </div>
-
-<script type="text/javascript">
-
-var _gaq = _gaq || [];
-_gaq.push(['_setAccount', 'UA-43907552-1']);
-_gaq.push(['_setDomainName', 'sans-sense.github.io']);
-_gaq.push(['_setAllowLinker', true]);
-_gaq.push(['_trackPageview']);
-
-(function() {
-var ga = document.createElement('script'); ga.type = 'text/javascript';
-  ga.async = true;
-ga.src = ('https:' == document.location.protocol ? 'https://ssl' :
-  'http://www') + '.google-analytics.com/ga.js';
-var s = document.getElementsByTagName('script')[0];
-  s.parentNode.insertBefore(ga, s);
-})();
-
-</script> 
-
 </body>
 </html>

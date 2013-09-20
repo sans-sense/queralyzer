@@ -31,7 +31,7 @@ queralyzer.Formatter = (function() {
 	function prepareJsonEntry(entry) {
 		var jsonContent;
 		if (entry !== null && entry.length >= 10) {
-			return jsonContent = {
+			var jsonContent = {
 				"id" : entry[0],
 				"select_type" : entry[1],
 				"table" : entry[2],
@@ -43,6 +43,7 @@ queralyzer.Formatter = (function() {
 				"rows" : entry[8],
 				"Extra" : checkNullity(entry[9])
 			};
+			return jsonContent;
 		}
 		return null;
 	}
@@ -147,7 +148,7 @@ queralyzer.Formatter = (function() {
 		}
 		return entries;
 	}
-	
+
 	/*
 	 * API to read file content and registering events.
 	 */
@@ -174,7 +175,7 @@ queralyzer.Formatter = (function() {
 
 			$(".accessplan")[0].value = withprefex;
 			$(".accessplan")[0].style.color = "#808080";
-			formatToTree(sampleaccessplan);
+			queralyzer.Formatter.formatToTree(sampleaccessplan);
 			for ( var i = 0; i < $(".leaves").length; i++) {
 				$(".leaves")[i].style.color = "#808080";
 			}
@@ -191,7 +192,7 @@ queralyzer.Formatter = (function() {
 			} catch (e) {
 				$('#info')
 						.html(
-								"Error: seems File API is not supported on your browser");
+								"Error: It seems File API is not supported on your browser");
 				return;
 			}
 			readFile(file, reader);
@@ -205,9 +206,37 @@ queralyzer.Formatter = (function() {
 			if (fileStartsWith(records[0], '+--')) {
 				accessPlanEntries = handleDashedContent(fileContent);
 			} else {
-				accessPlanEntries = handleCSVContent(records)
+				accessPlanEntries = handleCSVContent(records);
 			}
 			queralyzer.App.renderTree(accessPlanEntries);
+		},
+
+		getcodemirroreditor : function(texteditor) {
+			var editor = CodeMirror.fromTextArea($(texteditor)[0], {
+				mode : "text/x-mysql",
+				lineNumbers : false,
+				lineWrapping : true,
+				extraKeys : {
+					"Enter" : function() {
+						if (queralyzer.App.isValidQuery(editor.getValue())) {
+							editor.save();
+							queralyzer.App.submitQuery();
+						} else {
+							alert("Please check the query");
+						}
+					}
+				}
+			});
+			return editor;
+		},
+		initializeeditor : function(editor) {
+			editor.setSize("98%", $(".accessplan").height());
+			editor.getWrapperElement().style["fontFamily"] = "\"Helvetica Neue\", Helvetica, Arial, sans-serif";
+			if ($.browser.mozilla) {
+				editor.getWrapperElement().style["lineHeight"] = "1.5";
+			} else {
+				editor.getWrapperElement().style["line-height"] = "1.5";
+			}
 		}
 
 	};
