@@ -9,7 +9,7 @@ skip-grant-tables=0
 innodb=OFF
 default-storage-engine=MyISAM
 #plugin-name=qa_blackhole
-plugin-load=qa_blackhole=ha_blackhole
+plugin-load=qa_blackhole=libha_blackhole.so
 plugin-dir=/home/prabinb/queralyzer/plugin/
 log-output=FILE
 general-log=ON

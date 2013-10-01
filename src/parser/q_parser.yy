@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
+#include <string.h>
 #include <map>
 #include "q_table.h"
 #include "../meta_data.h"
@@ -29,6 +30,7 @@ extern void load_symbols();
 extern YY_BUFFER_STATE yy_scan_string(const char *str);
 
 char yyerrtext[4024];
+char errString[21];
 
 using namespace std;
 int yylex();
@@ -199,7 +201,6 @@ void clearParserData();
 %token  ENCLOSED
 %token  END                           /* SQL-2003-R */
 %token  ENDS_SYM
-%token  END_OF_INPUT                  /* INTERNAL */
 %token  ENGINES_SYM
 %token  ENGINE_SYM
 %token  ENUM
@@ -705,7 +706,7 @@ select:
 	  select_init
           {
           }
-          ';'
+          opt_end_of_input
         ;
 opt_explain:
 	  /* empty */
@@ -713,7 +714,7 @@ opt_explain:
 	;
 opt_end_of_input:
           /* empty */
-        | END_OF_INPUT
+        | ';'
         ;
 
 /* Need select_init2 for subselects. */
@@ -2660,8 +2661,8 @@ type_datetime_precision:
 int
 queralyzer_parser(const char *queryBuffer,
     std::vector < std::string > &createTablesVector,
-    std::map < std::string, TableMetaData * >&tableData,
-    std::map < std::string, IndexMetaData * >&indexData)
+    std::multimap < std::string, TableMetaData * >&tableData,
+    std::multimap < std::string, IndexMetaData * >&indexData)
 {
     using namespace std;
 
@@ -2702,7 +2703,7 @@ queralyzer_parser(const char *queryBuffer,
 	    tableDataTemp->storageEngine = "qa_blackhole";
 	    tableDataTemp->schemaName = "Dummy";
 	    tableDataTemp->createOption = "Normal";
-	    tableDataTemp->rowCount = "10000";
+	    tableDataTemp->rowCount = 2; // same value is set inside SE in get_share()
 	    tableDataTemp->columnCount = columnCount;
 	    tableDataTemp->tableColumns = new std::string[columnCount];
 	    // std::cout<<tableDataTemp->tableName<<std::endl;
@@ -2725,20 +2726,24 @@ queralyzer_parser(const char *queryBuffer,
 	    createTablesVector.push_back(tableDataTemp->tableName);
 	    // std::cout<<create_queries<<" q_parser.yy"<<std::endl;
 	    tableCount++;
-	    std::pair < std::map < std::string, TableMetaData * >::iterator,
+	    /*
+             * std::pair < std::multimap < std::string, TableMetaData * >::iterator,
 		bool > table_inserted;
 	    table_inserted =
 		tableData.insert(std::pair < std::string,
 		TableMetaData * >(tableDataTemp->tableName, tableDataTemp));
-	    if (!table_inserted.second)
+                */
+            std::multimap<std::string, TableMetaData *>::iterator it;
+            it=tableData.find(tableDataTemp->tableName);
+	    if (it->second != NULL)
 	    {
-		tableData.erase(table_inserted.first);
-		delete table_inserted.first->second;
+		tableData.erase(it);
+		delete it->second;
+            }
 
-		tableData.insert(std::pair < std::string,
-		    TableMetaData * >(tableDataTemp->tableName,
-			tableDataTemp));
-	    }
+	    tableData.insert(std::pair < std::string,
+	    TableMetaData * >(tableDataTemp->tableName, tableDataTemp));
+	    
 	}
 	qTableAliasMap.erase(qTableAliasMap_it);
     }
@@ -2751,7 +2756,18 @@ void
 yyerror(string s)
 {
     printf("ERROR, line %s\n", yyerrtext);
+    int textlen = strlen(yyerrtext);
+    int errlen = (textlen>=20) ? 20 : textlen;
+    strcpy(errString, yyerrtext+textlen-errlen);
+    errString[20]='\0';
+    std::cout<<errString<<std::endl;
     std::cout<< s <<std::endl;
+}
+
+char *
+getParserErrorText()
+{
+    return errString;
 }
 
 void 

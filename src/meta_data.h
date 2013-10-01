@@ -5,12 +5,13 @@
 #define QUERALYZER_META_DATA_H_
 
 template < class T > static void
-serializeMap(std::map < std::string, T * >&obj_map, std::string & json_output)
+serializeMap(std::multimap < std::string, T * >&obj_map,
+    std::string & json_output)
 {
     Json::ValueType vt = Json::arrayValue;
     Json::Value serializeArrayRoot(vt);
     Json::Value serializeRoot;
-    typename std::map < std::string, T * >::iterator it;
+    typename std::multimap < std::string, T * >::iterator it;
     int obj_count = 0;
 
     for (it = obj_map.begin(); it != obj_map.end(); ++it)
@@ -21,12 +22,14 @@ serializeMap(std::map < std::string, T * >&obj_map, std::string & json_output)
 	    serializeArrayRoot[obj_count++] = serializeRoot;
 	}
     }
-    Json::StyledWriter writer;
+    // Json::StyledWriter writer; //use this to get indented json string
+    Json::FastWriter writer;
     json_output = writer.write(serializeArrayRoot);
 }
 
 template < class T > static void
-deserializeMap(std::map < std::string, T * >&obj_map, std::string & json_input)
+deserializeMap(std::multimap < std::string, T * >&obj_map,
+    std::string & json_input)
 {
     Json::ValueType vt = Json::arrayValue;
     Json::Value deserializeArrayRoot(vt);
@@ -35,7 +38,7 @@ deserializeMap(std::map < std::string, T * >&obj_map, std::string & json_input)
     Json::Reader reader;
     if (!reader.parse(json_input, deserializeArrayRoot))
     {
-	return false;
+	return;
     }
     int obj_count = deserializeArrayRoot.size();
     int i = 0;
@@ -87,7 +90,7 @@ class ExplainMetaData:public JsonSerializable
     ExplainMetaData(void)
     {
     }
-   ~ExplainMetaData(void);
+         ~ExplainMetaData(void);
 
     std::string id;
     std::string select_type;
@@ -113,7 +116,7 @@ class TableMetaData:public JsonSerializable
     TableMetaData(void):columnCount(0)
     {
     }
-   ~TableMetaData(void)
+         ~TableMetaData(void)
     {
 	delete[]tableColumns;
     }
@@ -122,14 +125,16 @@ class TableMetaData:public JsonSerializable
     std::string schemaName;
     std::string storageEngine;
     std::string createOption;
-    std::string rowCount;		// long is not supported in jsoncpp
-					// library being used
+    int rowCount;
+
+    // library being used
     int columnCount;
 
     void serialize(Json::Value & root);
     void deserialize(Json::Value & root);
 
     std::string getName();
+
     TableMetaData & operator=(const TableMetaData & other);
 };
 
@@ -139,21 +144,19 @@ class IndexMetaData:public JsonSerializable
     IndexMetaData(void):columnCount(0), nonUnique(false), isNullable(false)
     {
     }
-   ~IndexMetaData()
+         ~IndexMetaData()
     {
 	delete[]indexColumns;
     }
     std::string indexName;		// for primary key it is always
-					// PRIMARY
+    // "PRIMARY KEY"
     std::string indexType;
     std::string * indexColumns;
     std::string tableName;
     std::string schemaName;
     std::string storageEngine;
     int columnCount;
-
-    std::string cardinality;		// long is not supported in jsoncpp
-					// library being used
+    int cardinality;
     bool nonUnique;
     bool isNullable;
 

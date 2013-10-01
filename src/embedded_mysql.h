@@ -17,9 +17,11 @@ class EmbeddedMYSQL
     static bool isInitialized;
     static MYSQL *mysql;
     MYSQL_RES *results;
-    std::map < std::string, TableMetaData * >table_data_map;
-    std::map < std::string, IndexMetaData * >index_data_map;
-    EmbeddedMYSQL():results(NULL)
+         
+	    std::multimap < std::string, TableMetaData * >table_data_multimap;
+         
+	    std::multimap < std::string, IndexMetaData * >index_data_multimap;
+              EmbeddedMYSQL():results(NULL)
     {
     }
     EmbeddedMYSQL(EmbeddedMYSQL const &)
@@ -34,15 +36,16 @@ class EmbeddedMYSQL
     int deinitializeMYSQL();
     int EmbeddedMYSQL::createTableMYSQL(std::string table_name);
 
-    int executeMYSQL(std::string query_str, std::map < std::string,
-	ExplainMetaData * >&explain_data_map);
+    int executeMYSQL(std::string query_str, std::multimap < std::string,
+	ExplainMetaData * >&explain_data_multimap);
 
     void getTableMetaDataMYSQL(std::string & table_json_output);
-    void setTableMetaDataMYSQL(std::string & table_json_input);
+    int setTableMetaDataMYSQL(std::string & table_json_input);
     void getIndexMetaDataMYSQL(std::string & index_json_output);
-    void setIndexMetaDataMYSQL(std::string & index_json_input);
+    int setIndexMetaDataMYSQL(std::string & index_json_input);
     int parseMYSQL(std::string query_str,
 	std::vector < std::string > &create_queries_vector);
     void resetMYSQL();
-
+    int EmbeddedMYSQL::updateMetaDataMYSQL();
+    int EmbeddedMYSQL::updateStorageEngine(std::string & table_json_input);
 };

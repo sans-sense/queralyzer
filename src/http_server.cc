@@ -5,18 +5,26 @@
 #include <httpd.h>
 #include "query.h"
 #include "meta_data.h"
-
+extern getParserErrorText();
 extern "C"
 {
-    char *custom_error_messages[] = {	
-        // MYSQL errors
+    /*
+     * This is a global object, for storing the query information. The
+     * memory is being allocated inside query_html(). 
+     */
+    Query *query;
+
+    char *custom_error_messages[] = {
+	// MYSQL errors
 	"dummy_no_error",
 	"Error, Mysql not initialized properly",
 	"Error, while creating new tables",
 	"Error, while running the input query",
 	// Query Initialization and parsing
 	"Error, during Query Initialization",
-	"Error, while query parsing the input query"
+	"Error, while query parsing the input query",
+	// IPC errors
+	"Error, while sending data to the storage engine."
     };
 
     int display_error_if_any(int result, httpd * server)
@@ -52,16 +60,23 @@ extern "C"
 	char *query_input = variable->value;
 
 	printf("%s\n", query_input);
-	Query *query = new Query(query_input);
+	if (query != NULL)
+	{
+	    delete query;
+
+	    query = NULL;
+	}
+
+	query = new Query(query_input);
 
 	if (query == NULL)
 	    printf("Problem while creating Query object\n");
 
-	if (!display_error_if_any(query->parseQuery(), server)
-	    && !display_error_if_any(query->initialiseQueryExecution(),
-		server))
+	if (!display_error_if_any(query->parseQuery(), server))
 	{
-	    if (!display_error_if_any(query->executeQuery(), server))
+	    if ((!display_error_if_any(query->initialiseQueryExecution(),
+			server))
+		&& (!display_error_if_any(query->executeQuery(), server)))
 	    {
 		std::string mysql_json_output;
 		query->getQueryOutput(mysql_json_output);
@@ -69,10 +84,15 @@ extern "C"
 		std::cout << mysql_json_output << std::endl;
 	    }
 	}
+	else
+	{
+	    httpdPrintf(server, "%s\n", getParserErrorText());
+	}
 	return;
     }
     void table_data_html(httpd * server)
     {
+
 	EmbeddedMYSQL *embedded_mysql = EmbeddedMYSQL::getInstance();
 
 	if (!strcmp(httpdRequestMethodName(server), "GET"))
@@ -95,17 +115,60 @@ extern "C"
 	    }
 	    std::string updateTableDataString = updateString->value;
 	    std::cout << updateTableDataString << std::endl;
-	    embedded_mysql->setTableMetaDataMYSQL(updateTableDataString);
-	    httpdPrintf(server, "UPDATE DONE");	// dummy
+	    if ((query)
+		&&
+		(!display_error_if_any(embedded_mysql->
+			setTableMetaDataMYSQL(updateTableDataString), server))
+		&& (!display_error_if_any(query->executeQuery(), server)))
+	    {
+		std::string mysql_json_output;
+		query->getQueryOutput(mysql_json_output);
+		httpdPrintf(server, "%s\n", mysql_json_output.c_str());
+		std::cout << mysql_json_output << std::endl;
+	    }
+	    // httpdPrintf(server, "UPDATE DONE"); // dummy
 	}
 	return;
     }
 
     void index_data_html(httpd * server)
     {
-	httpdSetResponse(server, "501 Not Implemented");
-	httpdPrintf(server, "Not Implemented");
-	std::cout << "Not Implemented" << std::endl;
+	EmbeddedMYSQL *embedded_mysql = EmbeddedMYSQL::getInstance();
+
+	if (!strcmp(httpdRequestMethodName(server), "GET"))
+	{
+	    std::string getIndexDataString;
+	    embedded_mysql->getIndexMetaDataMYSQL(getIndexDataString);
+	    httpdPrintf(server, "%s\n", getIndexDataString.c_str());
+	    std::cout << getIndexDataString << std::endl;
+	}
+	else if (!strcmp(httpdRequestMethodName(server), "POST"))
+	{
+	    httpVar *updateString;
+
+	    updateString = httpdGetVariableByName(server, "indexmetadata");
+	    if (updateString == NULL)
+	    {
+		httpdSetResponse(server, "500");
+		httpdPrintf(server, "Missing form data!");
+		return;
+	    }
+	    std::string updateIndexDataString = updateString->value;
+	    std::cout << updateIndexDataString << std::endl;
+
+	    if ((query)
+		&&
+		(!display_error_if_any(embedded_mysql->
+			setIndexMetaDataMYSQL(updateIndexDataString), server))
+		&& (!display_error_if_any(query->executeQuery(), server)))
+	    {
+		std::string mysql_json_output;
+		query->getQueryOutput(mysql_json_output);
+		httpdPrintf(server, "%s\n", mysql_json_output.c_str());
+		std::cout << mysql_json_output << std::endl;
+	    }
+	    // httpdPrintf(server, "UPDATE DONE"); // dummy
+	}
 	return;
     }
 
@@ -133,7 +196,7 @@ extern "C"
 	/*
 	 ** Create a server and setup our logging
 	 */
-	server = httpdCreate(NULL, 1234);
+	server = httpdCreate(NULL, 4321);
 	if (server == NULL)
 	{
 	    perror("Can't create server");
@@ -149,8 +212,8 @@ extern "C"
 	httpdAddFileContent(server, "/", "index.html", HTTP_TRUE, NULL,
 	    "index.html");
 	httpdAddWildcardContent(server, "/css", NULL, "css");
-        httpdAddWildcardContent (server, "/data", NULL, "data");
-        httpdAddWildcardContent(server, "/img", NULL, "img");
+	httpdAddWildcardContent(server, "/data", NULL, "data");
+	httpdAddWildcardContent(server, "/img", NULL, "img");
 	httpdAddWildcardContent(server, "/js", NULL, "js");
 	httpdAddWildcardContent(server, "/codemirror", NULL, "codemirror");
 	httpdAddWildcardContent(server, "/js/lib", NULL, "js/lib");

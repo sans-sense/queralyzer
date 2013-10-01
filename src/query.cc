@@ -1,7 +1,8 @@
 #include <string>
 #include "query.h"
-Query::Query (std::string input):query_str (input)
+Query::Query (std::string input)
 {
+    query_str="EXPLAIN " + input;
 }
 
 Query::~Query ()
@@ -19,6 +20,7 @@ int
 Query::parseQuery ()
 {
 		EmbeddedMYSQL *embedded_mysql = EmbeddedMYSQL::getInstance ();
+                embedded_mysql->resetMYSQL();
 		return (embedded_mysql->parseMYSQL (query_str, create_tables_vector));
 }
 
@@ -47,12 +49,13 @@ Query::initialiseQueryExecution ()
 int
 Query::executeQuery ()
 {
-		EmbeddedMYSQL *embedded_mysql = EmbeddedMYSQL::getInstance ();
-		return (embedded_mysql->executeMYSQL (query_str, explain_data_map));
+    explain_data_multimap.clear();
+    EmbeddedMYSQL *embedded_mysql = EmbeddedMYSQL::getInstance ();
+    return (embedded_mysql->executeMYSQL (query_str, explain_data_multimap));
 }
 
 void
 Query::getQueryOutput (std::string & explain_json_output)
 {
-	serializeMap(explain_data_map, explain_json_output);
+	serializeMap(explain_data_multimap, explain_json_output);
 }

@@ -9,7 +9,7 @@ class Query
 {
 private:
 	std::string query_str;
-	std::map<std::string, ExplainMetaData*> explain_data_map;
+	std::multimap<std::string, ExplainMetaData*> explain_data_multimap;
 	std::vector < std::string > create_tables_vector;
 	std::string output_str;
 	bool data_updated;

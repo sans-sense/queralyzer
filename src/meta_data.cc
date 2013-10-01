@@ -25,7 +25,7 @@ TableMetaData::deserialize(Json::Value & root)
     schemaName = root.get("schemaName", "").asString();
     storageEngine = root.get("storageEngine", "").asString();
     createOption = root.get("createOption", "").asString();
-    rowCount = root.get("rowCount", "0").asString();
+    rowCount = root.get("rowCount", 0).asInt();
     columnCount = root.get("columnCount", 0).asInt();
 
     Json::ValueType vt = Json::arrayValue;
@@ -36,14 +36,12 @@ TableMetaData::deserialize(Json::Value & root)
 
 }
 
-std::string
-TableMetaData::getName()
+std::string TableMetaData::getName()
 {
     return tableName;
 }
 
-TableMetaData& 
-TableMetaData::operator=(const TableMetaData & other)
+TableMetaData & TableMetaData::operator=(const TableMetaData & other)
 {
     tableName = other.tableName;
     schemaName = other.schemaName;
@@ -64,7 +62,7 @@ void
 IndexMetaData::serialize(Json::Value & root)
 {
     root["indexName"] = indexName;	// for primary key it is always
-					// PRIMARY
+    // PRIMARY
     root["indexType"] = indexType;
     root["tableName"] = tableName;
     root["schemaName"] = schemaName;
@@ -89,7 +87,7 @@ IndexMetaData::deserialize(Json::Value & root)
     schemaName = root.get("schemaName", "").asString();
     storageEngine = root.get("storageEngine", "").asString();
     columnCount = root.get("columnCount", 0).asInt();
-    cardinality = root.get("cardinality", "0").asString();
+    cardinality = root.get("cardinality", 0).asInt();
     nonUnique = root.get("nonUnique", 0).asBool();
     isNullable = root.get("isNullable", 0).asBool();
     Json::ValueType vt = Json::arrayValue;
@@ -98,10 +96,9 @@ IndexMetaData::deserialize(Json::Value & root)
     deserializeArray(columnArray, indexColumns, columnCount);
 }
 
-std::string
-IndexMetaData::getName()
+std::string IndexMetaData::getName()
 {
-    return indexName;
+    return tableName;
 }
 
 void

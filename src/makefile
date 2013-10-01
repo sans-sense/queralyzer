@@ -17,17 +17,17 @@ ifndef QA_HOME
 endif
 
 # we use the embedded server so we may need to build it from scratch
-inc      := $(QA_MYSQL_HOME)/include 
+inc      := $(QA_MYSQL_HOME)/include
 lib      := $(QA_MYSQL_HOME)/libmysqld 
 parserlib := $(QA_HOME)/lib
 
 CPP      := g++
-CPPFLAGS := -I$(inc) -I$(HTTPD_HOME)/include -D_THREAD_SAFE -D_REENTRANT -fpermissive 
-CFLAGS   := -g -W -Wall -fno-elide-constructors
+CPPFLAGS := -I$(inc) -I$(QA_MYSQL_HOME)/sql -I$(HTTPD_HOME)/include -D_THREAD_SAFE -D_REENTRANT -fpermissive 
+CFLAGS   := -g -W -Wall -fno-elide-constructors 
 LDFLAGS  := -static-libgcc 
 # You can change -lmysqld to -lmysqlclient to use the
 # client/server library
-LDLIBS   := -L$(lib) -L$(parserlib) -L$(HTTPD_HOME)/lib -lmysqld -lz -lm -ldl -lcrypt -lstdc++ -lrt -lqparser -lhttpd -L$(QA_JSONCPP_HOME)/libs/linux-gcc-4.7/ -ljson_linux-gcc-4.7_libmt
+LDLIBS   := -L$(lib) -L$(parserlib) -L$(HTTPD_HOME)/lib -lmysqld -lz -lm -ldl -lcrypt -lstdc++ -lrt -lqparser -lhttpd $(QA_JSONCPP_HOME)/libs/linux-gcc-4.7/libjson_linux-gcc-4.7_libmt.a
 
 ifneq (,$(shell grep FreeBSD /COPYRIGHT 2>/dev/null))
 # FreeBSD

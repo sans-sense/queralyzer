@@ -9,16 +9,16 @@
 using namespace std;
 extern int queralyzer_parser (const char *queryBuffer,
 		std::vector <std::string> &createTablesVector,
-		std::map<std::string, TableMetaData*> &tableData,
-		std::map<std::string, IndexMetaData*> &indexData);
+		std::multimap<std::string, TableMetaData*> &tableData,
+		std::multimap<std::string, IndexMetaData*> &indexData);
 
 
 /*TODO */
 int
 main ()
 {
-	std::map<std::string, TableMetaData*> tableData;
-	std::map<std::string, IndexMetaData*> indexData;
+	std::multimap<std::string, TableMetaData*> tableData;
+	std::multimap<std::string, IndexMetaData*> indexData;
 	vector < string > table_vector;
 	vector < string >::iterator table_vector_it;
 	int parserResult = 1;
@@ -53,7 +53,10 @@ main ()
 			std::string table_name = *table_vector_it;
 
 			TableMetaData *table_found = NULL;
-			table_found = tableData[table_name];
+                        std::multimap<std::string, TableMetaData*>::iterator it;
+                        it=tableData.find(table_name);
+                        table_found=it->second;
+                        //table_found = tableData[table_name];
 			
 			if(table_found == NULL)
 			{

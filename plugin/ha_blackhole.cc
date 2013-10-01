@@ -19,12 +19,24 @@
 #endif
 
 #define MYSQL_SERVER 1
+
 #include "sql_priv.h"
 #include "unireg.h"
 #include "probes_mysql.h"
 #include "ha_blackhole.h"
 #include "sql_class.h"                          // THD, SYSTEM_THREAD_SLAVE_SQL
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <sys/un.h>
+#include <string>
+#include <pthread.h>
+#include <map>
+#include "../src/meta_data.cc"
 
+#define ADDRESS     "/tmp/queralyzer.sock"	/* addr to connect */
 
 /* Static declarations for handlerton */
 
@@ -50,6 +62,91 @@ static HASH blackhole_open_tables;
 
 static st_blackhole_share *get_share(const char *table_name);
 static void free_share(st_blackhole_share *share);
+void *queralyzer_accept_connection(void *ptr);
+std::multimap<std::string, TableMetaData *> meta_data_multimap;
+
+int queralyzer_msg_server()
+{
+    /* ToDo: for now it is table meta data only not index meta data, 
+     * It would be nice to merge them both and use as single meta data,
+     * the key is always the table name.
+     */
+    pthread_t thread1;
+    pthread_attr_t *attr=NULL;
+    int s, ns, len;
+    struct sockaddr_un saun, fsaun;
+    struct sockaddr *sa, *fsa;
+
+    /*
+     * Get a socket to work with.  This socket
+     * will be in the UNIX domain, and will be a
+     * stream socket.
+     */
+    if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
+    {
+	perror("server: socket");
+	return -1;
+    }
+
+    saun.sun_family = AF_UNIX;
+    strcpy(saun.sun_path, ADDRESS);
+
+    unlink(ADDRESS);
+    len = sizeof(saun.sun_family) + strlen(saun.sun_path);
+    sa = (struct sockaddr*)&saun;
+    if (bind(s, sa, len) < 0)
+    {
+	perror("server: bind");
+	return -1;
+    }
+
+    if (listen(s, 5) < 0)
+    {
+	perror("server: listen");
+	return -1;
+    }
+    pthread_create(&thread1 , attr, queralyzer_accept_connection, (void*) &s);
+}
+void *queralyzer_accept_connection(void *ptr)
+{
+    /*
+     * Accept connections. When we accept one, ns
+     * will be connected to the client. fsaun will
+     * contain the address of the client.
+     */
+    int ns, fromlen;
+    int socket_sd;
+    struct sockaddr_un *fsaun;
+    struct sockaddr *fsa;
+    void *buf;
+    FILE *fp;
+    socket_sd=*((int*)ptr);
+    buf = (char*) malloc(sizeof(char)*4096);
+    for ( ; ; )
+    {
+        fsa = (struct sockaddr*)&fsaun;
+        //length = (struct socklen_t)fromlen;
+        if ((ns = accept(socket_sd, fsa,(socklen_t*) &fromlen)) < 0)
+        {
+        	perror("server: accept");
+        	//return;
+        }
+        fp = fdopen(ns, "r");
+        recv(ns, buf, 4096, MSG_WAITALL);
+        /* terminate it with null character, just a safety measure, 
+         * we don't expect it to cross it, anyways.
+         */
+        ((char*)buf)[4095]='\0';
+        printf("Read from scoket: %s\n", (char*) buf);
+        std::string table_json_input = (char*)buf;
+        meta_data_multimap.clear();
+        deserializeMap(meta_data_multimap, table_json_input);
+    }
+
+    close(socket_sd);
+    //return 0;
+}
+
 
 /*****************************************************************************
 ** BLACKHOLE tables
@@ -145,6 +242,47 @@ int qa_blackhole::delete_row(const uchar *buf)
   DBUG_RETURN(HA_ERR_WRONG_COMMAND);
 }
 
+void qa_blackhole::set_buffer(uchar* buf, const uchar *value)
+{
+  /* Let's set all columns as nullable and some default value for them.
+   */
+  int column_no=0;
+  //if(value[0] == 1)
+  {
+    buf[0]=(uchar)0;
+    for (int bit=1; bit<=share->column_count; bit++)
+    {
+      buf[0] |= (1<<bit); //setting nullable bits for all the columns
+    }
+    buf[0]=~buf[0];
+  }
+    
+  for (column_no=0; column_no<share->column_count; column_no++)
+  {
+    /*int byte=0;
+    while(byte<sizeof(int))
+    {
+        int x = (value >> (8*byte)) & 0xff;
+        buf[4*(column_no)+1+byte]=(uchar)x;
+        byte++;
+    }*/
+    int i=0;
+    while(value[i]!='\0')
+    {
+        buf[4*(column_no)+1+i]=value[i];
+        i++;
+    }
+    while(i<sizeof(int))
+    {
+      buf[4*(column_no)+1+i]='\0';
+      i++;
+    }
+  }
+  buf[4*(column_no)+1]='\0';
+
+  return;
+}
+
 int qa_blackhole::rnd_init(bool scan)
 {
   DBUG_ENTER("qa_blackhole::rnd_init");
@@ -160,11 +298,15 @@ int qa_blackhole::rnd_next(uchar *buf)
                        TRUE);
   THD *thd= ha_thd();
   //if (thd->system_thread == SYSTEM_THREAD_SLAVE_SQL && thd->query() == NULL)
- if (is_slave_applier(thd) && thd->query() == NULL)
+/* if (is_slave_applier(thd) && thd->query() == NULL)
     rc= 0;
   else
     rc= HA_ERR_END_OF_FILE;
+    */
   MYSQL_READ_ROW_DONE(rc);
+  uchar value=1;
+  set_buffer(buf, &value);
+  rc=0;
   table->status= rc ? STATUS_NOT_FOUND : 0;
   DBUG_RETURN(rc);
 }
@@ -193,12 +335,39 @@ int qa_blackhole::info(uint flag)
 {
   DBUG_ENTER("qa_blackhole::info");
   //printf("fn:A qa_blackhole::info\n");
+
   memset(&stats, 0, sizeof(stats));
+  std::multimap<std::string, TableMetaData *>::iterator metaDataMultiMap_it;
+  /* share->table_name contains the complete path of the respective frm file.
+   * Need to trim it, to get table name.
+   */
+  char *last_occu_of_slash = strrchr(share->table_name, '/');
+  if (last_occu_of_slash == NULL)
+  {
+      //ToDo: error out
+      
+  }
+  char table_name[40]; //not expecting table name to be greater than this;
+  strcpy(table_name, last_occu_of_slash+1);
+  
+  metaDataMultiMap_it=meta_data_multimap.find(table_name);
+
+  if(metaDataMultiMap_it != meta_data_multimap.end())
+  {
+      TableMetaData *table_data=metaDataMultiMap_it->second;
+      share->row_count=table_data->rowCount;
+      share->column_count=table_data->columnCount;
+  }
+  else
+  {
+    share->row_count=0; //ToDo: should error out.
+  }
   if (flag & HA_STATUS_VARIABLE)
   {
   //printf("fn:B qa_blackhole::info\n");
-    stats.records=1000;
-    stats.deleted=0;
+    //stats.records=3;
+    //stats.deleted=0;
+    stats.records=share->row_count;
   }
   if (flag & HA_STATUS_AUTO)
     stats.auto_increment_value= 1;
@@ -258,10 +427,14 @@ int qa_blackhole::index_read_map(uchar * buf, const uchar * key,
   MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
   THD *thd= ha_thd();
   //if (thd->system_thread == SYSTEM_THREAD_SLAVE_SQL && thd->query() == NULL)
-  if (is_slave_applier(thd) && thd->query() == NULL)
+ /*if (is_slave_applier(thd) && thd->query() == NULL)
     rc= 0;
-  else
+ // else
     rc= HA_ERR_END_OF_FILE;
+    */
+  //int value=(int)key[0];
+  set_buffer(buf,key);
+  rc=0;
   MYSQL_INDEX_READ_ROW_DONE(rc);
   table->status= rc ? STATUS_NOT_FOUND : 0;
   DBUG_RETURN(rc);
@@ -277,11 +450,14 @@ int qa_blackhole::index_read_idx_map(uchar * buf, uint idx, const uchar * key,
   MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
   THD *thd= ha_thd();
   //if (thd->system_thread == SYSTEM_THREAD_SLAVE_SQL && thd->query() == NULL)
-  if (is_slave_applier(thd) && thd->query() == NULL)
+  /*if (is_slave_applier(thd) && thd->query() == NULL)
     rc= 0;
-  else
-    //rc = 0;
+  //else
     rc= HA_ERR_END_OF_FILE;
+    */
+  //int value=(int)(key[0]);
+  set_buffer(buf,key);
+  rc=0;
   MYSQL_INDEX_READ_ROW_DONE(rc);
   table->status= rc ? STATUS_NOT_FOUND : 0;
   DBUG_RETURN(rc);
@@ -296,10 +472,14 @@ int qa_blackhole::index_read_last_map(uchar * buf, const uchar * key,
   MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
   THD *thd= ha_thd();
   //if (thd->system_thread == SYSTEM_THREAD_SLAVE_SQL && thd->query() == NULL)
-  if (is_slave_applier(thd) && thd->query() == NULL)
+/*  if (is_slave_applier(thd) && thd->query() == NULL)
     rc= 0;
   else
     rc= HA_ERR_END_OF_FILE;
+    */
+  //int value=(int)(key[0]);
+  set_buffer(buf,key);
+  rc=0;
   MYSQL_INDEX_READ_ROW_DONE(rc);
   table->status= rc ? STATUS_NOT_FOUND : 0;
   DBUG_RETURN(rc);
@@ -311,7 +491,11 @@ int qa_blackhole::index_next(uchar * buf)
   int rc;
   DBUG_ENTER("qa_blackhole::index_next");
   MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
-  rc= HA_ERR_END_OF_FILE;
+  //rc= HA_ERR_END_OF_FILE;
+  uchar value=1;
+  set_buffer(buf,&value);
+  rc=0;
+
   MYSQL_INDEX_READ_ROW_DONE(rc);
   table->status= STATUS_NOT_FOUND;
   DBUG_RETURN(rc);
@@ -324,6 +508,9 @@ int qa_blackhole::index_prev(uchar * buf)
   DBUG_ENTER("qa_blackhole::index_prev");
   MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
   rc= HA_ERR_END_OF_FILE;
+  uchar value=1;
+  set_buffer(buf,&value);
+  rc=0;
   MYSQL_INDEX_READ_ROW_DONE(rc);
   table->status= STATUS_NOT_FOUND;
   DBUG_RETURN(rc);
@@ -336,6 +523,9 @@ int qa_blackhole::index_first(uchar * buf)
   DBUG_ENTER("qa_blackhole::index_first");
   MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
   rc= HA_ERR_END_OF_FILE;
+  uchar value=1;
+  set_buffer(buf,&value);
+  rc=0;
   MYSQL_INDEX_READ_ROW_DONE(rc);
   table->status= STATUS_NOT_FOUND;
   DBUG_RETURN(rc);
@@ -348,15 +538,27 @@ int qa_blackhole::index_last(uchar * buf)
   DBUG_ENTER("qa_blackhole::index_last");
   MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
   rc= HA_ERR_END_OF_FILE;
+  uchar value=1;
+  set_buffer(buf,&value);
+  rc=0;
   MYSQL_INDEX_READ_ROW_DONE(rc);
   table->status= STATUS_NOT_FOUND;
   DBUG_RETURN(rc);
 }
 
+/*int qa_blackhole::index_read_idx_map(uchar * buf, uint idx, const uchar * key,
+                         key_part_map keypart_map,
+                         enum ha_rkey_function find_flag)
+{
+    return 0;
+}*/
+
+
 static st_blackhole_share *get_share(const char *table_name)
 {
   st_blackhole_share *share;
   uint length;
+  std::multimap<std::string, TableMetaData *>::iterator metaDataMultiMap_it;
 
   length= (uint) strlen(table_name);
   mysql_mutex_lock(&blackhole_mutex);
@@ -368,9 +570,12 @@ static st_blackhole_share *get_share(const char *table_name)
     if (!(share= (st_blackhole_share*) my_malloc(sizeof(st_blackhole_share) +
                                                  length,
                                                  MYF(MY_WME | MY_ZEROFILL))))
+    {
       goto error;
+    }
 
     share->table_name_length= length;
+    share->table_name= (char*) malloc(sizeof(char)*(length+1));
     strmov(share->table_name, table_name);
     
     if (my_hash_insert(&blackhole_open_tables, (uchar*) share))
@@ -382,8 +587,21 @@ static st_blackhole_share *get_share(const char *table_name)
     
     thr_lock_init(&share->lock);
   }
+  metaDataMultiMap_it=meta_data_multimap.find(table_name);
+
+  if(metaDataMultiMap_it != meta_data_multimap.end())
+  {
+      TableMetaData *table_data=metaDataMultiMap_it->second;
+      share->row_count=table_data->rowCount;
+      share->column_count=table_data->columnCount;
+  }
+  else
+  {
+    share->row_count=0; //ToDo: should error out.
+  }
   share->use_count++;
-  
+  //share->row_count = 2; //default
+  //share->column_count = 0; //default
 error:
   mysql_mutex_unlock(&blackhole_mutex);
   return share;
@@ -443,7 +661,7 @@ static int qa_blackhole_init(void *p)
 
   blackhole_hton= (handlerton *)p;
   blackhole_hton->state= SHOW_OPTION_YES;
-  blackhole_hton->db_type= DB_TYPE_BLACKHOLE_DB;
+  blackhole_hton->db_type= DB_TYPE_UNKNOWN;
   blackhole_hton->create= blackhole_create_handler;
   blackhole_hton->flags= HTON_CAN_RECREATE;
 
@@ -455,6 +673,9 @@ static int qa_blackhole_init(void *p)
                       (my_hash_get_key) blackhole_get_key,
                       (my_hash_free_key) blackhole_free_key, 0);
 
+  /* start the message server used for receiving the data from queralyzer */
+  queralyzer_msg_server();
+
   return 0;
 }
 
@@ -465,6 +686,7 @@ static int qa_blackhole_fini(void *p)
 
   return 0;
 }
+
 
 struct st_mysql_storage_engine qa_blackhole_storage_engine=
 { MYSQL_HANDLERTON_INTERFACE_VERSION };
@@ -486,3 +708,4 @@ mysql_declare_plugin(qa_blackhole)
   0,                          /* flags                           */
 }
 mysql_declare_plugin_end;
+

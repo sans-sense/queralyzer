@@ -22,7 +22,10 @@
 #include "thr_lock.h"                           /* THR_LOCK */
 #include "handler.h"                            /* handler */
 #include "table.h"                              /* TABLE_SHARE */
-
+//#include <string>
+//#include <map>
+//#include "../src/meta_data.h"
+//#include "blackhole_meta_data.h"
 /*
   Shared structure for correct LOCK operation
 */
@@ -30,14 +33,16 @@ struct st_blackhole_share {
   THR_LOCK lock;
   uint use_count;
   uint table_name_length;
-  char table_name[1];
+  char *table_name;
+  uint row_count;
+  uint column_count;
 };
-
 
 /*
   Class definition for the blackhole storage engine
   "Dumbest named feature ever"
 */
+
 class qa_blackhole: public handler
 {
   THR_LOCK_DATA lock;      /* MySQL lock */
@@ -100,6 +105,8 @@ public:
   THR_LOCK_DATA **store_lock(THD *thd,
                              THR_LOCK_DATA **to,
                              enum thr_lock_type lock_type);
+  void set_buffer(uchar* buf, const uchar* value);
+
 private:
   virtual int write_row(uchar *buf);
   virtual int update_row(const uchar *old_data, uchar *new_data);

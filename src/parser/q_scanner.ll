@@ -105,7 +105,8 @@ static SYMBOL symbols[]=
 {"STDDEV", SYM(STD_SYM)},
 {"STDDEV_POP", SYM(STD_SYM)},
 {"NULL", SYM(NULL_SYM)},
-{"IS", SYM(IS)}
+{"IS", SYM(IS)},
+{"LIMIT", SYM(LIMIT)}
 };
 
 void load_symbols()

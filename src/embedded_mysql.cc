@@ -1,14 +1,31 @@
 #include <sstream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <netdb.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <sys/un.h>
 #include "embedded_mysql.h"
+
+#define ADDRESS "/tmp/queralyzer.sock"
+
 extern int queralyzer_parser(const char *queryBuffer,
     std::vector < std::string > &createQueriesVector,
-    std::map < std::string, TableMetaData * >&tableData,
-    std::map < std::string, IndexMetaData * >&indexData);
-bool EmbeddedMYSQL::isInstantiated = false;
+    std::multimap < std::string, TableMetaData * >&tableData,
+    std::multimap < std::string, IndexMetaData * >&indexData);
+
+bool
+    EmbeddedMYSQL::isInstantiated = false;
+
 EmbeddedMYSQL *
     EmbeddedMYSQL::my_embedded_mysql = NULL;
 
-bool EmbeddedMYSQL::isInitialized = false;
+bool
+    EmbeddedMYSQL::isInitialized = false;
+
 MYSQL *
     EmbeddedMYSQL::mysql = NULL;
 
@@ -53,8 +70,7 @@ EmbeddedMYSQL::initializeMYSQL()
 
 	if (!mysql_real_connect(mysql, NULL, NULL, NULL, "test", 0, NULL, 0))
 	{
-	    std::
-		cout << "mysql_real_connect failed: " << mysql_error(mysql) <<
+	    std::cout << "mysql_real_connect failed: " << mysql_error(mysql) <<
 		std::endl;
 	    isInitialized = false;
 	    return 1;
@@ -90,8 +106,7 @@ EmbeddedMYSQL::createTableMYSQL(std::string table_name)
 {
     if (isInitialized == false)
     {
-	std::
-	    cout <<
+	std::cout <<
 	    "MYSQL is not initialised properly, unable to process queries";
 	return 1;
     }
@@ -103,12 +118,14 @@ EmbeddedMYSQL::createTableMYSQL(std::string table_name)
 
     TableMetaData *table_found = NULL;
 
-    table_found = table_data_map[table_name];
+    std::multimap < std::string, TableMetaData * >::iterator it;
+    it = table_data_multimap.find(table_name);
+    table_found = it->second;
 
     if (table_found == NULL)
     {
-	std::cout << "ERROR while searching the table in table map" << std::
-	    endl;
+	std::cout << "ERROR while searching the table in table multimap" <<
+	    std::endl;
 	return 2;
     }
     int column_count = table_found->columnCount;
@@ -137,15 +154,13 @@ EmbeddedMYSQL::createTableMYSQL(std::string table_name)
      */
     if (mysql_query(mysql, drop_query.c_str()))
     {
-	std::
-	    cout << "problems running " << drop_query << " error " <<
+	std::cout << "problems running " << drop_query << " error " <<
 	    mysql_error(mysql);
 	return 2;
     }
     if (mysql_query(mysql, create_query.c_str()))
     {
-	std::
-	    cout << "problems running " << create_query << " error " <<
+	std::cout << "problems running " << create_query << " error " <<
 	    mysql_error(mysql);
 	return 2;
     }
@@ -155,12 +170,11 @@ EmbeddedMYSQL::createTableMYSQL(std::string table_name)
 
 int
 EmbeddedMYSQL::executeMYSQL(std::string query_str,
-    std::map < std::string, ExplainMetaData * >&explain_data_map)
+    std::multimap < std::string, ExplainMetaData * >&explain_data_multimap)
 {
     if (isInitialized == false)
     {
-	std::
-	    cout <<
+	std::cout <<
 	    "MYSQL is not initialised properly, unable to process queries";
     }
     if (query_str.empty())
@@ -168,10 +182,17 @@ EmbeddedMYSQL::executeMYSQL(std::string query_str,
 	std::cout << "Cannot process empty query";
 	return 3;
     }
+    std::string table_json_string;
+    serializeMap(table_data_multimap, table_json_string);
+    int result = updateStorageEngine(table_json_string);
+
+    {
+	if (result == -1)
+	    return 6;
+    }
     if (mysql_query(mysql, query_str.c_str()))
     {
-	std::
-	    cout << "problems running " << query_str << " error " <<
+	std::cout << "problems running " << query_str << " error " <<
 	    mysql_error(mysql);
 	return 3;
     }
@@ -197,10 +218,6 @@ EmbeddedMYSQL::executeMYSQL(std::string query_str,
 	    std::stringstream ss;
 	    ss << i;
 	    std::string key = "ROW" + ss.str();
-	    // char key[3];
-	    // snprintf(key, 3, "%03d", i);
-	    // std::string key = "ROW" + std::to_string(i);
-
 	    explain_data->id = *(row + 0) ? (char *) *(row + 0) : "NULL";
 	    explain_data->select_type =
 		*(row + 1) ? (char *) *(row + 1) : "NULL";
@@ -213,10 +230,9 @@ EmbeddedMYSQL::executeMYSQL(std::string query_str,
 	    explain_data->ref = *(row + 7) ? (char *) *(row + 7) : "NULL";
 	    explain_data->rows = *(row + 8) ? (char *) *(row + 8) : "NULL";
 	    explain_data->Extra = *(row + 9) ? (char *) *(row + 9) : "NULL";
-	    explain_data_map.insert(std::pair < std::string,
+	    explain_data_multimap.insert(std::pair < std::string,
 		ExplainMetaData * >(key, explain_data));
 	    i++;
-	    // std::cout<<"printing the value of i: "<<i<<std::endl;
 	}
     }
     mysql_free_result(results);
@@ -227,10 +243,10 @@ EmbeddedMYSQL::executeMYSQL(std::string query_str,
 void
 EmbeddedMYSQL::getTableMetaDataMYSQL(std::string & table_json_output)
 {
-    serializeMap(table_data_map, table_json_output);
+    serializeMap(table_data_multimap, table_json_output);
 }
 
-void
+int
 EmbeddedMYSQL::setTableMetaDataMYSQL(std::string & table_json_input)
 {
     /*
@@ -239,21 +255,38 @@ EmbeddedMYSQL::setTableMetaDataMYSQL(std::string & table_json_input)
      * to update the existing map other then deleting and recreating
      * the whole map. Same applies to Index Meta Data.
      */
-    table_data_map.clear();
-    deserializeMap(table_data_map, table_json_input);
+    table_data_multimap.clear();
+    deserializeMap(table_data_multimap, table_json_input);
+
+    /*
+     * Passing the serialize data to the Storage engine. Since in future we
+     * intend to do all the work in the Storage engine. It's better to store 
+     * the meta data map in the SE. ToDo: remove all the meta data from
+     * queralyzer (currently needed for create and alter table) and let
+     * storage engine alone maintain it. 
+     */
+
+    int result = updateStorageEngine(table_json_input);
+
+    if (result == -1)
+	return 6;
+
+    return 0;
 }
 
 void
 EmbeddedMYSQL::getIndexMetaDataMYSQL(std::string & index_json_output)
 {
-    serializeMap(index_data_map, index_json_output);
+    serializeMap(index_data_multimap, index_json_output);
 }
 
-void
+int
 EmbeddedMYSQL::setIndexMetaDataMYSQL(std::string & index_json_input)
 {
-    index_data_map.clear();
-    deserializeMap(index_data_map, index_json_input);
+    index_data_multimap.clear();
+    deserializeMap(index_data_multimap, index_json_input);
+
+    this->updateMetaDataMYSQL();
 }
 
 int
@@ -261,13 +294,162 @@ EmbeddedMYSQL::parseMYSQL(std::string query_str,
     std::vector < std::string > &create_queries_vector)
 {
     return (queralyzer_parser(query_str.c_str(), create_queries_vector,
-	    table_data_map, index_data_map));
+	    table_data_multimap, index_data_multimap));
 }
 
 void
 EmbeddedMYSQL::resetMYSQL()
 {
     results = NULL;
-    table_data_map.clear();
-    index_data_map.clear();
+    table_data_multimap.clear();
+    index_data_multimap.clear();
+}
+
+int
+EmbeddedMYSQL::updateMetaDataMYSQL()
+{
+    /*
+     * Drop all the tables and recreate them with the new table meta data
+     * and index meta data information. 
+     */
+    std::multimap < std::string,
+	TableMetaData * >::iterator tableMetaDataMultiMap_it;
+
+    for (tableMetaDataMultiMap_it = table_data_multimap.begin();
+	tableMetaDataMultiMap_it != table_data_multimap.end();
+	++tableMetaDataMultiMap_it)
+    {
+	std::string table_name = tableMetaDataMultiMap_it->first;
+	TableMetaData *table_data = tableMetaDataMultiMap_it->second;
+
+	std::pair < std::multimap < std::string, IndexMetaData * >::iterator,
+	    std::multimap < std::string, IndexMetaData * >::iterator >
+	    index_found;
+
+	index_found = index_data_multimap.equal_range(table_name);
+
+	std::string create_query;
+	std::string drop_query;
+	drop_query = "drop table if exists ";
+	drop_query += table_name;
+	drop_query += ";\n";
+	create_query = "create table if not exists ";
+	create_query += table_data->tableName;
+	create_query += " ( ";
+	int column_count = table_data->columnCount;
+
+	while (column_count != 0)
+	{
+	    create_query += table_data->tableColumns[column_count - 1];
+	    create_query += " int";
+	    if (column_count > 1)
+	    {
+		create_query += ",";
+	    }
+	    column_count -= 1;
+	}
+	std::multimap < std::string, IndexMetaData * >::iterator it;
+	for (it = index_found.first; it != index_found.second; ++it)
+	{
+	    create_query += ",";
+	    if (it->second->indexName != "PRIMARY KEY")
+	    {
+		create_query += "index ";
+	    }
+	    create_query += it->second->indexName;
+	    create_query += "(";
+	    int index_column_count = it->second->columnCount;
+
+	    while (index_column_count != 0)
+	    {
+		create_query +=
+		    it->second->indexColumns[index_column_count - 1];
+		if (index_column_count > 1)
+		{
+		    create_query += ",";
+		}
+		index_column_count -= 1;
+	    }
+	    create_query += ")";
+
+	    create_query += "using " + it->second->indexType;
+	}
+	create_query += " ) engine=qa_blackhole;\n";
+
+	/*
+	 * Avoiding risk, dropping the table if it exists 
+	 */
+	if (mysql_query(mysql, drop_query.c_str()))
+	{
+	    std::cout << "problems running " << drop_query << " error " <<
+		mysql_error(mysql);
+	    return 2;
+	}
+	if (mysql_query(mysql, create_query.c_str()))
+	{
+	    std::cout << "problems running " << create_query << " error " <<
+		mysql_error(mysql);
+	    return 2;
+	}
+    }
+    return 0;
+}
+
+int
+EmbeddedMYSQL::updateStorageEngine(std::string & table_json_input)
+{
+    /*
+     * Using IPC to send the data to the SE. Queralyzer acts as a client
+     * for Storage Engine. 
+     */
+    int s, len;
+    struct sockaddr_un saun;
+    struct sockaddr *sa;
+
+    /*
+     * Get a socket to work with.  This socket will
+     * be in the UNIX domain, and will be a stream socket.
+     */
+    if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1)
+    {
+	perror("client: socket");
+	return -1;
+	// exit(1);
+    }
+
+    /*
+     * Create the address we will be connecting to.
+     */
+    saun.sun_family = AF_UNIX;
+    strcpy(saun.sun_path, ADDRESS);
+    len = sizeof(saun.sun_family) + strlen(saun.sun_path);
+    sa = (struct sockaddr *) &saun;
+    if ((connect(s, sa, len)) == -1)
+    {
+	perror("client: connect");
+	close(s);
+	return -1;
+	// exit(1);
+    }
+    int input_len = table_json_input.length();
+    int sent_len = 0;
+
+    while (sent_len < input_len)
+    {
+	int result =
+	    send(s, (void *) (table_json_input.c_str()), input_len, 0);
+	if (result == -1 && errno == EINTR)
+	{
+	    continue;
+	}
+	if (result == -1)
+	{
+	    perror("client: send");
+	    close(s);
+	    return -1;
+	}
+	sent_len += result;
+    }
+    close(s);
+    return 0;
 }
