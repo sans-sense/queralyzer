@@ -2,6 +2,7 @@ queralyzer.Formatter = (function() {
 
 	var sampleaccessplan = "id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra    \n1	SIMPLE	ur	system	(null)	(null)	(null)	(null)	1	(null)    \n1	SIMPLE	b	const	PRIMARY	PRIMARY	4	const	1	(null)    \n1	SIMPLE	p	ref	i2	i2	4	const	1	(null)";
 	var withprefex = "Below is the sample Access plan :\n" + sampleaccessplan;
+	const MIN_COLUMNS = 10;
 
 	function format(fileContent) {
 		var data, str, i, j, headerLines;
@@ -13,7 +14,7 @@ queralyzer.Formatter = (function() {
 		for (i in data) {
 			str += data[i];
 			var headerCount = str.split("+");
-			if ((headerCount.length - 2) == 10) {
+			if ((headerCount.length - 2) == MIN_COLUMNS) {
 				headerLines = parseInt(i) + 1;
 				break;
 			}
@@ -30,7 +31,7 @@ queralyzer.Formatter = (function() {
 
 	function prepareJsonEntry(entry) {
 		var jsonContent;
-		if (entry !== null && entry.length >= 10) {
+		if (entry !== null&& entry.length>=MIN_COLUMNS) {
 			var jsonContent = {
 				"id" : entry[0],
 				"select_type" : entry[1],
@@ -49,10 +50,10 @@ queralyzer.Formatter = (function() {
 	}
 
 	function checkNullity(value) {
-		if (value === "(null)") {
-			return "NULL";
+		if (value === "(null)"|| value === "NULL" || value === "") {
+			return null;
 		}
-		return value;
+		return value.replace(/"/g,"");
 	}
 
 	function trimElements(entry) {
@@ -87,8 +88,8 @@ queralyzer.Formatter = (function() {
 	 * This API will validate headers of the given access plan.
 	 */
 	function validateHeaders(headers) {
-		if (headers.length < 10) {
-			$('#info').html("Error : Expected no of column headers are 10. ");
+		if (headers.length < MIN_COLUMNS) {
+			$('#info').html("Error : Expected no of column headers are "+MIN_COLUMNS+". ");
 			return false;
 		}
 		if (!checkHeaders(trimElements(headers))) {
@@ -141,9 +142,13 @@ queralyzer.Formatter = (function() {
 		if (validateHeaders(headers)) {
 			for ( var i = 1; i < records.length; i++) {
 				var entry = records[i].split("\t");
-				if (entry.length >= 10) {
-					entries[i - 1] = prepareJsonEntry(entry);
+				if (entry.length >= MIN_COLUMNS) {
+					entries[i - 1] = prepareJsonEntry(entry);	
 				}
+				else if(i===records.length-1&&entry.length===9) {
+						entry[9] = "";
+						entries[i - 1] = prepareJsonEntry(entry);
+					}
 			}
 		}
 		return entries;
@@ -208,6 +213,7 @@ queralyzer.Formatter = (function() {
 			} else {
 				accessPlanEntries = handleCSVContent(records);
 			}
+			// File f = new File()
 			queralyzer.App.renderTree(accessPlanEntries);
 		},
 
