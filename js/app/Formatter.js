@@ -1,7 +1,7 @@
 queralyzer.Formatter = (function() {
 
-	var sampleaccessplan = "id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra    \n1	SIMPLE	ur	system	(null)	(null)	(null)	(null)	1	(null)    \n1	SIMPLE	b	const	PRIMARY	PRIMARY	4	const	1	(null)    \n1	SIMPLE	p	ref	i2	i2	4	const	1	(null)";
-	var withprefex = "Below is the sample Access plan :\n" + sampleaccessplan;
+	var sampleAccessPlan = "id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra    \n1	SIMPLE	ur	system	(null)	(null)	(null)	(null)	1	(null)    \n1	SIMPLE	b	const	PRIMARY	PRIMARY	4	const	1	(null)    \n1	SIMPLE	p	ref	i2	i2	4	const	1	(null)";
+	var withPrefix = "Below is the sample Access plan :\n" + sampleAccessPlan;
 	const MIN_COLUMNS = 10;
 
 	function format(fileContent) {
@@ -178,9 +178,9 @@ queralyzer.Formatter = (function() {
 
 		reset : function() {
 
-			$(".accessplan")[0].value = withprefex;
+			$(".accessplan")[0].value = withPrefix;
 			$(".accessplan")[0].style.color = "#808080";
-			queralyzer.Formatter.formatToTree(sampleaccessplan);
+			queralyzer.Formatter.formatToTree(sampleAccessPlan);
 			for ( var i = 0; i < $(".leaves").length; i++) {
 				$(".leaves")[i].style.color = "#808080";
 			}
@@ -217,8 +217,8 @@ queralyzer.Formatter = (function() {
 			queralyzer.App.renderTree(accessPlanEntries);
 		},
 
-		getcodemirroreditor : function(texteditor) {
-			var editor = CodeMirror.fromTextArea($(texteditor)[0], {
+		getCodeMirrorEditor : function(textEditor) {
+			var editor = CodeMirror.fromTextArea($(textEditor)[0], {
 				mode : "text/x-mysql",
 				lineNumbers : false,
 				lineWrapping : true,
@@ -235,7 +235,7 @@ queralyzer.Formatter = (function() {
 			});
 			return editor;
 		},
-		initializeeditor : function(editor) {
+		initializeEditor : function(editor) {
 			editor.setSize("98%", $(".accessplan").height());
 			editor.getWrapperElement().style["fontFamily"] = "\"Helvetica Neue\", Helvetica, Arial, sans-serif";
 			if ($.browser.mozilla) {
