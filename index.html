@@ -42,8 +42,8 @@
 		$("#help").height(($(".tree").height() - 78) + "px");
 		
 		var formatter = queralyzer.Formatter;
-		var editor = formatter.getcodemirroreditor("#userQuery");
-		formatter.initializeeditor(editor);
+		var editor = formatter.getCodeMirrorEditor("#userQuery");
+		formatter.initializeEditor(editor);
 		formatter.formatToTree(sampleaccessplan);
 	
 		$('#reset').click(function(e) {
