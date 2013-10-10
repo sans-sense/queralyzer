@@ -15,7 +15,8 @@
 extern int queralyzer_parser(const char *queryBuffer,
     std::vector < std::string > &createQueriesVector,
     std::multimap < std::string, TableMetaData * >&tableData,
-    std::multimap < std::string, IndexMetaData * >&indexData);
+    std::multimap < std::string, IndexMetaData * >&indexData,
+    std::multimap < std::string, std::string > &table_name_data);
 
 bool
     EmbeddedMYSQL::isInstantiated = false;
@@ -59,7 +60,7 @@ EmbeddedMYSQL::initializeMYSQL()
 	NULL
     };
     int num_elements = (sizeof(server_options) / sizeof(char *)) - 1;
-    char *server_groups[] = { "server", "client", NULL };
+    char *server_groups[] = {"mysqld", "server", "client", NULL };
 
     mysql_library_init(num_elements, server_options, server_groups);
     mysql = mysql_init(NULL);
@@ -68,7 +69,7 @@ EmbeddedMYSQL::initializeMYSQL()
 	mysql_options(mysql, MYSQL_READ_DEFAULT_GROUP, "libmysqld_client");
 	mysql_options(mysql, MYSQL_OPT_USE_EMBEDDED_CONNECTION, NULL);
 
-	if (!mysql_real_connect(mysql, NULL, NULL, NULL, "test", 0, NULL, 0))
+	if (!mysql_real_connect(mysql, NULL, NULL, NULL, "test_queralyzer", 0, NULL, 0))
 	{
 	    std::cout << "mysql_real_connect failed: " << mysql_error(mysql) <<
 		std::endl;
@@ -148,7 +149,7 @@ EmbeddedMYSQL::createTableMYSQL(std::string table_name)
 	}
 	column_count -= 1;
     }
-    create_query += " ) engine=qa_blackhole;\n";
+    create_query += " ) engine=ANALYSISENGINE;\n";
     /*
      * Avoiding risk, dropping the table if it exists 
      */
@@ -289,12 +290,37 @@ EmbeddedMYSQL::setIndexMetaDataMYSQL(std::string & index_json_input)
     this->updateMetaDataMYSQL();
 }
 
+void 
+EmbeddedMYSQL::getTableAliasDataMYSQL(std::string & alias_json_output)
+{
+    Json::ValueType vt = Json::arrayValue;
+    Json::Value serializeArrayRoot(vt);
+    int obj_count=0;
+    std::multimap<std::string,std::string>::iterator table_alias_multimap_it;
+    for(table_alias_multimap_it = table_alias_multimap.begin();
+        table_alias_multimap_it != table_alias_multimap.end();
+        ++table_alias_multimap_it)
+    {
+        std::cout<<(*table_alias_multimap_it).second<< ":" <<(*table_alias_multimap_it).first <<std::endl;
+        Json::Value serializeObj;
+        /* As per our parser implementation it is not possible to have same table alias 
+         * for more than one table. 
+         * one alias per table name, but that is fine, as in json we
+         * want to map aliases to table names. 
+         */
+         serializeObj[(*table_alias_multimap_it).second]=(*table_alias_multimap_it).first;
+         serializeArrayRoot[obj_count++]=serializeObj;
+    }
+    Json::FastWriter writer;
+    alias_json_output=writer.write(serializeArrayRoot);
+}
+
 int
 EmbeddedMYSQL::parseMYSQL(std::string query_str,
     std::vector < std::string > &create_queries_vector)
 {
     return (queralyzer_parser(query_str.c_str(), create_queries_vector,
-	    table_data_multimap, index_data_multimap));
+	    table_data_multimap, index_data_multimap, table_alias_multimap));
 }
 
 void
@@ -374,7 +400,7 @@ EmbeddedMYSQL::updateMetaDataMYSQL()
 
 	    create_query += "using " + it->second->indexType;
 	}
-	create_query += " ) engine=qa_blackhole;\n";
+	create_query += " ) engine=ANALYSISENGINE;\n";
 
 	/*
 	 * Avoiding risk, dropping the table if it exists 

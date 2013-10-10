@@ -2662,7 +2662,8 @@ int
 queralyzer_parser(const char *queryBuffer,
     std::vector < std::string > &createTablesVector,
     std::multimap < std::string, TableMetaData * >&tableData,
-    std::multimap < std::string, IndexMetaData * >&indexData)
+    std::multimap < std::string, IndexMetaData * >&indexData,
+    std::multimap < std::string, std::string > &table_alias_data)
 {
     using namespace std;
 
@@ -2676,11 +2677,11 @@ queralyzer_parser(const char *queryBuffer,
     // yy_delete_buffer(queryBuffer);
     set < string >::iterator it;
     int tableCount = 0;
-
     /*
      * Removing the duplicate table aliases 
      */
     removeDuplicateTableAliases();
+    table_alias_data=qTableNameMultiMap;
     for (qTableAliasMap_it = qTableAliasMap.begin();
 	qTableAliasMap_it != qTableAliasMap.end(); ++qTableAliasMap_it)
     {
@@ -2700,7 +2701,7 @@ queralyzer_parser(const char *queryBuffer,
 
 	    // std::cout<<qt->tableName<<std::endl;
 	    tableDataTemp->tableName = qt->tableName;
-	    tableDataTemp->storageEngine = "qa_blackhole";
+	    tableDataTemp->storageEngine = "ANALYSISENGINE";
 	    tableDataTemp->schemaName = "Dummy";
 	    tableDataTemp->createOption = "Normal";
 	    tableDataTemp->rowCount = 2; // same value is set inside SE in get_share()
@@ -2722,7 +2723,7 @@ queralyzer_parser(const char *queryBuffer,
 		    columnCount -= 1;
 		}
 	    }
-	    // create_queries += " ) engine=qa_blackhole;\n";
+	    // create_queries += " ) engine=ANALYSISENGINE;\n";
 	    createTablesVector.push_back(tableDataTemp->tableName);
 	    // std::cout<<create_queries<<" q_parser.yy"<<std::endl;
 	    tableCount++;
@@ -2785,6 +2786,26 @@ clearParserData()
 void
 removeDuplicateTableAliases()
 {
+    /* Before proceeding ahead we need to filter out the cases where the table
+     * name multimap contains more than one equal values for a key(table name).
+     */
+    std::string table_alias_prev="";
+    multimap < string, string >::iterator temp_it;
+    qTableNameMultiMap_it = qTableNameMultiMap.begin();
+    while(qTableNameMultiMap_it != qTableNameMultiMap.end())
+    {
+        std::string table_alias_current=(*qTableNameMultiMap_it).second;
+        if (table_alias_current==table_alias_prev)
+        {
+            temp_it=qTableNameMultiMap_it;
+            ++qTableNameMultiMap_it;
+            qTableNameMultiMap.erase(temp_it);
+            continue;
+        }
+        table_alias_prev=table_alias_current;
+        ++qTableNameMultiMap_it;
+    }
+
     for (qTableAliasMap_it = qTableAliasMap.begin();
 	qTableAliasMap_it != qTableAliasMap.end(); ++qTableAliasMap_it)
     {

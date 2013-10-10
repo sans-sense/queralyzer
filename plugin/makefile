@@ -6,14 +6,14 @@ ifndef QA_JSONCPP_HOME
 endif
 
 # we use the embedded server so we may need to build it from scratch
-inc      := $(QA_MYSQL_HOME)/sql $(QA_MYSQL_HOME)/include $(QA_MYSQL_HOME)/regex
+inc      := $(QA_MYSQL_HOME)/sql $(QA_MYSQL_HOME)/include $(QA_MYSQL_HOME)/regex $(QA_MYSQL_HOME)/extra/yassl/include $(QA_MYSQL_HOME)/extra/yassl/taocrypt/include $(QA_MYSQL_HOME)/zlib
 lib      := $(QA_MYSQL_HOME)/libmysqld
 inc_params=$(foreach d, $(inc), -I$d)
 
 CC       := g++
-CPPFLAGS := -g $(inc_params) -D_THREAD_SAFE -DSAFE_MUTEX -D_REENTRANT  -Dblackhole_EXPORTS -DHAVE_CONFIG_H -DMYSQL_DYNAMIC_PLUGIN -fno-rtti  -fPIC
-#CXX_DEFINES = -Dblackhole_EXPORTS -DHAVE_CONFIG_H -DMYSQL_DYNAMIC_PLUGIN
-CFLAGS   := -g -W -Wall -Wextra
+CPPFLAGS := $(inc_params) -fPIC -Wall -Wno-unused-parameter -Wall -Wextra -Wunused -Wwrite-strings -Wno-strict-aliasing -Woverloaded-virtual -g -fabi-version=2 -fno-omit-frame-pointer -fno-strict-aliasing -DENABLED_DEBUG_SYNC -D_THREAD_SAFE -DSAFE_MUTEX -D_REENTRANT  -DHAVE_CONFIG_H -DMYSQL_DYNAMIC_PLUGIN -fno-rtti
+#CXX_DEFINES = -DHAVE_CONFIG_H -DMYSQL_DYNAMIC_PLUGIN
+CFLAGS   := 
 LDFLAGS  := -static-libgcc 
 # You can change -lmysqld to -lmysqlclient to use the
 # client/server library
@@ -28,24 +28,15 @@ LDLIBS += -lpthread
 LDFLAGS += -shared
 endif
 
-targets:= libha_blackhole.so
+targets:= libanalysisengine.so
 
 all: $(targets)
 
-#libha_blackhole.so: ha_blackhole.cc blackhole_meta_data.cc
-#	$(CC) $(CPPFLAGS) -o ha_blackhole.cc blackhole_meta_data.cc $(LDLIBS) $@
-
-#blackhole_meta_data.o: blackhole_meta_data.cc
-#	$(CC) $(CPPFLAGS) -c -o $@ $<
-
-ha_blackhole.o: ha_blackhole.cc
+ha_analysisengine.o: ha_analysisengine.cc
 	$(CC) $(CPPFLAGS) -c -o $@ $<
 
-libha_blackhole.so: ha_blackhole.o
-	$(CC) $(LDFLAGS) ha_blackhole.o $(LDLIBS) -o $@
-
-#libha_blackhole.so: blackhole_meta_data.o ha_blackhole.o
-#	ld -o $@ $(LDFLAGS) $(LDLIBS) blackhole_meta_data.o ha_blackhole.o
+libanalysisengine.so: ha_analysisengine.o
+	$(CC) $(LDFLAGS) ha_analysisengine.o $(LDLIBS) -o $@
 
 
 clean:

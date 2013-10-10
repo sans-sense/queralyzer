@@ -18,10 +18,13 @@ class EmbeddedMYSQL
     static MYSQL *mysql;
     MYSQL_RES *results;
          
-	    std::multimap < std::string, TableMetaData * >table_data_multimap;
-         
-	    std::multimap < std::string, IndexMetaData * >index_data_multimap;
-              EmbeddedMYSQL():results(NULL)
+    std::multimap < std::string, TableMetaData * >table_data_multimap;
+       
+    std::multimap < std::string, IndexMetaData * >index_data_multimap;
+
+    std::multimap < std::string, std::string > table_alias_multimap;
+
+    EmbeddedMYSQL():results(NULL)
     {
     }
     EmbeddedMYSQL(EmbeddedMYSQL const &)
@@ -48,4 +51,6 @@ class EmbeddedMYSQL
     void resetMYSQL();
     int EmbeddedMYSQL::updateMetaDataMYSQL();
     int EmbeddedMYSQL::updateStorageEngine(std::string & table_json_input);
+    MYSQL* EmbeddedMYSQL::getMYSQL() {return mysql;}
+    void getTableAliasDataMYSQL(std::string & alias_json_output);
 };

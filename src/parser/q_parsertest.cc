@@ -10,7 +10,8 @@ using namespace std;
 extern int queralyzer_parser (const char *queryBuffer,
 		std::vector <std::string> &createTablesVector,
 		std::multimap<std::string, TableMetaData*> &tableData,
-		std::multimap<std::string, IndexMetaData*> &indexData);
+		std::multimap<std::string, IndexMetaData*> &indexData,
+                std::multimap < std::string, std::string > &table_alias_data);
 
 
 /*TODO */
@@ -19,6 +20,7 @@ main ()
 {
 	std::multimap<std::string, TableMetaData*> tableData;
 	std::multimap<std::string, IndexMetaData*> indexData;
+        std::multimap<std::string, std::string > aliasData;
 	vector < string > table_vector;
 	vector < string >::iterator table_vector_it;
 	int parserResult = 1;
@@ -36,7 +38,7 @@ main ()
 			"Type your query and hit enter, and check the file 'intermediate_create_queries'"
 			<< endl;
 	fgets (input_buffer, sizeof (input_buffer), command_pipe);
-	parserResult = queralyzer_parser (input_buffer, table_vector, tableData, indexData);
+	parserResult = queralyzer_parser (input_buffer, table_vector, tableData, indexData, aliasData);
 	if (parserResult)
 	{
 		cout << "Problem while parsing, erroring out" << endl;
@@ -78,7 +80,7 @@ main ()
                                 }
                                 column_count -= 1;
 			}
-                        create_query += " ) engine=qa_blackhole;\n";
+                        create_query += " ) engine=replica;\n";
 
 
 		createQueryFile << create_query << endl;

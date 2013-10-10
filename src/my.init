@@ -1,16 +1,26 @@
-[server]
+[mysqld]
 basedir=/usr/local/mysql
-datadir=/usr/local/mysql/data2
-
+datadir=/usr/local/mysql/data
+port=3306
+server_id=1
+socket=/tmp/queralyzer_mysql.sock
+#key_buffer_size=16M
+#max_allowed_packet=8M
 #default-character-set=system_character_set
 #character-set-server=utf8
 #collation-server=utf8_unicode_ci
-skip-grant-tables=0
+skip-grant-tables=ON
+#PERFORMANCE_SCHEMA=OFF
 innodb=OFF
+#INNODB_TRX=OFF
 default-storage-engine=MyISAM
-#plugin-name=qa_blackhole
-plugin-load=qa_blackhole=libha_blackhole.so
+# this needs to be in pair
+#plugin-name=analysisengine
+plugin-load=analysisengine=libanalysisengine.so
 plugin-dir=/home/prabinb/queralyzer/plugin/
+
+[server]
+bind-address=::1
 log-output=FILE
 general-log=ON
 general-log-file=../logs/gen.log
@@ -21,6 +31,10 @@ slow-query-log=ON
 log-error=../logs/server.error-mysql.log
 #debug=d,debug,error,warning:F:L:O,./server.log.trace
 #debug=d,trace,error:t,5:F:L:O,./server.log.trace
-debug=d,debug, info,error,trace, enter, exit, warning:t, 20:F:L:O,../logs/server.mysqld.trace
+debug=d,debug, index, info,error,trace, enter, exit, warning:t, 20:F:L:O,../logs/server.mysqld.trace
+#debug=d,debug, index, info,error,trace, enter, exit, warning:O,../logs/server.mysqld.trace
 #debug=d,debug, info,error,trace, enter, exit, warning, F:L:O,./server.mysqld.trace
 
+[client]
+port=3306
+socket=/tmp/queralyzer_mysql.sock

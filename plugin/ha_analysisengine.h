@@ -1,19 +1,3 @@
-/* Copyright (c) 2005, 2010, Oracle and/or its affiliates. All rights reserved.
-
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; version 2 of the License.
-
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA */
-
-
 //#ifdef USE_PRAGMA_INTERFACE
 //#pragma interface			/* gcc class implementation */
 //#endif
@@ -22,14 +6,10 @@
 #include "thr_lock.h"                           /* THR_LOCK */
 #include "handler.h"                            /* handler */
 #include "table.h"                              /* TABLE_SHARE */
-//#include <string>
-//#include <map>
-//#include "../src/meta_data.h"
-//#include "blackhole_meta_data.h"
 /*
   Shared structure for correct LOCK operation
 */
-struct st_blackhole_share {
+struct st_analysisengine_share {
   THR_LOCK lock;
   uint use_count;
   uint table_name_length;
@@ -39,22 +19,22 @@ struct st_blackhole_share {
 };
 
 /*
-  Class definition for the blackhole storage engine
+  Class definition for the analysisengine storage engine
   "Dumbest named feature ever"
 */
 
-class qa_blackhole: public handler
+class analysisengine: public handler
 {
   THR_LOCK_DATA lock;      /* MySQL lock */
-  st_blackhole_share *share;
+  st_analysisengine_share *share;
 
 public:
-  qa_blackhole(handlerton *hton, TABLE_SHARE *table_arg);
-  ~qa_blackhole()
+  analysisengine(handlerton *hton, TABLE_SHARE *table_arg);
+  ~analysisengine()
   {
   }
   /* The name that will be used for display purposes */
-  const char *table_type() const { return "BLACKHOLE"; }
+  const char *table_type() const { return "ANALYSISENGINE"; }
   /*
     The name of the index type that will be used for display
     don't implement this method unless you really have indexes
@@ -75,12 +55,12 @@ public:
             HA_READ_ORDER | HA_KEYREAD_ONLY);
   }
   /* The following defines can be increased if necessary */
-#define BLACKHOLE_MAX_KEY	64		/* Max allowed keys */
-#define BLACKHOLE_MAX_KEY_SEG	16		/* Max segments for key */
-#define BLACKHOLE_MAX_KEY_LENGTH 1000
-  uint max_supported_keys()          const { return BLACKHOLE_MAX_KEY; }
-  uint max_supported_key_length()    const { return BLACKHOLE_MAX_KEY_LENGTH; }
-  uint max_supported_key_part_length() const { return BLACKHOLE_MAX_KEY_LENGTH; }
+#define ANALYSISENGINE_MAX_KEY	64		/* Max allowed keys */
+#define ANALYSISENGINE_MAX_KEY_SEG	16		/* Max segments for key */
+#define ANALYSISENGINE_MAX_KEY_LENGTH 1000
+  uint max_supported_keys()          const { return ANALYSISENGINE_MAX_KEY; }
+  uint max_supported_key_length()    const { return ANALYSISENGINE_MAX_KEY_LENGTH; }
+  uint max_supported_key_part_length() const { return ANALYSISENGINE_MAX_KEY_LENGTH; }
   int open(const char *name, int mode, uint test_if_locked);
   int close(void);
   int truncate();
