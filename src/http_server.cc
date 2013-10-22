@@ -46,6 +46,84 @@ extern "C"
         return;
     }
 
+    void explain_json_html(httpd *server)
+    {
+        if (query == NULL)
+        {
+            printf("There is no existing query in backhand\n");
+            httpdPrintf(server, "Missing form data!");
+            return;
+        }
+        if (!query->explain_output_in_json.empty())
+        {
+            //httpdPrintf(server, query->explain_output_in_json.c_str());
+            //replace the '<' and '>' in the string, which will be send to
+            //client.
+            char *cpJson = query->explain_output_in_json.c_str();
+            int i=0;
+            char c;
+           /* while ((c=cpJson[i])!='\0'){
+                if (c=='<'){
+                    cpJson[i]='(';
+                }
+                else if(c=='>'){
+                    cpJson[i]=')';
+                }
+                i++;
+            }*/
+            httpdOutput(server, query->explain_output_in_json.c_str());
+            std::cout << query->explain_output_in_json << std::endl;
+            return;
+        }
+
+        if (!display_error_if_any(query->parseQuery(), server))
+        {
+            if ((!display_error_if_any(query->initialiseQueryExecution(),
+                            server))
+                    && (!display_error_if_any(query->executeQuery(), server)))
+            {
+                std::string mysql_json_output;
+                query->getQueryOutput(mysql_json_output);
+                httpdPrintf(server, "%s\n", mysql_json_output.c_str());
+               // httpdOutput(server, mysql_json_output.c_str());
+                std::cout << mysql_json_output << std::endl;
+            }
+        }
+        else
+        {
+            httpdPrintf(server, "%s\n", getParserErrorText());
+        }
+        return;
+    }
+
+    void optimizer_trace_html(httpd *server)
+    {
+        if (query == NULL)
+        {
+            printf("There is no existing query in backhand\n");
+            httpdPrintf(server, "Missing form data!");
+            return;
+        }
+        if (!query->optimizer_trace_in_json.empty())
+        {
+            char *cpJson = query->optimizer_trace_in_json.c_str();
+            int i=0;
+            char c;
+            /*while ((c=cpJson[i])!='\0'){
+                if (c=='<'){
+                    cpJson[i]='(';
+                }
+                else if(c=='>'){
+                    cpJson[i]=')';
+                }
+                i++;
+            }*/
+            httpdPrintf(server, query->optimizer_trace_in_json.c_str());
+            std::cout << query->optimizer_trace_in_json << std::endl;
+            return;
+        }
+    }
+
     void bypass_queralyzer_html(httpd *server)
     {
         httpVar *variable = httpdGetVariableByName(server, "c_query");
@@ -122,7 +200,6 @@ extern "C"
         if (query != NULL)
         {
             delete query;
-
             query = NULL;
         }
 
@@ -281,8 +358,8 @@ extern "C"
         httpdAddCContent(server, "/", "dummy", HTTP_TRUE, NULL, dummy_html);
         httpdAddCContent(server, "/", "bypass_queralyzer", HTTP_TRUE, NULL, bypass_queralyzer_html);
         httpdSetFileBase(server, "../../queralyzerUI/");
-        httpdAddFileContent(server, "/", "index.html", HTTP_TRUE, NULL,
-                "index.html");
+        httpdAddFileContent(server, "/", "index.html", HTTP_TRUE, NULL, "index.html");
+        httpdAddFileContent(server, "/", "Layout.html", HTTP_TRUE, NULL, "Layout.html");
         httpdAddWildcardContent(server, "/css", NULL, "css");
         httpdAddWildcardContent(server, "/data", NULL, "data");
         httpdAddWildcardContent(server, "/img", NULL, "img");
@@ -291,12 +368,12 @@ extern "C"
         httpdAddWildcardContent(server, "/js/lib", NULL, "js/lib");
         httpdAddWildcardContent(server, "/js/app", NULL, "js/app");
         httpdAddWildcardContent(server, "/bootstrap", NULL, "bootstrap");
-        httpdAddWildcardContent(server, "/bootstrap/css", NULL,
-                "bootstrap/css");
-        httpdAddWildcardContent(server, "/bootstrap/img", NULL,
-                "bootstrap/img");
+        httpdAddWildcardContent(server, "/bootstrap/css", NULL, "bootstrap/css");
+        httpdAddWildcardContent(server, "/bootstrap/img", NULL, "bootstrap/img");
         httpdAddWildcardContent(server, "/bootstrap/js", NULL, "bootstrap/js");
         httpdAddCContent(server, "/", "query", HTTP_TRUE, NULL, query_html);
+        httpdAddCContent(server, "/", "explainjson", HTTP_TRUE, NULL, explain_json_html);
+        httpdAddCContent(server, "/", "optimizertrace", HTTP_TRUE, NULL, optimizer_trace_html);
         httpdAddCContent(server, "/", "tablemetadata", HTTP_TRUE, NULL,
                 table_data_html);
         httpdAddCContent(server, "/", "indexmetadata", HTTP_TRUE, NULL,

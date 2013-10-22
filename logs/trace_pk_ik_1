@@ -1,0 +1,131 @@
+open_binary_frm: debug: field flags: 0, storage: 0, column_format: 0
+open_binary_frm: debug: field_type: 3, field_length: 11, interval: 0x0, pack_flag: FIELDFLAG_BINARY FIELDFLAG_NUMBER FIELDFLAG_PACK 
+open_binary_frm: debug: field flags: 0, storage: 0, column_format: 0
+open_binary_frm: debug: field_type: 3, field_length: 11, interval: 0x0, pack_flag: FIELDFLAG_BINARY FIELDFLAG_NUMBER FIELDFLAG_PACK 
+open_binary_frm: debug: field flags: 0, storage: 0, column_format: 0
+trans_commit_stmt: debug: stmt.unsafe_rollback_flags: 
+trans_commit_stmt: debug: all.unsafe_rollback_flags: 
+trans_commit_stmt: debug: add_unsafe_rollback_flags: 0
+ha_commit_low: debug: is_empty: 1
+trans_commit_stmt: debug: reset_unsafe_rollback_flags
+mysql_real_query: debug: mysys_var: 0x1609ef0
+mysql_reset_thd_for_next_command: debug: reset_unsafe_rollback_flags
+reset_current_stmt_binlog_format_row: debug: temporary_tables: no, in_sub_stmt: no, system_thread: NON_SYSTEM_THREAD
+mysql_reset_thd_for_next_command: debug: is_current_stmt_binlog_format_row(): 0
+trans_commit_stmt: debug: stmt.unsafe_rollback_flags: 
+trans_commit_stmt: debug: all.unsafe_rollback_flags: 
+trans_commit_stmt: debug: add_unsafe_rollback_flags: 0
+ha_commit_low: debug: is_empty: 1
+trans_commit_stmt: debug: reset_unsafe_rollback_flags
+trans_commit_implicit: debug: stmt.unsafe_rollback_flags: 
+trans_commit_implicit: debug: all.unsafe_rollback_flags: 
+ha_commit_low: debug: is_empty: 1
+trans_commit_implicit: debug: reset_unsafe_rollback_flags
+trans_commit_stmt: debug: stmt.unsafe_rollback_flags: 
+trans_commit_stmt: debug: all.unsafe_rollback_flags: 
+trans_commit_stmt: debug: add_unsafe_rollback_flags: 0
+ha_commit_low: debug: is_empty: 1
+trans_commit_stmt: debug: reset_unsafe_rollback_flags
+trans_commit_implicit: debug: stmt.unsafe_rollback_flags: 
+trans_commit_implicit: debug: all.unsafe_rollback_flags: 
+ha_commit_low: debug: is_empty: 1
+trans_commit_implicit: debug: reset_unsafe_rollback_flags
+mysql_real_query: debug: mysys_var: 0x1609ef0
+mysql_reset_thd_for_next_command: debug: reset_unsafe_rollback_flags
+reset_current_stmt_binlog_format_row: debug: temporary_tables: no, in_sub_stmt: no, system_thread: NON_SYSTEM_THREAD
+mysql_reset_thd_for_next_command: debug: is_current_stmt_binlog_format_row(): 0
+trans_commit_stmt: debug: stmt.unsafe_rollback_flags: 
+trans_commit_stmt: debug: all.unsafe_rollback_flags: 
+trans_commit_stmt: debug: add_unsafe_rollback_flags: 0
+ha_commit_low: debug: is_empty: 1
+trans_commit_stmt: debug: reset_unsafe_rollback_flags
+trans_commit_implicit: debug: stmt.unsafe_rollback_flags: 
+trans_commit_implicit: debug: all.unsafe_rollback_flags: 
+ha_commit_low: debug: is_empty: 1
+trans_commit_implicit: debug: reset_unsafe_rollback_flags
+my_stat: error: Got errno: 2 from stat
+my_register_filename: error: Got error 2 on open
+make_empty_rec: debug: field_type: 3, field_length: 11, interval: 0x0, pack_flag: FIELDFLAG_BINARY FIELDFLAG_NUMBER FIELDFLAG_PACK 
+make_empty_rec: debug: field_type: 3, field_length: 11, interval: 0x0, pack_flag: FIELDFLAG_BINARY FIELDFLAG_NUMBER FIELDFLAG_PACK 
+open_binary_frm: debug: field_type: 3, field_length: 11, interval: 0x0, pack_flag: FIELDFLAG_BINARY FIELDFLAG_NUMBER FIELDFLAG_PACK 
+open_binary_frm: debug: field flags: 0, storage: 0, column_format: 0
+open_binary_frm: debug: field_type: 3, field_length: 11, interval: 0x0, pack_flag: FIELDFLAG_BINARY FIELDFLAG_NUMBER FIELDFLAG_PACK 
+open_binary_frm: debug: field flags: 0, storage: 0, column_format: 0
+trans_commit_stmt: debug: stmt.unsafe_rollback_flags: 
+trans_commit_stmt: debug: all.unsafe_rollback_flags: 
+trans_commit_stmt: debug: add_unsafe_rollback_flags: 0
+ha_commit_low: debug: is_empty: 1
+trans_commit_stmt: debug: reset_unsafe_rollback_flags
+trans_commit_implicit: debug: stmt.unsafe_rollback_flags: 
+trans_commit_implicit: debug: all.unsafe_rollback_flags: 
+ha_commit_low: debug: is_empty: 1
+trans_commit_implicit: debug: reset_unsafe_rollback_flags
+mysql_real_query: debug: mysys_var: 0x1609ef0
+mysql_reset_thd_for_next_command: debug: reset_unsafe_rollback_flags
+reset_current_stmt_binlog_format_row: debug: temporary_tables: no, in_sub_stmt: no, system_thread: NON_SYSTEM_THREAD
+mysql_reset_thd_for_next_command: debug: is_current_stmt_binlog_format_row(): 0
+trans_commit_stmt: debug: stmt.unsafe_rollback_flags: 
+trans_commit_stmt: debug: all.unsafe_rollback_flags: 
+trans_commit_stmt: debug: add_unsafe_rollback_flags: 0
+ha_commit_low: debug: is_empty: 1
+trans_commit_stmt: debug: reset_unsafe_rollback_flags
+trans_commit_implicit: debug: stmt.unsafe_rollback_flags: 
+trans_commit_implicit: debug: all.unsafe_rollback_flags: 
+ha_commit_low: debug: is_empty: 1
+trans_commit_implicit: debug: reset_unsafe_rollback_flags
+trans_commit_stmt: debug: stmt.unsafe_rollback_flags: 
+trans_commit_stmt: debug: all.unsafe_rollback_flags: 
+trans_commit_stmt: debug: add_unsafe_rollback_flags: 0
+ha_commit_low: debug: is_empty: 1
+trans_commit_stmt: debug: reset_unsafe_rollback_flags
+trans_commit_implicit: debug: stmt.unsafe_rollback_flags: 
+trans_commit_implicit: debug: all.unsafe_rollback_flags: 
+ha_commit_low: debug: is_empty: 1
+trans_commit_implicit: debug: reset_unsafe_rollback_flags
+mysql_real_query: debug: mysys_var: 0x1609ef0
+mysql_reset_thd_for_next_command: debug: reset_unsafe_rollback_flags
+reset_current_stmt_binlog_format_row: debug: temporary_tables: no, in_sub_stmt: no, system_thread: NON_SYSTEM_THREAD
+mysql_reset_thd_for_next_command: debug: is_current_stmt_binlog_format_row(): 0
+trans_commit_stmt: debug: stmt.unsafe_rollback_flags: 
+trans_commit_stmt: debug: all.unsafe_rollback_flags: 
+trans_commit_stmt: debug: add_unsafe_rollback_flags: 0
+ha_commit_low: debug: is_empty: 1
+trans_commit_stmt: debug: reset_unsafe_rollback_flags
+trans_commit_implicit: debug: stmt.unsafe_rollback_flags: 
+trans_commit_implicit: debug: all.unsafe_rollback_flags: 
+ha_commit_low: debug: is_empty: 1
+trans_commit_implicit: debug: reset_unsafe_rollback_flags
+my_stat: error: Got errno: 2 from stat
+my_register_filename: error: Got error 2 on open
+make_empty_rec: debug: field_type: 3, field_length: 11, interval: 0x0, pack_flag: FIELDFLAG_BINARY FIELDFLAG_NUMBER FIELDFLAG_PACK 
+make_empty_rec: debug: field_type: 3, field_length: 11, interval: 0x0, pack_flag: FIELDFLAG_BINARY FIELDFLAG_NUMBER FIELDFLAG_PACK 
+open_binary_frm: debug: field_type: 3, field_length: 11, interval: 0x0, pack_flag: FIELDFLAG_BINARY FIELDFLAG_NUMBER FIELDFLAG_PACK 
+open_binary_frm: debug: field flags: 0, storage: 0, column_format: 0
+open_binary_frm: debug: field_type: 3, field_length: 11, interval: 0x0, pack_flag: FIELDFLAG_BINARY FIELDFLAG_NUMBER FIELDFLAG_PACK 
+open_binary_frm: debug: field flags: 0, storage: 0, column_format: 0
+trans_commit_stmt: debug: stmt.unsafe_rollback_flags: 
+trans_commit_stmt: debug: all.unsafe_rollback_flags: 
+trans_commit_stmt: debug: add_unsafe_rollback_flags: 0
+ha_commit_low: debug: is_empty: 1
+trans_commit_stmt: debug: reset_unsafe_rollback_flags
+trans_commit_implicit: debug: stmt.unsafe_rollback_flags: 
+trans_commit_implicit: debug: all.unsafe_rollback_flags: 
+ha_commit_low: debug: is_empty: 1
+trans_commit_implicit: debug: reset_unsafe_rollback_flags
+mysql_real_query: debug: mysys_var: 0x1609ef0
+mysql_reset_thd_for_next_command: debug: reset_unsafe_rollback_flags
+reset_current_stmt_binlog_format_row: debug: temporary_tables: no, in_sub_stmt: no, system_thread: NON_SYSTEM_THREAD
+mysql_reset_thd_for_next_command: debug: is_current_stmt_binlog_format_row(): 0
+open_binary_frm: debug: field_type: 3, field_length: 11, interval: 0x0, pack_flag: FIELDFLAG_BINARY FIELDFLAG_NUMBER FIELDFLAG_PACK 
+open_binary_frm: debug: field flags: 0, storage: 0, column_format: 0
+open_binary_frm: debug: field_type: 3, field_length: 11, interval: 0x0, pack_flag: FIELDFLAG_BINARY FIELDFLAG_NUMBER FIELDFLAG_PACK 
+open_binary_frm: debug: field flags: 0, storage: 0, column_format: 0
+open_binary_frm: debug: field_type: 3, field_length: 11, interval: 0x0, pack_flag: FIELDFLAG_BINARY FIELDFLAG_NUMBER FIELDFLAG_PACK 
+open_binary_frm: debug: field flags: 0, storage: 0, column_format: 0
+open_binary_frm: debug: field_type: 3, field_length: 11, interval: 0x0, pack_flag: FIELDFLAG_BINARY FIELDFLAG_NUMBER FIELDFLAG_PACK 
+open_binary_frm: debug: field flags: 0, storage: 0, column_format: 0
+trans_commit_stmt: debug: stmt.unsafe_rollback_flags: 
+trans_commit_stmt: debug: all.unsafe_rollback_flags: 
+trans_commit_stmt: debug: add_unsafe_rollback_flags: 0
+ha_commit_low: debug: is_empty: 1
+trans_commit_stmt: debug: reset_unsafe_rollback_flags

@@ -1,0 +1,266 @@
+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra	
+1	PRIMARY	<derived2>	ALL	(null)	(null)	(null)	(null)	10000000000	Using where	
+1	PRIMARY	<derived5>	ref	<auto_key0>	<auto_key0>	5	total_awarded.id	10	(null)	
+5	DERIVED	<derived6>	ALL	(null)	(null)	(null)	(null)	1000000000	Using where	
+5	DERIVED	<derived8>	ref	<auto_key0>	<auto_key0>	5	current_table.id	10	(null)	
+8	DERIVED	<derived9>	ALL	(null)	(null)	(null)	(null)	1000000000	Using temporary; Using filesort	
+9	DERIVED	p	ALL	(null)	(null)	(null)	(null)	1000	Using where; Using temporary	
+9	DERIVED	b	ALL	(null)	(null)	(null)	(null)	1000	Using where; Using join buffer (Block Nested Loop)
+9	DERIVED	ur	ALL	(null)	(null)	(null)	(null)	1000	Using where; Distinct; Using join buffer (Block Nested Loop)	
+6	DERIVED	<derived7>	ALL	(null)	(null)	(null)	(null)	1000000000	Using temporary; Using filesort	
+7	DERIVED	p	ALL	(null)	(null)	(null)	(null)	1000	Using where; Using temporary	
+7	DERIVED	b	ALL	(null)	(null)	(null)	(null)	1000	Using where; Using join buffer (Block Nested Loop)
+7	DERIVED	ur	ALL	(null)	(null)	(null)	(null)	1000	Using where; Distinct; Using join buffer (Block Nested Loop)	
+2	DERIVED	<derived3>	ALL	(null)	(null)	(null)	(null)	1000000000	Using where; Using filesort	
+2	DERIVED	<derived4>	ref	<auto_key0>	<auto_key0>	5	current_table.id	10	(null)	
+4	DERIVED	b	ALL	(null)	(null)	(null)	(null)	1000	Using where; Using temporary; Using filesort	
+4	DERIVED	ur	ALL	(null)	(null)	(null)	(null)	1000	Using where; Using join buffer (Block Nested Loop)
+4	DERIVED	p	ALL	(null)	(null)	(null)	(null)	1000	Using where; Using join buffer (Block Nested Loop)
+3	DERIVED	b	ALL	(null)	(null)	(null)	(null)	1000	Using where; Using temporary; Using filesort	
+3	DERIVED	ur	ALL	(null)	(null)	(null)	(null)	1000	Using where; Using join buffer (Block Nested Loop)
+3	DERIVED	p	ALL	(null)	(null)	(null)	(null)	1000	Using where; Using join buffer (Block Nested Loop)
+
+
+[
+   {
+      "Extra" : "Using where",
+      "id" : "1",
+      "key" : "NULL",
+      "key_len" : "NULL",
+      "possible_keys" : "NULL",
+      "ref" : "NULL",
+      "rows" : 23908996,
+      "select_type" : "PRIMARY",
+      "table" : "<derived2>",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "NULL",
+      "id" : "1",
+      "key" : "<auto_key0>",
+      "key_len" : "5",
+      "possible_keys" : "<auto_key0>",
+      "ref" : "total_awarded.id",
+      "rows" : 23909252,
+      "select_type" : "PRIMARY",
+      "table" : "<derived5>",
+      "type" : "ref"
+   },
+   {
+      "Extra" : "Using where",
+      "id" : "5",
+      "key" : "NULL",
+      "key_len" : "NULL",
+      "possible_keys" : "NULL",
+      "ref" : "NULL",
+      "rows" : 23909420,
+      "select_type" : "DERIVED",
+      "table" : "<derived6>",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "NULL",
+      "id" : "5",
+      "key" : "<auto_key0>",
+      "key_len" : "5",
+      "possible_keys" : "<auto_key0>",
+      "ref" : "current_table.id",
+      "rows" : 23909676,
+      "select_type" : "DERIVED",
+      "table" : "<derived8>",
+      "type" : "ref"
+   },
+   {
+      "Extra" : "Using temporary; Using filesort",
+      "id" : "8",
+      "key" : "NULL",
+      "key_len" : "NULL",
+      "possible_keys" : "NULL",
+      "ref" : "NULL",
+      "rows" : 23909844,
+      "select_type" : "DERIVED",
+      "table" : "<derived9>",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using where; Using temporary",
+      "id" : "9",
+      "key" : "NULL",
+      "key_len" : "NULL",
+      "possible_keys" : "NULL",
+      "ref" : "NULL",
+      "rows" : 23910052,
+      "select_type" : "DERIVED",
+      "table" : "p",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using where; Using join buffer (Block Nested Loop)",
+      "id" : "9",
+      "key" : "NULL",
+      "key_len" : "NULL",
+      "possible_keys" : "NULL",
+      "ref" : "NULL",
+      "rows" : 23910260,
+      "select_type" : "DERIVED",
+      "table" : "b",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using where; Distinct; Using join buffer (Block Nested Loop)",
+      "id" : "9",
+      "key" : "NULL",
+      "key_len" : "NULL",
+      "possible_keys" : "NULL",
+      "ref" : "NULL",
+      "rows" : 23910484,
+      "select_type" : "DERIVED",
+      "table" : "ur",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using temporary; Using filesort",
+      "id" : "6",
+      "key" : "NULL",
+      "key_len" : "NULL",
+      "possible_keys" : "NULL",
+      "ref" : "NULL",
+      "rows" : 23910732,
+      "select_type" : "DERIVED",
+      "table" : "<derived7>",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using where; Using temporary",
+      "id" : "7",
+      "key" : "NULL",
+      "key_len" : "NULL",
+      "possible_keys" : "NULL",
+      "ref" : "NULL",
+      "rows" : 23910940,
+      "select_type" : "DERIVED",
+      "table" : "p",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using where; Using join buffer (Block Nested Loop)",
+      "id" : "7",
+      "key" : "NULL",
+      "key_len" : "NULL",
+      "possible_keys" : "NULL",
+      "ref" : "NULL",
+      "rows" : 23911148,
+      "select_type" : "DERIVED",
+      "table" : "b",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using where; Distinct; Using join buffer (Block Nested Loop)",
+      "id" : "7",
+      "key" : "NULL",
+      "key_len" : "NULL",
+      "possible_keys" : "NULL",
+      "ref" : "NULL",
+      "rows" : 23911372,
+      "select_type" : "DERIVED",
+      "table" : "ur",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using where; Using filesort",
+      "id" : "2",
+      "key" : "NULL",
+      "key_len" : "NULL",
+      "possible_keys" : "NULL",
+      "ref" : "NULL",
+      "rows" : 23911620,
+      "select_type" : "DERIVED",
+      "table" : "<derived3>",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "NULL",
+      "id" : "2",
+      "key" : "<auto_key0>",
+      "key_len" : "5",
+      "possible_keys" : "<auto_key0>",
+      "ref" : "current_table.id",
+      "rows" : 23911892,
+      "select_type" : "DERIVED",
+      "table" : "<derived4>",
+      "type" : "ref"
+   },
+   {
+      "Extra" : "Using where; Using temporary; Using filesort",
+      "id" : "4",
+      "key" : "NULL",
+      "key_len" : "NULL",
+      "possible_keys" : "NULL",
+      "ref" : "NULL",
+      "rows" : 23912052,
+      "select_type" : "DERIVED",
+      "table" : "b",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using where; Using join buffer (Block Nested Loop)",
+      "id" : "4",
+      "key" : "NULL",
+      "key_len" : "NULL",
+      "possible_keys" : "NULL",
+      "ref" : "NULL",
+      "rows" : 23912276,
+      "select_type" : "DERIVED",
+      "table" : "ur",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using where; Using join buffer (Block Nested Loop)",
+      "id" : "4",
+      "key" : "NULL",
+      "key_len" : "NULL",
+      "possible_keys" : "NULL",
+      "ref" : "NULL",
+      "rows" : 23912500,
+      "select_type" : "DERIVED",
+      "table" : "p",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using where; Using temporary; Using filesort",
+      "id" : "3",
+      "key" : "NULL",
+      "key_len" : "NULL",
+      "possible_keys" : "NULL",
+      "ref" : "NULL",
+      "rows" : 23912724,
+      "select_type" : "DERIVED",
+      "table" : "b",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using where; Using join buffer (Block Nested Loop)",
+      "id" : "3",
+      "key" : "NULL",
+      "key_len" : "NULL",
+      "possible_keys" : "NULL",
+      "ref" : "NULL",
+      "rows" : 23912948,
+      "select_type" : "DERIVED",
+      "table" : "ur",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using where; Using join buffer (Block Nested Loop)",
+      "id" : "3",
+      "key" : "NULL",
+      "key_len" : "NULL",
+      "possible_keys" : "NULL",
+      "ref" : "NULL",
+      "rows" : 23913172,
+      "select_type" : "DERIVED",
+      "table" : "p",
+      "type" : "ALL"
+   }
+]
+

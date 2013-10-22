@@ -1,0 +1,63 @@
+[Thu Oct 10 09:01:10 2013] [error] [client 127.0.0.1] File does not exist: /table_alias_map
+[Thu Oct 10 09:01:30 2013] [error] [client 127.0.0.1] File does not exist: /table_alias.html
+terminate called after throwing an instance of 'std::logic_error'
+  what():  basic_string::_S_construct null not valid
+[Tue Oct 15 10:57:33 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Tue Oct 15 10:57:33 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Wed Oct 16 15:06:10 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Wed Oct 16 15:06:10 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Thu Oct 17 10:55:12 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Thu Oct 17 10:55:12 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Fri Oct 18 12:04:56 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Fri Oct 18 12:04:56 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Sat Oct 19 13:48:27 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Sat Oct 19 13:48:27 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Tue Oct 22 14:40:58 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Wed Oct 23 05:26:07 2013] [error] [client 127.0.0.1] File does not exist: /index2.html
+[Wed Oct 23 05:27:34 2013] [error] [client 127.0.0.1] File does not exist: /interactive_tree.css
+[Wed Oct 23 08:56:58 2013] [error] [client 127.0.0.1] File does not exist: /interactive_tree.css
+[Tue Oct 29 11:08:36 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Tue Oct 29 11:08:36 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Tue Nov 12 14:36:41 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Tue Nov 12 14:36:41 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Tue Nov 19 14:01:33 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Tue Nov 19 14:01:33 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Tue Nov 26 16:07:46 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Tue Nov 26 16:07:46 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Wed Nov 27 11:23:27 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Wed Nov 27 11:23:27 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Fri Nov 29 16:55:42 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Fri Nov 29 16:55:42 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Fri Nov 29 16:56:17 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Fri Nov 29 17:00:19 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Fri Nov 29 17:00:19 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Sat Nov 30 10:53:09 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Sat Nov 30 10:53:09 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Sat Nov 30 13:13:23 2013] [error] [client 127.0.0.1] File does not exist: /Layout.html
+[Sat Nov 30 13:13:31 2013] [error] [client 127.0.0.1] File does not exist: /layout.html
+[Sat Nov 30 13:15:04 2013] [error] [client 127.0.0.1] File does not exist: /layout.html
+[Sat Nov 30 13:15:06 2013] [error] [client 127.0.0.1] File does not exist: /layout.html
+[Sat Nov 30 13:15:08 2013] [error] [client 127.0.0.1] File does not exist: /lLyout.html
+[Sat Nov 30 13:15:12 2013] [error] [client 127.0.0.1] File does not exist: /Layout.html
+[Sat Nov 30 13:15:49 2013] [error] [client 127.0.0.1] File does not exist: /new.css
+[Sat Nov 30 13:15:51 2013] [error] [client 127.0.0.1] File does not exist: /new.css
+Can't create server: Address already in use
+client: connect: Connection refused
+Can't create server: Address already in use
+client: connect: Connection refused
+Can't create server: Address already in use
+Can't create server: Address already in use
+Can't create server: Address already in use
+Can't create server: Address already in use
+Can't create server: Address already in use
+client: connect: Connection refused
+[Thu Dec 05 08:02:56 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Thu Dec 05 08:02:56 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Fri Dec 06 12:58:07 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Fri Dec 06 12:58:07 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Mon Dec 09 10:54:49 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Mon Dec 09 10:54:49 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Tue Dec 10 01:47:00 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Tue Dec 10 01:47:00 2013] [error] [client 127.0.0.1] File does not exist: /favicon.ico
+[Tue Dec 10 12:01:51 2013] [error] [client 127.0.0.1] File does not exist: /optimizejson
+[Tue Dec 10 14:20:54 2013] [error] [client 127.0.0.1] File does not exist: /columndata

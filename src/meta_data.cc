@@ -69,8 +69,9 @@ IndexMetaData::serialize(Json::Value & root)
     root["storageEngine"] = storageEngine;
     root["columnCount"] = columnCount;
     root["cardinality"] = cardinality;
-    root["nonUnique"] = nonUnique;
-    root["isNullable"] = isNullable;
+    root["Unique"] = Unique;
+    root["Spatial"] = Spatial;
+    root["FullText"] = FullText;
     Json::ValueType vt = Json::arrayValue;
     Json::Value columnArray(vt);
 
@@ -88,8 +89,9 @@ IndexMetaData::deserialize(Json::Value & root)
     storageEngine = root.get("storageEngine", "").asString();
     columnCount = root.get("columnCount", 0).asInt();
     cardinality = root.get("cardinality", 0).asInt();
-    nonUnique = root.get("nonUnique", 0).asBool();
-    isNullable = root.get("isNullable", 0).asBool();
+    Unique = root.get("Unique", 0).asBool();
+    Spatial = root.get("Spatial", 0).asBool();
+    FullText = root.get("FullText", 0).asBool();
     Json::ValueType vt = Json::arrayValue;
     Json::Value columnArray(vt);
     columnArray = root["indexColumns"];

@@ -22,6 +22,8 @@ public:
 	int initialiseQueryExecution ();
 	int executeQuery ();
 	void getQueryOutput (std::string &);
+        std::string explain_output_in_json;
+        std::string optimizer_trace_in_json;
 };
 
 #endif  //QUERALYZER_QUERY_H_

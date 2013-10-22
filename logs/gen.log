@@ -1,0 +1,10 @@
+mysql_embedded, Version: 5.6.10-embedded-debug-log (Source distribution). embedded library
+Time                 Id Command    Argument
+131008 15:38:43	    1 Query	create table IF NOT EXISTS test_aps (id int primary key, name varchar(100))
+131008 15:38:57	    1 Query	drop table if exists category
+mysql_embedded, Version: 5.6.10-embedded-debug-log (Source distribution). embedded library
+Time                 Id Command    Argument
+mysql_embedded, Version: 5.6.10-embedded-debug-log (Source distribution). embedded library
+Time                 Id Command    Argument
+131008 17:17:12	    1 Query	create table IF NOT EXISTS test_aps (id int primary key, name varchar(100))
+131008 17:17:30	    1 Query	drop table if exists category

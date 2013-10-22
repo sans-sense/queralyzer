@@ -1,2 +1,10 @@
-create table if not exists hg ( abc int ) engine=qa_blackhole;
+create table if not exists actor ( id_1 int ) engine=myisam;
+
+create table if not exists x_booking ( property_id int,id_1 int,arrival int ) engine=myisam;
+
+create table if not exists exposure ( property_id int,gad int ) engine=myisam;
+
+create table if not exists x_property ( name int,id_1 int ) engine=myisam;
+
+create table if not exists x_upgrade_request ( booking_id int ) engine=myisam;
 

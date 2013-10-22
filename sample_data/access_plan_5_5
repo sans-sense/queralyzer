@@ -1,0 +1,295 @@
+explain select der_1.id_1 from ( select actor_1.id_1 from actor as actor_1  union  select actor_2.id_1 from actor as actor_2 ) as der_1  union  select der_2.id_1 from (select booking_count.id_1, booking_count.property_name, (booking_count.current / guests_exposed.current) as current, (booking_count.historic / guests_exposed.historic) as historic  from (select current_table.id_1, current_table.name as property_name, current_table.value as current, historic_table.value as historic  from (select count(distinct b.id_1) as value, p.name, p.id_1  from x_booking b, x_property p, x_upgrade_request ur where b.property_id in  (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888) and b.property_id = p.id_1 and b.id_1 = ur.booking_id and b.arrival between '2012-07-01' and '2012-07-31' and b.arrival < curdate()  group by b.property_id) current_table, (select count(distinct b.id_1) as value, p.name, p.id_1  from x_booking b, x_property p, x_upgrade_request ur where b.property_id in  (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888) and b.property_id = p.id_1 and b.id_1 = ur.booking_id and b.arrival between '2012-06-01' and '2012-06-30' and b.arrival < curdate()  group by b.property_id) historic_table where current_table.id_1 = historic_table.id_1) booking_count, (select current_table.id_1, current_table.name as property_name, current_table.guests_exposed as current, historic_table.guests_exposed as historic  from (select count(e.gad) as guests_exposed, p.id_1, p.name  from x_property p, exposure e where p.id_1 in  (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888) and e.gad between '2012-07-01' and '2012-07-31' and e.gad < curdate() and e.property_id = p.id_1  group by e.property_id) current_table, (select count(e.gad) as guests_exposed, p.id_1, p.name  from x_property p,exposure e where p.id_1 in  (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888) and e.property_id = p.id_1  and e.gad between '2012-06-01' and '2012-06-30' and e.gad < curdate()  group by e.property_id) historic_table where current_table.id_1 = historic_table.id_1) guests_exposed where booking_count.id_1 = guests_exposed.id_1 ) as der_2;
+
+
+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra	
+1	PRIMARY	<derived2>	ALL	(null)	(null)	(null)	(null)	2000	(null)	
+2	DERIVED	actor_1	ALL	(null)	(null)	(null)	(null)	1000	(null)	
+3	UNION	actor_2	ALL	(null)	(null)	(null)	(null)	1000	(null)	
+(null)	UNION RESULT	<union2,3>	ALL	(null)	(null)	(null)	(null)	(null)	Using temporary	
+4	UNION	<derived5>	ALL	(null)	(null)	(null)	(null)	10000000000	(null)	
+5	DERIVED	<derived9>	ALL	(null)	(null)	(null)	(null)	10000000	Using where	
+5	DERIVED	<derived6>	ref	<auto_key0>	<auto_key0>	5	guests_exposed.id_1	1000	(null)	
+9	DERIVED	<derived10>	ALL	(null)	(null)	(null)	(null)	1000000	Using where	
+9	DERIVED	<derived11>	ref	<auto_key0>	<auto_key0>	5	current_table.id_1	10	(null)	
+11	DERIVED	p	ALL	(null)	(null)	(null)	(null)	1000	Using where; Using temporary; Using filesort	
+11	DERIVED	e	ALL	(null)	(null)	(null)	(null)	1000	Using where; Using join buffer (Block Nested Loop)
+10	DERIVED	p	ALL	(null)	(null)	(null)	(null)	1000	Using where; Using temporary; Using filesort	
+10	DERIVED	e	ALL	(null)	(null)	(null)	(null)	1000	Using where; Using join buffer (Block Nested Loop)
+6	DERIVED	<derived7>	ALL	(null)	(null)	(null)	(null)	1000000000	Using where	
+6	DERIVED	<derived8>	ref	<auto_key0>	<auto_key0>	5	current_table.id_1	10	(null)	
+8	DERIVED	b	ALL	(null)	(null)	(null)	(null)	1000	Using where; Using temporary; Using filesort	
+8	DERIVED	p	ALL	(null)	(null)	(null)	(null)	1000	Using where; Using join buffer (Block Nested Loop)
+8	DERIVED	ur	ALL	(null)	(null)	(null)	(null)	1000	Using where; Using join buffer (Block Nested Loop)
+7	DERIVED	b	ALL	(null)	(null)	(null)	(null)	1000	Using where; Using temporary; Using filesort	
+7	DERIVED	p	ALL	(null)	(null)	(null)	(null)	1000	Using where; Using join buffer (Block Nested Loop)
+7	DERIVED	ur	ALL	(null)	(null)	(null)	(null)	1000	Using where; Using join buffer (Block Nested Loop)
+(null)	UNION RESULT	<union1,4>	ALL	(null)	(null)	(null)	(null)	(null)	Using temporary
+
+
+[
+   {
+      "Extra" : null,
+      "id" : "1",
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : 23897764,
+      "select_type" : "PRIMARY",
+      "table" : "<derived2>",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : null,
+      "id" : "2",
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : 23897940,
+      "select_type" : "DERIVED",
+      "table" : "actor_1",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : null,
+      "id" : "3",
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : 23898116,
+      "select_type" : "UNION",
+      "table" : "actor_2",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using temporary",
+      "id" : null,
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : 13024863,
+      "select_type" : "UNION RESULT",
+      "table" : "<union2,3>",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : null,
+      "id" : "4",
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : 23898476,
+      "select_type" : "UNION",
+      "table" : "<derived5>",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using where",
+      "id" : "5",
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : 23898652,
+      "select_type" : "DERIVED",
+      "table" : "<derived9>",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : null,
+      "id" : "5",
+      "key" : "<auto_key0>",
+      "key_len" : "5",
+      "possible_keys" : "<auto_key0>",
+      "ref" : "guests_exposed.id_1",
+      "rows" : 23898908,
+      "select_type" : "DERIVED",
+      "table" : "<derived6>",
+      "type" : "ref"
+   },
+   {
+      "Extra" : "Using where",
+      "id" : "9",
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : 23899084,
+      "select_type" : "DERIVED",
+      "table" : "<derived10>",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : null,
+      "id" : "9",
+      "key" : "<auto_key0>",
+      "key_len" : "5",
+      "possible_keys" : "<auto_key0>",
+      "ref" : "current_table.id_1",
+      "rows" : 23899340,
+      "select_type" : "DERIVED",
+      "table" : "<derived11>",
+      "type" : "ref"
+   },
+   {
+      "Extra" : "Using where; Using temporary; Using filesort",
+      "id" : "11",
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : 23899500,
+      "select_type" : "DERIVED",
+      "table" : "p",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using where; Using join buffer (Block Nested Loop)",
+      "id" : "11",
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : 23899724,
+      "select_type" : "DERIVED",
+      "table" : "e",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using where; Using temporary; Using filesort",
+      "id" : "10",
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : 23899948,
+      "select_type" : "DERIVED",
+      "table" : "p",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using where; Using join buffer (Block Nested Loop)",
+      "id" : "10",
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : 23900172,
+      "select_type" : "DERIVED",
+      "table" : "e",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using where",
+      "id" : "6",
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : 23900404,
+      "select_type" : "DERIVED",
+      "table" : "<derived7>",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : null,
+      "id" : "6",
+      "key" : "<auto_key0>",
+      "key_len" : "5",
+      "possible_keys" : "<auto_key0>",
+      "ref" : "current_table.id_1",
+      "rows" : 23900660,
+      "select_type" : "DERIVED",
+      "table" : "<derived8>",
+      "type" : "ref"
+   },
+   {
+      "Extra" : "Using where; Using temporary; Using filesort",
+      "id" : "8",
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : 23900820,
+      "select_type" : "DERIVED",
+      "table" : "b",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using where; Using join buffer (Block Nested Loop)",
+      "id" : "8",
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : 23901044,
+      "select_type" : "DERIVED",
+      "table" : "p",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using where; Using join buffer (Block Nested Loop)",
+      "id" : "8",
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : 23901268,
+      "select_type" : "DERIVED",
+      "table" : "ur",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using where; Using temporary; Using filesort",
+      "id" : "7",
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : 23901492,
+      "select_type" : "DERIVED",
+      "table" : "b",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using where; Using join buffer (Block Nested Loop)",
+      "id" : "7",
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : 23901716,
+      "select_type" : "DERIVED",
+      "table" : "p",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using where; Using join buffer (Block Nested Loop)",
+      "id" : "7",
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : 23901940,
+      "select_type" : "DERIVED",
+      "table" : "ur",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using temporary",
+      "id" : null,
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : 13024863,
+      "select_type" : "UNION RESULT",
+      "table" : "<union1,4>",
+      "type" : "ALL"
+   }
+]
+

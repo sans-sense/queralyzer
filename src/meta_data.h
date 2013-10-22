@@ -141,7 +141,7 @@ class TableMetaData:public JsonSerializable
 class IndexMetaData:public JsonSerializable
 {
   public:
-    IndexMetaData(void):columnCount(0), nonUnique(false), isNullable(false)
+    IndexMetaData(void):columnCount(0), Unique(false)
     {
     }
          ~IndexMetaData()
@@ -157,8 +157,9 @@ class IndexMetaData:public JsonSerializable
     std::string storageEngine;
     int columnCount;
     int cardinality;
-    bool nonUnique;
-    bool isNullable;
+    bool Unique;
+    bool Spatial;
+    bool FullText;
 
     void serialize(Json::Value & root);
     void deserialize(Json::Value & root);

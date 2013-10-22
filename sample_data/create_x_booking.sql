@@ -1,0 +1,83 @@
+-- MySQL dump 10.13  Distrib 5.5.20, for Linux (x86_64)
+--
+-- Host: localhost    Database: nor1
+-- ------------------------------------------------------
+-- Server version	5.5.20-enterprise-commercial-advanced-log
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `x_booking`
+--
+
+DROP TABLE IF EXISTS `x_booking`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `x_booking` (
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `SESSION_ID` varchar(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `GUEST_ID` bigint(20) NOT NULL DEFAULT '0',
+  `GUEST_MODIFIED` timestamp NULL DEFAULT NULL,
+  `MANAGER_MODIFIED` timestamp NULL DEFAULT NULL,
+  `CREATED` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `CREATED_DATE` date NOT NULL DEFAULT '0000-00-00',
+  `MODIFIED` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `CREATED_USER_ID` int(11) DEFAULT NULL,
+  `MODIFIED_USER_ID` int(11) DEFAULT NULL,
+  `EXT_BOOKING_ID` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `SOURCE_ID` int(11) NOT NULL DEFAULT '0' COMMENT 'data provider eg trust',
+  `CHAIN_ID` int(11) NOT NULL DEFAULT '0' COMMENT 'hotel/property chain',
+  `PROPERTY_ID` int(11) NOT NULL DEFAULT '0',
+  `CATEGORY_ID` int(11) NOT NULL DEFAULT '0',
+  `ROOM_ID` bigint(20) NOT NULL DEFAULT '0',
+  `EXT_ROOM_CD` varchar(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT '',
+  `EXT_PHYS_ROOM_CD` varchar(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `UPGRADE_MATRIX_ID` bigint(20) DEFAULT NULL,
+  `UPGRADE_MATRIX_TYPE` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'standard',
+  `CONDITION_ID` bigint(20) DEFAULT NULL,
+  `CURRENCY` char(7) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `PRICE` double(10,2) NOT NULL DEFAULT '0.00',
+  `ARRIVAL` date NOT NULL DEFAULT '0000-00-00',
+  `DEPARTURE` date NOT NULL DEFAULT '0000-00-00',
+  `NIGHTS` int(11) NOT NULL DEFAULT '0',
+  `ADULTS` int(3) NOT NULL DEFAULT '0' COMMENT 'number of',
+  `CHILDREN` int(3) NOT NULL,
+  `LOY_CD` varchar(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `RATE_CD` varchar(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `TIER_CD` varchar(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `CHANNEL_CD` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `REMINDER_EMAIL` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'not send',
+  `TESTFLAG` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'live' COMMENT 'real upgrade or just a test',
+  `UPGRADE_STATUS` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'nothx',
+  `NO_OFFER` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `HAS_AGENCY` tinyint(1) NOT NULL DEFAULT '0',
+  `COMMENTS` mediumtext CHARACTER SET utf8 COLLATE utf8_unicode_ci,
+  `changed_by_user_id` int(11) NOT NULL DEFAULT '0',
+  `changed_date` datetime NOT NULL,
+  `PID` varchar(5) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `PET` varchar(5) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `ROOMS` int(11) NOT NULL DEFAULT '1' COMMENT 'number of',
+  `SENT_ALERT_REMINDER` varchar(5) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'N',
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=12169931 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2012-08-23 21:34:11

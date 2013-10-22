@@ -1,0 +1,11 @@
+create table if not exists x_booking ( arrival int,id int,property_id int );
+
+create table if not exists exposure ( gad int,property_id int );
+
+create table if not exists x_property ( id int,name int );
+
+create table if not exists x_upgrade_request ( booking_id int );
+
+
+explain select booking_count.id, booking_count.property_name, (booking_count.current / guests_exposed.current) as current, (booking_count.historic / guests_exposed.historic) as historic  from (select current_table.id, current_table.name as property_name, current_table.value as current, historic_table.value as historic  from (select count(distinct b.id) as value, p.name, p.id  from x_booking b, x_property p, x_upgrade_request ur where b.property_id in  (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888) and b.property_id = p.id and b.id = ur.booking_id and b.arrival between '2012-07-01' and '2012-07-31' and b.arrival < curdate()  group by b.property_id) current_table, (select count(distinct b.id) as value, p.name, p.id  from x_booking b, x_property p, x_upgrade_request ur where b.property_id in  (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888) and b.property_id = p.id and b.id = ur.booking_id and b.arrival between '2012-06-01' and '2012-06-30' and b.arrival < curdate()  group by b.property_id) historic_table where current_table.id = historic_table.id) booking_count, (select current_table.id, current_table.name as property_name, current_table.guests_exposed as current, historic_table.guests_exposed as historic  from (select count(e.gad) as guests_exposed, p.id, p.name  from x_property p, exposure e where p.id in  (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888) and e.gad between '2012-07-01' and '2012-07-31' and e.gad < curdate() and e.property_id = p.id  group by e.property_id) current_table, (select count(e.gad) as guests_exposed, p.id, p.name  from x_property p,exposure e where p.id in  (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888) and e.property_id = p.id  and e.gad between '2012-06-01' and '2012-06-30' and e.gad < curdate()  group by e.property_id) historic_table where current_table.id = historic_table.id  order by current_table.id) guests_exposed where booking_count.id = guests_exposed.id  order by booking_count.id;
+

@@ -348,7 +348,7 @@ int analysisengine::info(uint flag)
   }
   else
   {
-    share->row_count=0; //ToDo: should error out.
+    share->row_count=0; 
   }
   if (flag & HA_STATUS_VARIABLE)
   {
@@ -357,6 +357,9 @@ int analysisengine::info(uint flag)
     //stats.deleted=0;
     stats.records=share->row_count;
   }
+  stats.data_file_length=(stats.records) * ((share->column_count) * (sizeof(int))+1);
+  stats.block_size=1024;//MyIsam Default
+  stats.index_file_length=0;
   if (flag & HA_STATUS_AUTO)
     stats.auto_increment_value= 1;
   DBUG_RETURN(0);

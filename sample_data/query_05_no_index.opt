@@ -1,0 +1,2153 @@
+{
+    "steps": [
+        {
+            "join_preparation": {
+                "select#": 10,
+                "steps": [
+                    {
+                        "expanded_query": "/* select#10 */ select count(`e`.`gad`) AS `guests_exposed`,`p`.`id_1` AS `id_1`,`p`.`name` AS `name` from `x_property` `p` join `exposure` `e` where ((`p`.`id_1` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`e`.`gad` between '2012-07-01' and '2012-07-31') and (`e`.`gad` < curdate()) and (`e`.`property_id` = `p`.`id_1`)) group by `e`.`property_id`"
+                    }
+                ]
+            }
+        },
+        {
+            "join_preparation": {
+                "select#": 11,
+                "steps": [
+                    {
+                        "expanded_query": "/* select#11 */ select count(`e`.`gad`) AS `guests_exposed`,`p`.`id_1` AS `id_1`,`p`.`name` AS `name` from `x_property` `p` join `exposure` `e` where ((`p`.`id_1` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`e`.`property_id` = `p`.`id_1`) and (`e`.`gad` between '2012-06-01' and '2012-06-30') and (`e`.`gad` < curdate())) group by `e`.`property_id`"
+                    }
+                ]
+            }
+        },
+        {
+            "join_preparation": {
+                "select#": 7,
+                "steps": [
+                    {
+                        "expanded_query": "/* select#7 */ select count(distinct `b`.`id_1`) AS `value`,`p`.`name` AS `name`,`p`.`id_1` AS `id_1` from `x_booking` `b` join `x_property` `p` join `x_upgrade_request` `ur` where ((`b`.`property_id` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`b`.`property_id` = `p`.`id_1`) and (`b`.`id_1` = `ur`.`booking_id`) and (`b`.`arrival` between '2012-07-01' and '2012-07-31') and (`b`.`arrival` < curdate())) group by `b`.`property_id`"
+                    }
+                ]
+            }
+        },
+        {
+            "join_preparation": {
+                "select#": 8,
+                "steps": [
+                    {
+                        "expanded_query": "/* select#8 */ select count(distinct `b`.`id_1`) AS `value`,`p`.`name` AS `name`,`p`.`id_1` AS `id_1` from `x_booking` `b` join `x_property` `p` join `x_upgrade_request` `ur` where ((`b`.`property_id` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`b`.`property_id` = `p`.`id_1`) and (`b`.`id_1` = `ur`.`booking_id`) and (`b`.`arrival` between '2012-06-01' and '2012-06-30') and (`b`.`arrival` < curdate())) group by `b`.`property_id`"
+                    }
+                ]
+            }
+        },
+        {
+            "join_preparation": {
+                "select#": 6,
+                "steps": [
+                    {
+                        "expanded_query": "/* select#6 */ select `current_table`.`id_1` AS `id_1`,`current_table`.`name` AS `property_name`,`current_table`.`value` AS `current`,`historic_table`.`value` AS `historic` from (/* select#7 */ select count(distinct `b`.`id_1`) AS `value`,`p`.`name` AS `name`,`p`.`id_1` AS `id_1` from `x_booking` `b` join `x_property` `p` join `x_upgrade_request` `ur` where ((`b`.`property_id` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`b`.`property_id` = `p`.`id_1`) and (`b`.`id_1` = `ur`.`booking_id`) and (`b`.`arrival` between '2012-07-01' and '2012-07-31') and (`b`.`arrival` < curdate())) group by `b`.`property_id`) `current_table` join (/* select#8 */ select count(distinct `b`.`id_1`) AS `value`,`p`.`name` AS `name`,`p`.`id_1` AS `id_1` from `x_booking` `b` join `x_property` `p` join `x_upgrade_request` `ur` where ((`b`.`property_id` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`b`.`property_id` = `p`.`id_1`) and (`b`.`id_1` = `ur`.`booking_id`) and (`b`.`arrival` between '2012-06-01' and '2012-06-30') and (`b`.`arrival` < curdate())) group by `b`.`property_id`) `historic_table` where (`current_table`.`id_1` = `historic_table`.`id_1`)"
+                    }
+                ]
+            }
+        },
+        {
+            "join_preparation": {
+                "select#": 9,
+                "steps": [
+                    {
+                        "expanded_query": "/* select#9 */ select `current_table`.`id_1` AS `id_1`,`current_table`.`name` AS `property_name`,`current_table`.`guests_exposed` AS `current`,`historic_table`.`guests_exposed` AS `historic` from (/* select#10 */ select count(`e`.`gad`) AS `guests_exposed`,`p`.`id_1` AS `id_1`,`p`.`name` AS `name` from `x_property` `p` join `exposure` `e` where ((`p`.`id_1` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`e`.`gad` between '2012-07-01' and '2012-07-31') and (`e`.`gad` < curdate()) and (`e`.`property_id` = `p`.`id_1`)) group by `e`.`property_id`) `current_table` join (/* select#11 */ select count(`e`.`gad`) AS `guests_exposed`,`p`.`id_1` AS `id_1`,`p`.`name` AS `name` from `x_property` `p` join `exposure` `e` where ((`p`.`id_1` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`e`.`property_id` = `p`.`id_1`) and (`e`.`gad` between '2012-06-01' and '2012-06-30') and (`e`.`gad` < curdate())) group by `e`.`property_id`) `historic_table` where (`current_table`.`id_1` = `historic_table`.`id_1`)"
+                    }
+                ]
+            }
+        },
+        {
+            "join_preparation": {
+                "select#": 5,
+                "steps": [
+                    {
+                        "expanded_query": "/* select#5 */ select `booking_count`.`id_1` AS `id_1`,`booking_count`.`property_name` AS `property_name`,(`booking_count`.`current` / `guests_exposed`.`current`) AS `current`,(`booking_count`.`historic` / `guests_exposed`.`historic`) AS `historic` from (/* select#6 */ select `current_table`.`id_1` AS `id_1`,`current_table`.`name` AS `property_name`,`current_table`.`value` AS `current`,`historic_table`.`value` AS `historic` from (/* select#7 */ select count(distinct `b`.`id_1`) AS `value`,`p`.`name` AS `name`,`p`.`id_1` AS `id_1` from `x_booking` `b` join `x_property` `p` join `x_upgrade_request` `ur` where ((`b`.`property_id` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`b`.`property_id` = `p`.`id_1`) and (`b`.`id_1` = `ur`.`booking_id`) and (`b`.`arrival` between '2012-07-01' and '2012-07-31') and (`b`.`arrival` < curdate())) group by `b`.`property_id`) `current_table` join (/* select#8 */ select count(distinct `b`.`id_1`) AS `value`,`p`.`name` AS `name`,`p`.`id_1` AS `id_1` from `x_booking` `b` join `x_property` `p` join `x_upgrade_request` `ur` where ((`b`.`property_id` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`b`.`property_id` = `p`.`id_1`) and (`b`.`id_1` = `ur`.`booking_id`) and (`b`.`arrival` between '2012-06-01' and '2012-06-30') and (`b`.`arrival` < curdate())) group by `b`.`property_id`) `historic_table` where (`current_table`.`id_1` = `historic_table`.`id_1`)) `booking_count` join (/* select#9 */ select `current_table`.`id_1` AS `id_1`,`current_table`.`name` AS `property_name`,`current_table`.`guests_exposed` AS `current`,`historic_table`.`guests_exposed` AS `historic` from (/* select#10 */ select count(`e`.`gad`) AS `guests_exposed`,`p`.`id_1` AS `id_1`,`p`.`name` AS `name` from `x_property` `p` join `exposure` `e` where ((`p`.`id_1` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`e`.`gad` between '2012-07-01' and '2012-07-31') and (`e`.`gad` < curdate()) and (`e`.`property_id` = `p`.`id_1`)) group by `e`.`property_id`) `current_table` join (/* select#11 */ select count(`e`.`gad`) AS `guests_exposed`,`p`.`id_1` AS `id_1`,`p`.`name` AS `name` from `x_property` `p` join `exposure` `e` where ((`p`.`id_1` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`e`.`property_id` = `p`.`id_1`) and (`e`.`gad` between '2012-06-01' and '2012-06-30') and (`e`.`gad` < curdate())) group by `e`.`property_id`) `historic_table` where (`current_table`.`id_1` = `historic_table`.`id_1`)) `guests_exposed` where (`booking_count`.`id_1` = `guests_exposed`.`id_1`)"
+                    }
+                ]
+            }
+        },
+        {
+            "join_preparation": {
+                "select#": 2,
+                "steps": [
+                    {
+                        "expanded_query": "/* select#2 */ select `actor_1`.`id_1` AS `id_1` from `actor` `actor_1`"
+                    }
+                ]
+            }
+        },
+        {
+            "join_preparation": {
+                "select#": 3,
+                "steps": [
+                    {
+                        "expanded_query": "/* select#3 */ select `actor_2`.`id_1` AS `id_1` from `actor` `actor_2`"
+                    }
+                ]
+            }
+        },
+        {
+            "creating_tmp_table": {
+                "tmp_table_info": {
+                    "table": "intermediate_tmp_table",
+                    "row_length": 5,
+                    "key_length": 5,
+                    "unique_constraint": false,
+                    "location": "memory (heap)",
+                    "row_limit_estimate": 3355443
+                }
+            }
+        },
+        {
+            "join_preparation": {
+                "select#": 1,
+                "steps": [
+                    {
+                        "expanded_query": "/* select#1 */ select `der_1`.`id_1` AS `id_1` from (/* select#2 */ select `actor_1`.`id_1` AS `id_1` from `actor` `actor_1` union /* select#3 */ select `actor_2`.`id_1` AS `id_1` from `actor` `actor_2`) `der_1`"
+                    }
+                ]
+            }
+        },
+        {
+            "join_preparation": {
+                "select#": 4,
+                "steps": [
+                    {
+                        "expanded_query": "/* select#4 */ select `der_2`.`id_1` AS `id_1` from (/* select#5 */ select `booking_count`.`id_1` AS `id_1`,`booking_count`.`property_name` AS `property_name`,(`booking_count`.`current` / `guests_exposed`.`current`) AS `current`,(`booking_count`.`historic` / `guests_exposed`.`historic`) AS `historic` from (/* select#6 */ select `current_table`.`id_1` AS `id_1`,`current_table`.`name` AS `property_name`,`current_table`.`value` AS `current`,`historic_table`.`value` AS `historic` from (/* select#7 */ select count(distinct `b`.`id_1`) AS `value`,`p`.`name` AS `name`,`p`.`id_1` AS `id_1` from `x_booking` `b` join `x_property` `p` join `x_upgrade_request` `ur` where ((`b`.`property_id` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`b`.`property_id` = `p`.`id_1`) and (`b`.`id_1` = `ur`.`booking_id`) and (`b`.`arrival` between '2012-07-01' and '2012-07-31') and (`b`.`arrival` < curdate())) group by `b`.`property_id`) `current_table` join (/* select#8 */ select count(distinct `b`.`id_1`) AS `value`,`p`.`name` AS `name`,`p`.`id_1` AS `id_1` from `x_booking` `b` join `x_property` `p` join `x_upgrade_request` `ur` where ((`b`.`property_id` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`b`.`property_id` = `p`.`id_1`) and (`b`.`id_1` = `ur`.`booking_id`) and (`b`.`arrival` between '2012-06-01' and '2012-06-30') and (`b`.`arrival` < curdate())) group by `b`.`property_id`) `historic_table` where (`current_table`.`id_1` = `historic_table`.`id_1`)) `booking_count` join (/* select#9 */ select `current_table`.`id_1` AS `id_1`,`current_table`.`name` AS `property_name`,`current_table`.`guests_exposed` AS `current`,`historic_table`.`guests_exposed` AS `historic` from (/* select#10 */ select count(`e`.`gad`) AS `guests_exposed`,`p`.`id_1` AS `id_1`,`p`.`name` AS `name` from `x_property` `p` join `exposure` `e` where ((`p`.`id_1` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`e`.`gad` between '2012-07-01' and '2012-07-31') and (`e`.`gad` < curdate()) and (`e`.`property_id` = `p`.`id_1`)) group by `e`.`property_id`) `current_table` join (/* select#11 */ select count(`e`.`gad`) AS `guests_exposed`,`p`.`id_1` AS `id_1`,`p`.`name` AS `name` from `x_property` `p` join `exposure` `e` where ((`p`.`id_1` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`e`.`property_id` = `p`.`id_1`) and (`e`.`gad` between '2012-06-01' and '2012-06-30') and (`e`.`gad` < curdate())) group by `e`.`property_id`) `historic_table` where (`current_table`.`id_1` = `historic_table`.`id_1`)) `guests_exposed` where (`booking_count`.`id_1` = `guests_exposed`.`id_1`)) `der_2`"
+                    }
+                ]
+            }
+        },
+        {
+            "creating_tmp_table": {
+                "tmp_table_info": {
+                    "table": "intermediate_tmp_table",
+                    "row_length": 5,
+                    "key_length": 5,
+                    "unique_constraint": false,
+                    "location": "memory (heap)",
+                    "row_limit_estimate": 3355443
+                }
+            }
+        },
+        {
+            "join_optimization": {
+                "select#": 1,
+                "steps": [
+                    {
+                        "join_optimization": {
+                            "select#": 2,
+                            "steps": [
+                                {
+                                    "table_dependencies": [
+                                        {
+                                            "table": "`actor` `actor_1`",
+                                            "row_may_be_null": false,
+                                            "map_bit": 0,
+                                            "depends_on_map_bits": []
+                                        }
+                                    ]
+                                },
+                                {
+                                    "rows_estimation": [
+                                        {
+                                            "table": "`actor` `actor_1`",
+                                            "table_scan": {
+                                                "rows": 2,
+                                                "cost": 2
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "considered_execution_plans": [
+                                        {
+                                            "plan_prefix": [],
+                                            "table": "`actor` `actor_1`",
+                                            "best_access_path": {
+                                                "considered_access_paths": [
+                                                    {
+                                                        "access_type": "scan",
+                                                        "rows": 2,
+                                                        "cost": 2.4024,
+                                                        "chosen": true
+                                                    }
+                                                ]
+                                            },
+                                            "cost_for_plan": 2.4024,
+                                            "rows_for_plan": 2,
+                                            "chosen": true
+                                        }
+                                    ]
+                                },
+                                {
+                                    "attaching_conditions_to_tables": {
+                                        "original_condition": null,
+                                        "attached_conditions_computation": [],
+                                        "attached_conditions_summary": [
+                                            {
+                                                "table": "`actor` `actor_1`",
+                                                "attached": null
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "refine_plan": [
+                                        {
+                                            "table": "`actor` `actor_1`",
+                                            "access_type": "table_scan"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "join_optimization": {
+                            "select#": 3,
+                            "steps": [
+                                {
+                                    "table_dependencies": [
+                                        {
+                                            "table": "`actor` `actor_2`",
+                                            "row_may_be_null": false,
+                                            "map_bit": 0,
+                                            "depends_on_map_bits": []
+                                        }
+                                    ]
+                                },
+                                {
+                                    "rows_estimation": [
+                                        {
+                                            "table": "`actor` `actor_2`",
+                                            "table_scan": {
+                                                "rows": 2,
+                                                "cost": 2
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "considered_execution_plans": [
+                                        {
+                                            "plan_prefix": [],
+                                            "table": "`actor` `actor_2`",
+                                            "best_access_path": {
+                                                "considered_access_paths": [
+                                                    {
+                                                        "access_type": "scan",
+                                                        "rows": 2,
+                                                        "cost": 2.4024,
+                                                        "chosen": true
+                                                    }
+                                                ]
+                                            },
+                                            "cost_for_plan": 2.4024,
+                                            "rows_for_plan": 2,
+                                            "chosen": true
+                                        }
+                                    ]
+                                },
+                                {
+                                    "attaching_conditions_to_tables": {
+                                        "original_condition": null,
+                                        "attached_conditions_computation": [],
+                                        "attached_conditions_summary": [
+                                            {
+                                                "table": "`actor` `actor_2`",
+                                                "attached": null
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "refine_plan": [
+                                        {
+                                            "table": "`actor` `actor_2`",
+                                            "access_type": "table_scan"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "table_dependencies": [
+                            {
+                                "table": " `der_1`",
+                                "row_may_be_null": false,
+                                "map_bit": 0,
+                                "depends_on_map_bits": []
+                            }
+                        ]
+                    },
+                    {
+                        "rows_estimation": [
+                            {
+                                "table": " `der_1`",
+                                "table_scan": {
+                                    "rows": 4,
+                                    "cost": 10
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "considered_execution_plans": [
+                            {
+                                "plan_prefix": [],
+                                "table": " `der_1`",
+                                "best_access_path": {
+                                    "considered_access_paths": [
+                                        {
+                                            "access_type": "scan",
+                                            "rows": 4,
+                                            "cost": 11,
+                                            "chosen": true
+                                        }
+                                    ]
+                                },
+                                "cost_for_plan": 11,
+                                "rows_for_plan": 4,
+                                "chosen": true
+                            }
+                        ]
+                    },
+                    {
+                        "attaching_conditions_to_tables": {
+                            "original_condition": null,
+                            "attached_conditions_computation": [],
+                            "attached_conditions_summary": [
+                                {
+                                    "table": " `der_1`",
+                                    "attached": null
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "refine_plan": [
+                            {
+                                "table": " `der_1`",
+                                "access_type": "table_scan"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "join_optimization": {
+                "select#": 4,
+                "steps": [
+                    {
+                        "join_optimization": {
+                            "select#": 5,
+                            "steps": [
+                                {
+                                    "join_optimization": {
+                                        "select#": 6,
+                                        "steps": [
+                                            {
+                                                "join_optimization": {
+                                                    "select#": 7,
+                                                    "steps": [
+                                                        {
+                                                            "condition_processing": {
+                                                                "condition": "WHERE",
+                                                                "original_condition": "((`b`.`property_id` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`b`.`property_id` = `p`.`id_1`) and (`b`.`id_1` = `ur`.`booking_id`) and (`b`.`arrival` between '2012-07-01' and '2012-07-31') and (`b`.`arrival` < curdate()))",
+                                                                "steps": [
+                                                                    {
+                                                                        "transformation": "equality_propagation",
+                                                                        "resulting_condition": "((`b`.`property_id` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`b`.`arrival` between '2012-07-01' and '2012-07-31') and (`b`.`arrival` < curdate()) and multiple equal(`b`.`property_id`, `p`.`id_1`) and multiple equal(`b`.`id_1`, `ur`.`booking_id`))"
+                                                                    },
+                                                                    {
+                                                                        "transformation": "constant_propagation",
+                                                                        "resulting_condition": "((`b`.`property_id` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`b`.`arrival` between '2012-07-01' and '2012-07-31') and (`b`.`arrival` < curdate()) and multiple equal(`b`.`property_id`, `p`.`id_1`) and multiple equal(`b`.`id_1`, `ur`.`booking_id`))"
+                                                                    },
+                                                                    {
+                                                                        "transformation": "trivial_condition_removal",
+                                                                        "resulting_condition": "((`b`.`property_id` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`b`.`arrival` between '2012-07-01' and '2012-07-31') and (`b`.`arrival` < curdate()) and multiple equal(`b`.`property_id`, `p`.`id_1`) and multiple equal(`b`.`id_1`, `ur`.`booking_id`))"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        },
+                                                        {
+                                                            "table_dependencies": [
+                                                                {
+                                                                    "table": "`x_booking` `b`",
+                                                                    "row_may_be_null": false,
+                                                                    "map_bit": 0,
+                                                                    "depends_on_map_bits": []
+                                                                },
+                                                                {
+                                                                    "table": "`x_property` `p`",
+                                                                    "row_may_be_null": false,
+                                                                    "map_bit": 1,
+                                                                    "depends_on_map_bits": []
+                                                                },
+                                                                {
+                                                                    "table": "`x_upgrade_request` `ur`",
+                                                                    "row_may_be_null": false,
+                                                                    "map_bit": 2,
+                                                                    "depends_on_map_bits": []
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "ref_optimizer_key_uses": []
+                                                        },
+                                                        {
+                                                            "rows_estimation": [
+                                                                {
+                                                                    "table": "`x_booking` `b`",
+                                                                    "table_scan": {
+                                                                        "rows": 3,
+                                                                        "cost": 2
+                                                                    }
+                                                                },
+                                                                {
+                                                                    "table": "`x_property` `p`",
+                                                                    "table_scan": {
+                                                                        "rows": 3,
+                                                                        "cost": 2
+                                                                    }
+                                                                },
+                                                                {
+                                                                    "table": "`x_upgrade_request` `ur`",
+                                                                    "rows": 1,
+                                                                    "cost": 1,
+                                                                    "table_type": "system",
+                                                                    "empty": false
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "considered_execution_plans": [
+                                                                {
+                                                                    "plan_prefix": [
+                                                                        "`x_upgrade_request` `ur`"
+                                                                    ],
+                                                                    "table": "`x_booking` `b`",
+                                                                    "best_access_path": {
+                                                                        "considered_access_paths": [
+                                                                            {
+                                                                                "access_type": "scan",
+                                                                                "rows": 3,
+                                                                                "cost": 2.6095,
+                                                                                "chosen": true,
+                                                                                "use_tmp_table": true
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    "cost_for_plan": 2.6095,
+                                                                    "rows_for_plan": 3,
+                                                                    "rest_of_plan": [
+                                                                        {
+                                                                            "plan_prefix": [
+                                                                                "`x_upgrade_request` `ur`",
+                                                                                "`x_booking` `b`"
+                                                                            ],
+                                                                            "table": "`x_property` `p`",
+                                                                            "best_access_path": {
+                                                                                "considered_access_paths": [
+                                                                                    {
+                                                                                        "access_type": "scan",
+                                                                                        "using_join_cache": true,
+                                                                                        "rows": 3,
+                                                                                        "cost": 3.8069,
+                                                                                        "chosen": true
+                                                                                    }
+                                                                                ]
+                                                                            },
+                                                                            "cost_for_plan": 6.4164,
+                                                                            "rows_for_plan": 9,
+                                                                            "sort_cost": 9,
+                                                                            "new_cost_for_plan": 15.416,
+                                                                            "chosen": true
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    "plan_prefix": [
+                                                                        "`x_upgrade_request` `ur`"
+                                                                    ],
+                                                                    "table": "`x_property` `p`",
+                                                                    "best_access_path": {
+                                                                        "considered_access_paths": [
+                                                                            {
+                                                                                "access_type": "scan",
+                                                                                "rows": 3,
+                                                                                "cost": 2.6066,
+                                                                                "chosen": true
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    "cost_for_plan": 2.6066,
+                                                                    "rows_for_plan": 3,
+                                                                    "rest_of_plan": [
+                                                                        {
+                                                                            "plan_prefix": [
+                                                                                "`x_upgrade_request` `ur`",
+                                                                                "`x_property` `p`"
+                                                                            ],
+                                                                            "table": "`x_booking` `b`",
+                                                                            "best_access_path": {
+                                                                                "considered_access_paths": [
+                                                                                    {
+                                                                                        "access_type": "scan",
+                                                                                        "using_join_cache": true,
+                                                                                        "rows": 3,
+                                                                                        "cost": 3.8097,
+                                                                                        "chosen": true
+                                                                                    }
+                                                                                ]
+                                                                            },
+                                                                            "cost_for_plan": 6.4163,
+                                                                            "rows_for_plan": 9,
+                                                                            "sort_cost": 9,
+                                                                            "new_cost_for_plan": 15.416,
+                                                                            "chosen": false
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "attaching_conditions_to_tables": {
+                                                                "original_condition": "((`b`.`id_1` = '8388353') and (`p`.`id_1` = `b`.`property_id`) and (`b`.`property_id` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`b`.`arrival` between '2012-07-01' and '2012-07-31') and (`b`.`arrival` < curdate()))",
+                                                                "attached_conditions_computation": [],
+                                                                "attached_conditions_summary": [
+                                                                    {
+                                                                        "table": "`x_booking` `b`",
+                                                                        "attached": "((`b`.`id_1` = '8388353') and (`b`.`property_id` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`b`.`arrival` between '2012-07-01' and '2012-07-31') and (`b`.`arrival` < curdate()))"
+                                                                    },
+                                                                    {
+                                                                        "table": "`x_property` `p`",
+                                                                        "attached": "(`p`.`id_1` = `b`.`property_id`)"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        },
+                                                        {
+                                                            "clause_processing": {
+                                                                "clause": "GROUP BY",
+                                                                "original_clause": "`b`.`property_id`",
+                                                                "items": [
+                                                                    {
+                                                                        "item": "`b`.`property_id`"
+                                                                    }
+                                                                ],
+                                                                "resulting_clause_is_simple": true,
+                                                                "resulting_clause": "`b`.`property_id`"
+                                                            }
+                                                        },
+                                                        {
+                                                            "refine_plan": [
+                                                                {
+                                                                    "table": "`x_booking` `b`",
+                                                                    "access_type": "table_scan"
+                                                                },
+                                                                {
+                                                                    "table": "`x_property` `p`",
+                                                                    "access_type": "table_scan"
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "creating_tmp_table": {
+                                                                "tmp_table_info": {
+                                                                    "table": "intermediate_tmp_table",
+                                                                    "row_length": 5,
+                                                                    "key_length": 5,
+                                                                    "unique_constraint": false,
+                                                                    "location": "memory (heap)",
+                                                                    "row_limit_estimate": 3355443
+                                                                }
+                                                            }
+                                                        },
+                                                        {
+                                                            "creating_tmp_table": {
+                                                                "tmp_table_info": {
+                                                                    "table": "intermediate_tmp_table",
+                                                                    "row_length": 5,
+                                                                    "key_length": 5,
+                                                                    "unique_constraint": false,
+                                                                    "location": "memory (heap)",
+                                                                    "row_limit_estimate": 3355443
+                                                                }
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                "join_optimization": {
+                                                    "select#": 8,
+                                                    "steps": [
+                                                        {
+                                                            "condition_processing": {
+                                                                "condition": "WHERE",
+                                                                "original_condition": "((`b`.`property_id` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`b`.`property_id` = `p`.`id_1`) and (`b`.`id_1` = `ur`.`booking_id`) and (`b`.`arrival` between '2012-06-01' and '2012-06-30') and (`b`.`arrival` < curdate()))",
+                                                                "steps": [
+                                                                    {
+                                                                        "transformation": "equality_propagation",
+                                                                        "resulting_condition": "((`b`.`property_id` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`b`.`arrival` between '2012-06-01' and '2012-06-30') and (`b`.`arrival` < curdate()) and multiple equal(`b`.`property_id`, `p`.`id_1`) and multiple equal(`b`.`id_1`, `ur`.`booking_id`))"
+                                                                    },
+                                                                    {
+                                                                        "transformation": "constant_propagation",
+                                                                        "resulting_condition": "((`b`.`property_id` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`b`.`arrival` between '2012-06-01' and '2012-06-30') and (`b`.`arrival` < curdate()) and multiple equal(`b`.`property_id`, `p`.`id_1`) and multiple equal(`b`.`id_1`, `ur`.`booking_id`))"
+                                                                    },
+                                                                    {
+                                                                        "transformation": "trivial_condition_removal",
+                                                                        "resulting_condition": "((`b`.`property_id` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`b`.`arrival` between '2012-06-01' and '2012-06-30') and (`b`.`arrival` < curdate()) and multiple equal(`b`.`property_id`, `p`.`id_1`) and multiple equal(`b`.`id_1`, `ur`.`booking_id`))"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        },
+                                                        {
+                                                            "table_dependencies": [
+                                                                {
+                                                                    "table": "`x_booking` `b`",
+                                                                    "row_may_be_null": false,
+                                                                    "map_bit": 0,
+                                                                    "depends_on_map_bits": []
+                                                                },
+                                                                {
+                                                                    "table": "`x_property` `p`",
+                                                                    "row_may_be_null": false,
+                                                                    "map_bit": 1,
+                                                                    "depends_on_map_bits": []
+                                                                },
+                                                                {
+                                                                    "table": "`x_upgrade_request` `ur`",
+                                                                    "row_may_be_null": false,
+                                                                    "map_bit": 2,
+                                                                    "depends_on_map_bits": []
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "ref_optimizer_key_uses": []
+                                                        },
+                                                        {
+                                                            "rows_estimation": [
+                                                                {
+                                                                    "table": "`x_booking` `b`",
+                                                                    "table_scan": {
+                                                                        "rows": 3,
+                                                                        "cost": 2
+                                                                    }
+                                                                },
+                                                                {
+                                                                    "table": "`x_property` `p`",
+                                                                    "table_scan": {
+                                                                        "rows": 3,
+                                                                        "cost": 2
+                                                                    }
+                                                                },
+                                                                {
+                                                                    "table": "`x_upgrade_request` `ur`",
+                                                                    "rows": 1,
+                                                                    "cost": 1,
+                                                                    "table_type": "system",
+                                                                    "empty": false
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "considered_execution_plans": [
+                                                                {
+                                                                    "plan_prefix": [
+                                                                        "`x_upgrade_request` `ur`"
+                                                                    ],
+                                                                    "table": "`x_booking` `b`",
+                                                                    "best_access_path": {
+                                                                        "considered_access_paths": [
+                                                                            {
+                                                                                "access_type": "scan",
+                                                                                "rows": 3,
+                                                                                "cost": 2.6095,
+                                                                                "chosen": true,
+                                                                                "use_tmp_table": true
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    "cost_for_plan": 2.6095,
+                                                                    "rows_for_plan": 3,
+                                                                    "rest_of_plan": [
+                                                                        {
+                                                                            "plan_prefix": [
+                                                                                "`x_upgrade_request` `ur`",
+                                                                                "`x_booking` `b`"
+                                                                            ],
+                                                                            "table": "`x_property` `p`",
+                                                                            "best_access_path": {
+                                                                                "considered_access_paths": [
+                                                                                    {
+                                                                                        "access_type": "scan",
+                                                                                        "using_join_cache": true,
+                                                                                        "rows": 3,
+                                                                                        "cost": 3.8069,
+                                                                                        "chosen": true
+                                                                                    }
+                                                                                ]
+                                                                            },
+                                                                            "cost_for_plan": 6.4164,
+                                                                            "rows_for_plan": 9,
+                                                                            "sort_cost": 9,
+                                                                            "new_cost_for_plan": 15.416,
+                                                                            "chosen": true
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    "plan_prefix": [
+                                                                        "`x_upgrade_request` `ur`"
+                                                                    ],
+                                                                    "table": "`x_property` `p`",
+                                                                    "best_access_path": {
+                                                                        "considered_access_paths": [
+                                                                            {
+                                                                                "access_type": "scan",
+                                                                                "rows": 3,
+                                                                                "cost": 2.6066,
+                                                                                "chosen": true
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    "cost_for_plan": 2.6066,
+                                                                    "rows_for_plan": 3,
+                                                                    "rest_of_plan": [
+                                                                        {
+                                                                            "plan_prefix": [
+                                                                                "`x_upgrade_request` `ur`",
+                                                                                "`x_property` `p`"
+                                                                            ],
+                                                                            "table": "`x_booking` `b`",
+                                                                            "best_access_path": {
+                                                                                "considered_access_paths": [
+                                                                                    {
+                                                                                        "access_type": "scan",
+                                                                                        "using_join_cache": true,
+                                                                                        "rows": 3,
+                                                                                        "cost": 3.8097,
+                                                                                        "chosen": true
+                                                                                    }
+                                                                                ]
+                                                                            },
+                                                                            "cost_for_plan": 6.4163,
+                                                                            "rows_for_plan": 9,
+                                                                            "sort_cost": 9,
+                                                                            "new_cost_for_plan": 15.416,
+                                                                            "chosen": false
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "attaching_conditions_to_tables": {
+                                                                "original_condition": "((`b`.`id_1` = '8388353') and (`p`.`id_1` = `b`.`property_id`) and (`b`.`property_id` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`b`.`arrival` between '2012-06-01' and '2012-06-30') and (`b`.`arrival` < curdate()))",
+                                                                "attached_conditions_computation": [],
+                                                                "attached_conditions_summary": [
+                                                                    {
+                                                                        "table": "`x_booking` `b`",
+                                                                        "attached": "((`b`.`id_1` = '8388353') and (`b`.`property_id` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`b`.`arrival` between '2012-06-01' and '2012-06-30') and (`b`.`arrival` < curdate()))"
+                                                                    },
+                                                                    {
+                                                                        "table": "`x_property` `p`",
+                                                                        "attached": "(`p`.`id_1` = `b`.`property_id`)"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        },
+                                                        {
+                                                            "clause_processing": {
+                                                                "clause": "GROUP BY",
+                                                                "original_clause": "`b`.`property_id`",
+                                                                "items": [
+                                                                    {
+                                                                        "item": "`b`.`property_id`"
+                                                                    }
+                                                                ],
+                                                                "resulting_clause_is_simple": true,
+                                                                "resulting_clause": "`b`.`property_id`"
+                                                            }
+                                                        },
+                                                        {
+                                                            "refine_plan": [
+                                                                {
+                                                                    "table": "`x_booking` `b`",
+                                                                    "access_type": "table_scan"
+                                                                },
+                                                                {
+                                                                    "table": "`x_property` `p`",
+                                                                    "access_type": "table_scan"
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "creating_tmp_table": {
+                                                                "tmp_table_info": {
+                                                                    "table": "intermediate_tmp_table",
+                                                                    "row_length": 5,
+                                                                    "key_length": 5,
+                                                                    "unique_constraint": false,
+                                                                    "location": "memory (heap)",
+                                                                    "row_limit_estimate": 3355443
+                                                                }
+                                                            }
+                                                        },
+                                                        {
+                                                            "creating_tmp_table": {
+                                                                "tmp_table_info": {
+                                                                    "table": "intermediate_tmp_table",
+                                                                    "row_length": 5,
+                                                                    "key_length": 5,
+                                                                    "unique_constraint": false,
+                                                                    "location": "memory (heap)",
+                                                                    "row_limit_estimate": 3355443
+                                                                }
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                "condition_processing": {
+                                                    "condition": "WHERE",
+                                                    "original_condition": "(`current_table`.`id_1` = `historic_table`.`id_1`)",
+                                                    "steps": [
+                                                        {
+                                                            "transformation": "equality_propagation",
+                                                            "resulting_condition": "multiple equal(`current_table`.`id_1`, `historic_table`.`id_1`)"
+                                                        },
+                                                        {
+                                                            "transformation": "constant_propagation",
+                                                            "resulting_condition": "multiple equal(`current_table`.`id_1`, `historic_table`.`id_1`)"
+                                                        },
+                                                        {
+                                                            "transformation": "trivial_condition_removal",
+                                                            "resulting_condition": "multiple equal(`current_table`.`id_1`, `historic_table`.`id_1`)"
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                "table_dependencies": [
+                                                    {
+                                                        "table": " `current_table`",
+                                                        "row_may_be_null": false,
+                                                        "map_bit": 0,
+                                                        "depends_on_map_bits": []
+                                                    },
+                                                    {
+                                                        "table": " `historic_table`",
+                                                        "row_may_be_null": false,
+                                                        "map_bit": 1,
+                                                        "depends_on_map_bits": []
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "ref_optimizer_key_uses": [
+                                                    {
+                                                        "table": " `current_table`",
+                                                        "field": "id_1",
+                                                        "equals": "`historic_table`.`id_1`",
+                                                        "null_rejecting": true
+                                                    },
+                                                    {
+                                                        "table": " `current_table`",
+                                                        "field": "id_1",
+                                                        "equals": "`historic_table`.`id_1`",
+                                                        "null_rejecting": true
+                                                    },
+                                                    {
+                                                        "table": " `historic_table`",
+                                                        "field": "id_1",
+                                                        "equals": "`current_table`.`id_1`",
+                                                        "null_rejecting": true
+                                                    },
+                                                    {
+                                                        "table": " `historic_table`",
+                                                        "field": "id_1",
+                                                        "equals": "`current_table`.`id_1`",
+                                                        "null_rejecting": true
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "rows_estimation": [
+                                                    {
+                                                        "table": " `current_table`",
+                                                        "table_scan": {
+                                                            "rows": 9,
+                                                            "cost": 10
+                                                        }
+                                                    },
+                                                    {
+                                                        "table": " `historic_table`",
+                                                        "table_scan": {
+                                                            "rows": 9,
+                                                            "cost": 10
+                                                        }
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "considered_execution_plans": [
+                                                    {
+                                                        "plan_prefix": [],
+                                                        "table": " `current_table`",
+                                                        "best_access_path": {
+                                                            "considered_access_paths": [
+                                                                {
+                                                                    "access_type": "ref",
+                                                                    "index": "<auto_key0>",
+                                                                    "usable": false,
+                                                                    "chosen": false
+                                                                },
+                                                                {
+                                                                    "access_type": "ref",
+                                                                    "index": "<auto_key1>",
+                                                                    "usable": false,
+                                                                    "chosen": false
+                                                                },
+                                                                {
+                                                                    "access_type": "scan",
+                                                                    "rows": 9,
+                                                                    "cost": 12.25,
+                                                                    "chosen": true
+                                                                }
+                                                            ]
+                                                        },
+                                                        "cost_for_plan": 12.25,
+                                                        "rows_for_plan": 9,
+                                                        "rest_of_plan": [
+                                                            {
+                                                                "plan_prefix": [
+                                                                    " `current_table`"
+                                                                ],
+                                                                "table": " `historic_table`",
+                                                                "best_access_path": {
+                                                                    "considered_access_paths": [
+                                                                        {
+                                                                            "access_type": "ref",
+                                                                            "index": "<auto_key0>",
+                                                                            "rows": 2,
+                                                                            "cost": 18.4,
+                                                                            "chosen": true
+                                                                        },
+                                                                        {
+                                                                            "access_type": "ref",
+                                                                            "index": "<auto_key1>",
+                                                                            "rows": 2,
+                                                                            "cost": 18.4,
+                                                                            "chosen": false
+                                                                        },
+                                                                        {
+                                                                            "access_type": "scan",
+                                                                            "using_join_cache": true,
+                                                                            "rows": 7,
+                                                                            "cost": 23.456,
+                                                                            "chosen": false
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "cost_for_plan": 33.85,
+                                                                "rows_for_plan": 18,
+                                                                "chosen": true
+                                                            }
+                                                        ]
+                                                    },
+                                                    {
+                                                        "plan_prefix": [],
+                                                        "table": " `historic_table`",
+                                                        "best_access_path": {
+                                                            "considered_access_paths": [
+                                                                {
+                                                                    "access_type": "ref",
+                                                                    "index": "<auto_key0>",
+                                                                    "usable": false,
+                                                                    "chosen": false
+                                                                },
+                                                                {
+                                                                    "access_type": "ref",
+                                                                    "index": "<auto_key1>",
+                                                                    "usable": false,
+                                                                    "chosen": false
+                                                                },
+                                                                {
+                                                                    "access_type": "scan",
+                                                                    "rows": 9,
+                                                                    "cost": 12.25,
+                                                                    "chosen": true
+                                                                }
+                                                            ]
+                                                        },
+                                                        "cost_for_plan": 12.25,
+                                                        "rows_for_plan": 9,
+                                                        "rest_of_plan": [
+                                                            {
+                                                                "plan_prefix": [
+                                                                    " `historic_table`"
+                                                                ],
+                                                                "table": " `current_table`",
+                                                                "best_access_path": {
+                                                                    "considered_access_paths": [
+                                                                        {
+                                                                            "access_type": "ref",
+                                                                            "index": "<auto_key0>",
+                                                                            "rows": 2,
+                                                                            "cost": 18.4,
+                                                                            "chosen": true
+                                                                        },
+                                                                        {
+                                                                            "access_type": "ref",
+                                                                            "index": "<auto_key1>",
+                                                                            "rows": 2,
+                                                                            "cost": 18.4,
+                                                                            "chosen": false
+                                                                        },
+                                                                        {
+                                                                            "access_type": "scan",
+                                                                            "using_join_cache": true,
+                                                                            "rows": 7,
+                                                                            "cost": 23.456,
+                                                                            "chosen": false
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "cost_for_plan": 33.85,
+                                                                "rows_for_plan": 18,
+                                                                "pruned_by_cost": true
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "attaching_conditions_to_tables": {
+                                                    "original_condition": "(`historic_table`.`id_1` = `current_table`.`id_1`)",
+                                                    "attached_conditions_computation": [],
+                                                    "attached_conditions_summary": [
+                                                        {
+                                                            "table": " `current_table`",
+                                                            "attached": "(`current_table`.`id_1` is not null)"
+                                                        },
+                                                        {
+                                                            "table": " `historic_table`",
+                                                            "attached": null
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                "refine_plan": [
+                                                    {
+                                                        "table": " `current_table`",
+                                                        "access_type": "table_scan"
+                                                    },
+                                                    {
+                                                        "table": " `historic_table`"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "join_optimization": {
+                                        "select#": 9,
+                                        "steps": [
+                                            {
+                                                "join_optimization": {
+                                                    "select#": 10,
+                                                    "steps": [
+                                                        {
+                                                            "condition_processing": {
+                                                                "condition": "WHERE",
+                                                                "original_condition": "((`p`.`id_1` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`e`.`gad` between '2012-07-01' and '2012-07-31') and (`e`.`gad` < curdate()) and (`e`.`property_id` = `p`.`id_1`))",
+                                                                "steps": [
+                                                                    {
+                                                                        "transformation": "equality_propagation",
+                                                                        "resulting_condition": "((`p`.`id_1` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`e`.`gad` between '2012-07-01' and '2012-07-31') and (`e`.`gad` < curdate()) and multiple equal(`e`.`property_id`, `p`.`id_1`))"
+                                                                    },
+                                                                    {
+                                                                        "transformation": "constant_propagation",
+                                                                        "resulting_condition": "((`p`.`id_1` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`e`.`gad` between '2012-07-01' and '2012-07-31') and (`e`.`gad` < curdate()) and multiple equal(`e`.`property_id`, `p`.`id_1`))"
+                                                                    },
+                                                                    {
+                                                                        "transformation": "trivial_condition_removal",
+                                                                        "resulting_condition": "((`p`.`id_1` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`e`.`gad` between '2012-07-01' and '2012-07-31') and (`e`.`gad` < curdate()) and multiple equal(`e`.`property_id`, `p`.`id_1`))"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        },
+                                                        {
+                                                            "table_dependencies": [
+                                                                {
+                                                                    "table": "`x_property` `p`",
+                                                                    "row_may_be_null": false,
+                                                                    "map_bit": 0,
+                                                                    "depends_on_map_bits": []
+                                                                },
+                                                                {
+                                                                    "table": "`exposure` `e`",
+                                                                    "row_may_be_null": false,
+                                                                    "map_bit": 1,
+                                                                    "depends_on_map_bits": []
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "ref_optimizer_key_uses": []
+                                                        },
+                                                        {
+                                                            "rows_estimation": [
+                                                                {
+                                                                    "table": "`x_property` `p`",
+                                                                    "table_scan": {
+                                                                        "rows": 3,
+                                                                        "cost": 2
+                                                                    }
+                                                                },
+                                                                {
+                                                                    "table": "`exposure` `e`",
+                                                                    "rows": 1,
+                                                                    "cost": 1,
+                                                                    "table_type": "system",
+                                                                    "empty": false
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "considered_execution_plans": [
+                                                                {
+                                                                    "plan_prefix": [
+                                                                        "`exposure` `e`"
+                                                                    ],
+                                                                    "table": "`x_property` `p`",
+                                                                    "best_access_path": {
+                                                                        "considered_access_paths": [
+                                                                            {
+                                                                                "access_type": "scan",
+                                                                                "rows": 3,
+                                                                                "cost": 2.6066,
+                                                                                "chosen": true
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    "cost_for_plan": 2.6066,
+                                                                    "rows_for_plan": 3,
+                                                                    "sort_cost": 3,
+                                                                    "new_cost_for_plan": 5.6066,
+                                                                    "chosen": true
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "condition_on_constant_tables": "(('8388353' in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and ('8388353' between '2012-07-01' and '2012-07-31') and ('8388353' < curdate()))",
+                                                            "condition_value": false
+                                                        }
+                                                    ],
+                                                    "empty_result": {
+                                                        "cause": "Impossible WHERE noticed after reading const tables"
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "join_optimization": {
+                                                    "select#": 11,
+                                                    "steps": [
+                                                        {
+                                                            "condition_processing": {
+                                                                "condition": "WHERE",
+                                                                "original_condition": "((`p`.`id_1` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`e`.`property_id` = `p`.`id_1`) and (`e`.`gad` between '2012-06-01' and '2012-06-30') and (`e`.`gad` < curdate()))",
+                                                                "steps": [
+                                                                    {
+                                                                        "transformation": "equality_propagation",
+                                                                        "resulting_condition": "((`p`.`id_1` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`e`.`gad` between '2012-06-01' and '2012-06-30') and (`e`.`gad` < curdate()) and multiple equal(`e`.`property_id`, `p`.`id_1`))"
+                                                                    },
+                                                                    {
+                                                                        "transformation": "constant_propagation",
+                                                                        "resulting_condition": "((`p`.`id_1` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`e`.`gad` between '2012-06-01' and '2012-06-30') and (`e`.`gad` < curdate()) and multiple equal(`e`.`property_id`, `p`.`id_1`))"
+                                                                    },
+                                                                    {
+                                                                        "transformation": "trivial_condition_removal",
+                                                                        "resulting_condition": "((`p`.`id_1` in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and (`e`.`gad` between '2012-06-01' and '2012-06-30') and (`e`.`gad` < curdate()) and multiple equal(`e`.`property_id`, `p`.`id_1`))"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        },
+                                                        {
+                                                            "table_dependencies": [
+                                                                {
+                                                                    "table": "`x_property` `p`",
+                                                                    "row_may_be_null": false,
+                                                                    "map_bit": 0,
+                                                                    "depends_on_map_bits": []
+                                                                },
+                                                                {
+                                                                    "table": "`exposure` `e`",
+                                                                    "row_may_be_null": false,
+                                                                    "map_bit": 1,
+                                                                    "depends_on_map_bits": []
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "ref_optimizer_key_uses": []
+                                                        },
+                                                        {
+                                                            "rows_estimation": [
+                                                                {
+                                                                    "table": "`x_property` `p`",
+                                                                    "table_scan": {
+                                                                        "rows": 3,
+                                                                        "cost": 2
+                                                                    }
+                                                                },
+                                                                {
+                                                                    "table": "`exposure` `e`",
+                                                                    "rows": 1,
+                                                                    "cost": 1,
+                                                                    "table_type": "system",
+                                                                    "empty": false
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "considered_execution_plans": [
+                                                                {
+                                                                    "plan_prefix": [
+                                                                        "`exposure` `e`"
+                                                                    ],
+                                                                    "table": "`x_property` `p`",
+                                                                    "best_access_path": {
+                                                                        "considered_access_paths": [
+                                                                            {
+                                                                                "access_type": "scan",
+                                                                                "rows": 3,
+                                                                                "cost": 2.6066,
+                                                                                "chosen": true
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    "cost_for_plan": 2.6066,
+                                                                    "rows_for_plan": 3,
+                                                                    "sort_cost": 3,
+                                                                    "new_cost_for_plan": 5.6066,
+                                                                    "chosen": true
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "condition_on_constant_tables": "(('8388353' in (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)) and ('8388353' between '2012-06-01' and '2012-06-30') and ('8388353' < curdate()))",
+                                                            "condition_value": false
+                                                        }
+                                                    ],
+                                                    "empty_result": {
+                                                        "cause": "Impossible WHERE noticed after reading const tables"
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "condition_processing": {
+                                                    "condition": "WHERE",
+                                                    "original_condition": "(`current_table`.`id_1` = `historic_table`.`id_1`)",
+                                                    "steps": [
+                                                        {
+                                                            "transformation": "equality_propagation",
+                                                            "resulting_condition": "multiple equal(`current_table`.`id_1`, `historic_table`.`id_1`)"
+                                                        },
+                                                        {
+                                                            "transformation": "constant_propagation",
+                                                            "resulting_condition": "multiple equal(`current_table`.`id_1`, `historic_table`.`id_1`)"
+                                                        },
+                                                        {
+                                                            "transformation": "trivial_condition_removal",
+                                                            "resulting_condition": "multiple equal(`current_table`.`id_1`, `historic_table`.`id_1`)"
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                "table_dependencies": [
+                                                    {
+                                                        "table": " `current_table`",
+                                                        "row_may_be_null": false,
+                                                        "map_bit": 0,
+                                                        "depends_on_map_bits": []
+                                                    },
+                                                    {
+                                                        "table": " `historic_table`",
+                                                        "row_may_be_null": false,
+                                                        "map_bit": 1,
+                                                        "depends_on_map_bits": []
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "ref_optimizer_key_uses": [
+                                                    {
+                                                        "table": " `current_table`",
+                                                        "field": "id_1",
+                                                        "equals": "`historic_table`.`id_1`",
+                                                        "null_rejecting": true
+                                                    },
+                                                    {
+                                                        "table": " `current_table`",
+                                                        "field": "id_1",
+                                                        "equals": "`historic_table`.`id_1`",
+                                                        "null_rejecting": true
+                                                    },
+                                                    {
+                                                        "table": " `historic_table`",
+                                                        "field": "id_1",
+                                                        "equals": "`current_table`.`id_1`",
+                                                        "null_rejecting": true
+                                                    },
+                                                    {
+                                                        "table": " `historic_table`",
+                                                        "field": "id_1",
+                                                        "equals": "`current_table`.`id_1`",
+                                                        "null_rejecting": true
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "rows_estimation": [
+                                                    {
+                                                        "table": " `current_table`",
+                                                        "table_scan": {
+                                                            "rows": 3,
+                                                            "cost": 10
+                                                        }
+                                                    },
+                                                    {
+                                                        "table": " `historic_table`",
+                                                        "table_scan": {
+                                                            "rows": 3,
+                                                            "cost": 10
+                                                        }
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "considered_execution_plans": [
+                                                    {
+                                                        "plan_prefix": [],
+                                                        "table": " `current_table`",
+                                                        "best_access_path": {
+                                                            "considered_access_paths": [
+                                                                {
+                                                                    "access_type": "ref",
+                                                                    "index": "<auto_key0>",
+                                                                    "usable": false,
+                                                                    "chosen": false
+                                                                },
+                                                                {
+                                                                    "access_type": "ref",
+                                                                    "index": "<auto_key1>",
+                                                                    "usable": false,
+                                                                    "chosen": false
+                                                                },
+                                                                {
+                                                                    "access_type": "scan",
+                                                                    "rows": 3,
+                                                                    "cost": 10.75,
+                                                                    "chosen": true
+                                                                }
+                                                            ]
+                                                        },
+                                                        "cost_for_plan": 10.75,
+                                                        "rows_for_plan": 3,
+                                                        "rest_of_plan": [
+                                                            {
+                                                                "plan_prefix": [
+                                                                    " `current_table`"
+                                                                ],
+                                                                "table": " `historic_table`",
+                                                                "best_access_path": {
+                                                                    "considered_access_paths": [
+                                                                        {
+                                                                            "access_type": "ref",
+                                                                            "index": "<auto_key0>",
+                                                                            "rows": 2,
+                                                                            "cost": 6.4,
+                                                                            "chosen": true
+                                                                        },
+                                                                        {
+                                                                            "access_type": "ref",
+                                                                            "index": "<auto_key1>",
+                                                                            "rows": 2,
+                                                                            "cost": 6.4,
+                                                                            "chosen": false
+                                                                        },
+                                                                        {
+                                                                            "access_type": "scan",
+                                                                            "cost": 10.6,
+                                                                            "rows": 3,
+                                                                            "cause": "cost",
+                                                                            "chosen": false
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "cost_for_plan": 17.95,
+                                                                "rows_for_plan": 6,
+                                                                "chosen": true
+                                                            }
+                                                        ]
+                                                    },
+                                                    {
+                                                        "plan_prefix": [],
+                                                        "table": " `historic_table`",
+                                                        "best_access_path": {
+                                                            "considered_access_paths": [
+                                                                {
+                                                                    "access_type": "ref",
+                                                                    "index": "<auto_key0>",
+                                                                    "usable": false,
+                                                                    "chosen": false
+                                                                },
+                                                                {
+                                                                    "access_type": "ref",
+                                                                    "index": "<auto_key1>",
+                                                                    "usable": false,
+                                                                    "chosen": false
+                                                                },
+                                                                {
+                                                                    "access_type": "scan",
+                                                                    "rows": 3,
+                                                                    "cost": 10.75,
+                                                                    "chosen": true
+                                                                }
+                                                            ]
+                                                        },
+                                                        "cost_for_plan": 10.75,
+                                                        "rows_for_plan": 3,
+                                                        "rest_of_plan": [
+                                                            {
+                                                                "plan_prefix": [
+                                                                    " `historic_table`"
+                                                                ],
+                                                                "table": " `current_table`",
+                                                                "best_access_path": {
+                                                                    "considered_access_paths": [
+                                                                        {
+                                                                            "access_type": "ref",
+                                                                            "index": "<auto_key0>",
+                                                                            "rows": 2,
+                                                                            "cost": 6.4,
+                                                                            "chosen": true
+                                                                        },
+                                                                        {
+                                                                            "access_type": "ref",
+                                                                            "index": "<auto_key1>",
+                                                                            "rows": 2,
+                                                                            "cost": 6.4,
+                                                                            "chosen": false
+                                                                        },
+                                                                        {
+                                                                            "access_type": "scan",
+                                                                            "cost": 10.6,
+                                                                            "rows": 3,
+                                                                            "cause": "cost",
+                                                                            "chosen": false
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "cost_for_plan": 17.95,
+                                                                "rows_for_plan": 6,
+                                                                "pruned_by_cost": true
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "attaching_conditions_to_tables": {
+                                                    "original_condition": "(`historic_table`.`id_1` = `current_table`.`id_1`)",
+                                                    "attached_conditions_computation": [],
+                                                    "attached_conditions_summary": [
+                                                        {
+                                                            "table": " `current_table`",
+                                                            "attached": "(`current_table`.`id_1` is not null)"
+                                                        },
+                                                        {
+                                                            "table": " `historic_table`",
+                                                            "attached": null
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                "refine_plan": [
+                                                    {
+                                                        "table": " `current_table`",
+                                                        "access_type": "table_scan"
+                                                    },
+                                                    {
+                                                        "table": " `historic_table`"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "condition_processing": {
+                                        "condition": "WHERE",
+                                        "original_condition": "(`booking_count`.`id_1` = `guests_exposed`.`id_1`)",
+                                        "steps": [
+                                            {
+                                                "transformation": "equality_propagation",
+                                                "resulting_condition": "multiple equal(`booking_count`.`id_1`, `guests_exposed`.`id_1`)"
+                                            },
+                                            {
+                                                "transformation": "constant_propagation",
+                                                "resulting_condition": "multiple equal(`booking_count`.`id_1`, `guests_exposed`.`id_1`)"
+                                            },
+                                            {
+                                                "transformation": "trivial_condition_removal",
+                                                "resulting_condition": "multiple equal(`booking_count`.`id_1`, `guests_exposed`.`id_1`)"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "table_dependencies": [
+                                        {
+                                            "table": " `booking_count`",
+                                            "row_may_be_null": false,
+                                            "map_bit": 0,
+                                            "depends_on_map_bits": []
+                                        },
+                                        {
+                                            "table": " `guests_exposed`",
+                                            "row_may_be_null": false,
+                                            "map_bit": 1,
+                                            "depends_on_map_bits": []
+                                        }
+                                    ]
+                                },
+                                {
+                                    "ref_optimizer_key_uses": [
+                                        {
+                                            "table": " `booking_count`",
+                                            "field": "id_1",
+                                            "equals": "`guests_exposed`.`id_1`",
+                                            "null_rejecting": true
+                                        },
+                                        {
+                                            "table": " `booking_count`",
+                                            "field": "id_1",
+                                            "equals": "`guests_exposed`.`id_1`",
+                                            "null_rejecting": true
+                                        },
+                                        {
+                                            "table": " `guests_exposed`",
+                                            "field": "id_1",
+                                            "equals": "`booking_count`.`id_1`",
+                                            "null_rejecting": true
+                                        },
+                                        {
+                                            "table": " `guests_exposed`",
+                                            "field": "id_1",
+                                            "equals": "`booking_count`.`id_1`",
+                                            "null_rejecting": true
+                                        }
+                                    ]
+                                },
+                                {
+                                    "rows_estimation": [
+                                        {
+                                            "table": " `booking_count`",
+                                            "table_scan": {
+                                                "rows": 18,
+                                                "cost": 10
+                                            }
+                                        },
+                                        {
+                                            "table": " `guests_exposed`",
+                                            "table_scan": {
+                                                "rows": 6,
+                                                "cost": 10
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "considered_execution_plans": [
+                                        {
+                                            "plan_prefix": [],
+                                            "table": " `guests_exposed`",
+                                            "best_access_path": {
+                                                "considered_access_paths": [
+                                                    {
+                                                        "access_type": "ref",
+                                                        "index": "<auto_key0>",
+                                                        "usable": false,
+                                                        "chosen": false
+                                                    },
+                                                    {
+                                                        "access_type": "ref",
+                                                        "index": "<auto_key1>",
+                                                        "usable": false,
+                                                        "chosen": false
+                                                    },
+                                                    {
+                                                        "access_type": "scan",
+                                                        "rows": 6,
+                                                        "cost": 11.5,
+                                                        "chosen": true
+                                                    }
+                                                ]
+                                            },
+                                            "cost_for_plan": 11.5,
+                                            "rows_for_plan": 6,
+                                            "rest_of_plan": [
+                                                {
+                                                    "plan_prefix": [
+                                                        " `guests_exposed`"
+                                                    ],
+                                                    "table": " `booking_count`",
+                                                    "best_access_path": {
+                                                        "considered_access_paths": [
+                                                            {
+                                                                "access_type": "ref",
+                                                                "index": "<auto_key0>",
+                                                                "rows": 2,
+                                                                "cost": 12.4,
+                                                                "chosen": true
+                                                            },
+                                                            {
+                                                                "access_type": "ref",
+                                                                "index": "<auto_key1>",
+                                                                "rows": 2,
+                                                                "cost": 12.4,
+                                                                "chosen": false
+                                                            },
+                                                            {
+                                                                "access_type": "scan",
+                                                                "using_join_cache": true,
+                                                                "rows": 14,
+                                                                "cost": 28.506,
+                                                                "chosen": false
+                                                            }
+                                                        ]
+                                                    },
+                                                    "cost_for_plan": 25.9,
+                                                    "rows_for_plan": 12,
+                                                    "chosen": true
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "plan_prefix": [],
+                                            "table": " `booking_count`",
+                                            "best_access_path": {
+                                                "considered_access_paths": [
+                                                    {
+                                                        "access_type": "ref",
+                                                        "index": "<auto_key0>",
+                                                        "usable": false,
+                                                        "chosen": false
+                                                    },
+                                                    {
+                                                        "access_type": "ref",
+                                                        "index": "<auto_key1>",
+                                                        "usable": false,
+                                                        "chosen": false
+                                                    },
+                                                    {
+                                                        "access_type": "scan",
+                                                        "rows": 18,
+                                                        "cost": 14.5,
+                                                        "chosen": true
+                                                    }
+                                                ]
+                                            },
+                                            "cost_for_plan": 14.5,
+                                            "rows_for_plan": 18,
+                                            "rest_of_plan": [
+                                                {
+                                                    "plan_prefix": [
+                                                        " `booking_count`"
+                                                    ],
+                                                    "table": " `guests_exposed`",
+                                                    "best_access_path": {
+                                                        "considered_access_paths": [
+                                                            {
+                                                                "access_type": "ref",
+                                                                "index": "<auto_key0>",
+                                                                "rows": 2,
+                                                                "cost": 36.4,
+                                                                "chosen": true
+                                                            },
+                                                            {
+                                                                "access_type": "ref",
+                                                                "index": "<auto_key1>",
+                                                                "rows": 2,
+                                                                "cost": 36.4,
+                                                                "chosen": false
+                                                            },
+                                                            {
+                                                                "access_type": "scan",
+                                                                "using_join_cache": true,
+                                                                "rows": 5,
+                                                                "cost": 28.518,
+                                                                "chosen": true
+                                                            }
+                                                        ]
+                                                    },
+                                                    "cost_for_plan": 43.018,
+                                                    "rows_for_plan": 90,
+                                                    "pruned_by_cost": true
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "attaching_conditions_to_tables": {
+                                        "original_condition": "(`booking_count`.`id_1` = `guests_exposed`.`id_1`)",
+                                        "attached_conditions_computation": [],
+                                        "attached_conditions_summary": [
+                                            {
+                                                "table": " `guests_exposed`",
+                                                "attached": "(`guests_exposed`.`id_1` is not null)"
+                                            },
+                                            {
+                                                "table": " `booking_count`",
+                                                "attached": null
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "refine_plan": [
+                                        {
+                                            "table": " `guests_exposed`",
+                                            "access_type": "table_scan"
+                                        },
+                                        {
+                                            "table": " `booking_count`"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "table_dependencies": [
+                            {
+                                "table": " `der_2`",
+                                "row_may_be_null": false,
+                                "map_bit": 0,
+                                "depends_on_map_bits": []
+                            }
+                        ]
+                    },
+                    {
+                        "rows_estimation": [
+                            {
+                                "table": " `der_2`",
+                                "table_scan": {
+                                    "rows": 12,
+                                    "cost": 10
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "considered_execution_plans": [
+                            {
+                                "plan_prefix": [],
+                                "table": " `der_2`",
+                                "best_access_path": {
+                                    "considered_access_paths": [
+                                        {
+                                            "access_type": "scan",
+                                            "rows": 12,
+                                            "cost": 13,
+                                            "chosen": true
+                                        }
+                                    ]
+                                },
+                                "cost_for_plan": 13,
+                                "rows_for_plan": 12,
+                                "chosen": true
+                            }
+                        ]
+                    },
+                    {
+                        "attaching_conditions_to_tables": {
+                            "original_condition": null,
+                            "attached_conditions_computation": [],
+                            "attached_conditions_summary": [
+                                {
+                                    "table": " `der_2`",
+                                    "attached": null
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "refine_plan": [
+                            {
+                                "table": " `der_2`",
+                                "access_type": "table_scan"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "join_explain": {
+                "select#": 1,
+                "steps": [
+                    {
+                        "creating_tmp_table": {
+                            "tmp_table_info": {
+                                "table": " `der_1`",
+                                "row_length": 5,
+                                "key_length": 0,
+                                "unique_constraint": false,
+                                "location": "memory (heap)",
+                                "row_limit_estimate": 3355443
+                            }
+                        }
+                    },
+                    {
+                        "join_explain": {
+                            "select#": 2,
+                            "steps": []
+                        }
+                    },
+                    {
+                        "join_explain": {
+                            "select#": 3,
+                            "steps": []
+                        }
+                    },
+                    {
+                        "join_preparation": {
+                            "select#": "fake",
+                            "steps": [
+                                {
+                                    "expanded_query": "/* select#fake */ select `id_1` AS `id_1` from dual"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "join_optimization": {
+                            "select#": "fake",
+                            "steps": [
+                                {
+                                    "table_dependencies": [
+                                        {
+                                            "table": "``.``",
+                                            "row_may_be_null": false,
+                                            "map_bit": 0,
+                                            "depends_on_map_bits": []
+                                        }
+                                    ]
+                                },
+                                {
+                                    "rows_estimation": [
+                                        {
+                                            "table": "``.``",
+                                            "table_scan": {
+                                                "rows": 0,
+                                                "cost": 10
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "considered_execution_plans": [
+                                        {
+                                            "plan_prefix": [],
+                                            "table": "``.``",
+                                            "best_access_path": {
+                                                "considered_access_paths": [
+                                                    {
+                                                        "access_type": "scan",
+                                                        "rows": 0,
+                                                        "cost": 10,
+                                                        "chosen": true
+                                                    }
+                                                ]
+                                            },
+                                            "cost_for_plan": 10,
+                                            "rows_for_plan": 0,
+                                            "chosen": true
+                                        }
+                                    ]
+                                },
+                                {
+                                    "attaching_conditions_to_tables": {
+                                        "original_condition": null,
+                                        "attached_conditions_computation": [],
+                                        "attached_conditions_summary": [
+                                            {
+                                                "table": "``.``",
+                                                "attached": null
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "refine_plan": [
+                                        {
+                                            "table": "``.``",
+                                            "access_type": "table_scan"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "join_explain": {
+                            "select#": "fake",
+                            "steps": []
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "join_explain": {
+                "select#": 4,
+                "steps": [
+                    {
+                        "creating_tmp_table": {
+                            "tmp_table_info": {
+                                "table": " `der_2`",
+                                "row_length": 31,
+                                "key_length": 0,
+                                "unique_constraint": false,
+                                "location": "memory (heap)",
+                                "row_limit_estimate": 541200
+                            }
+                        }
+                    },
+                    {
+                        "join_explain": {
+                            "select#": 5,
+                            "steps": [
+                                {
+                                    "creating_tmp_table": {
+                                        "tmp_table_info": {
+                                            "table": " `booking_count`",
+                                            "row_length": 25,
+                                            "key_length": 5,
+                                            "unique_constraint": false,
+                                            "location": "memory (heap)",
+                                            "row_limit_estimate": 671088
+                                        }
+                                    }
+                                },
+                                {
+                                    "creating_tmp_table": {
+                                        "tmp_table_info": {
+                                            "table": " `guests_exposed`",
+                                            "row_length": 25,
+                                            "key_length": 0,
+                                            "unique_constraint": false,
+                                            "location": "memory (heap)",
+                                            "row_limit_estimate": 671088
+                                        }
+                                    }
+                                },
+                                {
+                                    "join_explain": {
+                                        "select#": 9,
+                                        "steps": [
+                                            {
+                                                "creating_tmp_table": {
+                                                    "tmp_table_info": {
+                                                        "table": " `current_table`",
+                                                        "row_length": 17,
+                                                        "key_length": 0,
+                                                        "unique_constraint": false,
+                                                        "location": "memory (heap)",
+                                                        "row_limit_estimate": 986895
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "creating_tmp_table": {
+                                                    "tmp_table_info": {
+                                                        "table": " `historic_table`",
+                                                        "row_length": 17,
+                                                        "key_length": 5,
+                                                        "unique_constraint": false,
+                                                        "location": "memory (heap)",
+                                                        "row_limit_estimate": 986895
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "join_explain": {
+                                                    "select#": 11,
+                                                    "steps": []
+                                                }
+                                            },
+                                            {
+                                                "join_explain": {
+                                                    "select#": 10,
+                                                    "steps": []
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "join_explain": {
+                                        "select#": 6,
+                                        "steps": [
+                                            {
+                                                "creating_tmp_table": {
+                                                    "tmp_table_info": {
+                                                        "table": " `current_table`",
+                                                        "row_length": 17,
+                                                        "key_length": 0,
+                                                        "unique_constraint": false,
+                                                        "location": "memory (heap)",
+                                                        "row_limit_estimate": 986895
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "creating_tmp_table": {
+                                                    "tmp_table_info": {
+                                                        "table": " `historic_table`",
+                                                        "row_length": 17,
+                                                        "key_length": 5,
+                                                        "unique_constraint": false,
+                                                        "location": "memory (heap)",
+                                                        "row_limit_estimate": 986895
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "join_explain": {
+                                                    "select#": 8,
+                                                    "steps": []
+                                                }
+                                            },
+                                            {
+                                                "join_explain": {
+                                                    "select#": 7,
+                                                    "steps": []
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "join_preparation": {
+                "select#": "fake",
+                "steps": [
+                    {
+                        "expanded_query": "/* select#fake */ select `id_1` AS `id_1` from dual"
+                    }
+                ]
+            }
+        },
+        {
+            "join_optimization": {
+                "select#": "fake",
+                "steps": [
+                    {
+                        "table_dependencies": [
+                            {
+                                "table": "``.``",
+                                "row_may_be_null": false,
+                                "map_bit": 0,
+                                "depends_on_map_bits": []
+                            }
+                        ]
+                    },
+                    {
+                        "rows_estimation": [
+                            {
+                                "table": "``.``",
+                                "table_scan": {
+                                    "rows": 0,
+                                    "cost": 10
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "considered_execution_plans": [
+                            {
+                                "plan_prefix": [],
+                                "table": "``.``",
+                                "best_access_path": {
+                                    "considered_access_paths": [
+                                        {
+                                            "access_type": "scan",
+                                            "rows": 0,
+                                            "cost": 10,
+                                            "chosen": true
+                                        }
+                                    ]
+                                },
+                                "cost_for_plan": 10,
+                                "rows_for_plan": 0,
+                                "chosen": true
+                            }
+                        ]
+                    },
+                    {
+                        "attaching_conditions_to_tables": {
+                            "original_condition": null,
+                            "attached_conditions_computation": [],
+                            "attached_conditions_summary": [
+                                {
+                                    "table": "``.``",
+                                    "attached": null
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "refine_plan": [
+                            {
+                                "table": "``.``",
+                                "access_type": "table_scan"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "join_explain": {
+                "select#": "fake",
+                "steps": []
+            }
+        }
+    ]
+}

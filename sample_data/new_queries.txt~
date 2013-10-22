@@ -1,0 +1,40 @@
+Explain SELECT
+     date( c.Join_Date ) DateJoined,
+     count( distinct c.msisdn ) DistinctMembers,
+     SUM(w.revenue) AmountOfRevenue
+  FROM
+     customers c
+        JOIN ws_billing_all w
+           ON c.msisdn = w.msisdn
+          AND date( w.event_time ) <= date_add( c.Join_Date, INTERVAL 30 DAY )
+  WHERE
+     c.Join_Date >= "asdasd"
+  group by
+     date( c.Join_Date )
+  order by
+     date( c.Join_Date );
+     
+     
+Explain SELECT 
+Emp.EmployeeID, Emp.Name, Emp.Salary, Man.Name AS Manager 
+FROM Employees Emp 
+LEFT JOIN Employees AS Man 
+ON Emp.ManagerID = Man.EmployeeID 
+WHERE (Emp.EmployeeID = '087652');
+
+explain SELECT artists.name
+    FROM tab_1 artists
+    WHERE (artists.name LIKE 'P%')
+    UNION
+    SELECT artists2.name
+    FROM tab_2 artists2
+    WHERE (artists2.name LIKE 'G%');;
+    
+Explain SELECT cs.title, MATCH(cs.title) AGAINST ('hits') AS Rating    
+FROM cds  cs 
+WHERE MATCH(cs.title) AGAINST ('hits');
+   
+explain select z.city,z.state,z.zip,z.latitude,z.longitude from zipcodes z where z.state = "CO" and z.zip not in (SELECT z2.zip FROM zipcodes z2 WHERE ( z.latitude >= 37 AND z.latitude <= 41 ) AND ( z.longitude >= -109 AND z.longitude <= -102.1 ));
+ 
+ 
+

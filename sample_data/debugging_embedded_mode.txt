@@ -1,0 +1,61 @@
+  Perform basic log initialization: create file-based log handler and¬
+  init error log.¬         
+*/¬                        
+void LOGGER::init_base()¬  
+{¬                         
+  DBUG_ASSERT(inited == 0);¬
+  inited= 1;¬
+¬
+  /*¬
+    Here we create file log handler. We don't do it for the table log handler¬
+    here as it cannot be created so early. The reason is THD initialization,¬
+    which depends on the system variables (parsed later).¬
+  */¬
+
+select p.name from product p where p.category_id in (select c.id from category c where c.category_class=1 and c.parent_id is NULL);
+
+1       breakpoint     keep y   <MULTIPLE>         
+1.1                         y     0x00000000008384aa in SQL_SELECT::test_quick_select(THD*, Bitmap<64u>, unsigned long long, unsigned
+long long, bool, st_order::enum_order) at /home/prabinb/Downloads/source/mysql-5.6.10/sql/opt_range.cc:2566
+1.2                         y     0x00007ffff476db9a in SQL_SELECT::test_quick_select(THD*, Bitmap<64u>, unsigned long long, unsigned
+long long, bool, st_order::enum_order) at /home/prabinb/Downloads/source/mysql-5.6.10/sql/opt_range.cc:2566
+2       breakpoint     keep y   <MULTIPLE>         
+2.1                         y     0x000000000069ffab in handler::index_only_read_time(unsigned int, double) 
+                                                   at /home/prabinb/Downloads/source/mysql-5.6.10/sql/handler.cc:5413
+2.2                         y     0x00007ffff462f79b in handler::index_only_read_time(unsigned int, double) 
+                                                   at /home/prabinb/Downloads/source/mysql-5.6.10/sql/handler.cc:5413
+3       breakpoint     keep y   <MULTIPLE>         
+        breakpoint already hit 7 times
+3.1                         y     0x00000000008582d4 in Optimize_table_order::best_access_path(st_join_table*, unsigned long long, uns
+igned int, bool, double, st_position*, st_position*) at /home/prabinb/Downloads/source/mysql-5.6.10/sql/sql_planner.cc:404
+3.2                         y     0x00007ffff4a5f974 in Optimize_table_order::best_access_path(st_join_table*, unsigned long long, uns
+igned int, bool, double, st_position*, st_position*) at /home/prabinb/Downloads/source/mysql-5.6.10/sql/sql_planner.cc:404
+4       breakpoint     keep y   <MULTIPLE>         
+4.1                         y     0x000000000085869f in Optimize_table_order::best_access_path(st_join_table*, unsigned long long, uns
+igned int, bool, double, st_position*, st_position*) at /home/prabinb/Downloads/source/mysql-5.6.10/sql/sql_planner.cc:490
+4.2                         y     0x00007ffff4a5fd3f in Optimize_table_order::best_access_path(st_join_table*, unsigned long long, uns
+igned int, bool, double, st_position*, st_position*) at /home/prabinb/Downloads/source/mysql-5.6.10/sql/sql_planner.cc:490
+5       breakpoint     keep y   <PENDING>          max_key_length
+6       breakpoint     keep y   <MULTIPLE>         
+        breakpoint already hit 6 times
+6.1                         y     0x00000000006f95c0 in handler::max_key_length() const 
+                                                   at /home/prabinb/Downloads/source/mysql-5.6.10/sql/handler.h:2494
+6.2                         y     0x00007ffff464faa6 in handler::max_key_length() const 
+                                                   at /home/prabinb/Downloads/source/mysql-5.6.10/sql/handler.h:2494
+7       breakpoint     keep y   <MULTIPLE>         
+7.1                         y     0x00000000006710c2 in add_pk_parts_to_sk(KEY*, uint, KEY*, uint, TABLE_SHARE*, handler*, uint*) 
+                                                   at /home/prabinb/Downloads/source/mysql-5.6.10/sql/table.cc:914
+7.2                         y     0x00007ffff496534a in add_pk_parts_to_sk(KEY*, uint, KEY*, uint, TABLE_SHARE*, handler*, uint*) 
+                                                   at /home/prabinb/Downloads/source/mysql-5.6.10/sql/table.cc:914
+8       breakpoint     keep y   <MULTIPLE>         
+8.1                         y     0x000000000067123d in add_pk_parts_to_sk(KEY*, uint, KEY*, uint, TABLE_SHARE*, handler*, uint*) 
+                                                   at /home/prabinb/Downloads/source/mysql-5.6.10/sql/table.cc:948
+8.2                         y     0x00007ffff49654c5 in add_pk_parts_to_sk(KEY*, uint, KEY*, uint, TABLE_SHARE*, handler*, uint*) 
+                                                   at /home/prabinb/Downloads/source/mysql-5.6.10/sql/table.cc:948
+9       breakpoint     keep y   <MULTIPLE>         
+        breakpoint already hit 8 times
+9.1                         y     0x0000000000674428 in open_binary_frm(THD*, TABLE_SHARE*, uchar*, File) 
+                                                   at /home/prabinb/Downloads/source/mysql-5.6.10/sql/table.cc:1922
+9.2                         y     0x00007ffff49686b0 in open_binary_frm(THD*, TABLE_SHARE*, uchar*, File) 
+                                                   at /home/prabinb/Downloads/source/mysql-5.6.10/sql/table.cc:1922
+

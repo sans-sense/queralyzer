@@ -1,0 +1,38 @@
+Sql_alloc
+	Explain_format
+		Explain_format_JSON
+		Explain_format_traditional
+		
+		
+Sql_alloc
+	Explain_context
+		opt_explain_json_namespace::context
+			opt_explain_json_namespace::joinable_ctx
+				opt_explain_json_namespace::duplication_weedout_ctx
+				opt_explain_json_namespace::join_tab_ctx
+				opt_explain_json_namespace::materialize_ctx
+				opt_explain_json_namespace::message_ctx
+				opt_explain_json_namespace::simple_sort_ctx
+					opt_explain_json_namespace::simple_sort_with_subqueries_ctx
+			opt_explain_json_namespace::subquery_ctx
+			opt_explain_json_namespace::table_base_ctx
+				opt_explain_json_namespace::materialize_ctx
+				opt_explain_json_namespace::table_with_where_and_derived
+					opt_explain_json_namespace::join_tab_ctx
+					opt_explain_json_namespace::message_ctx
+				opt_explain_json_namespace::union_result_ctx
+			opt_explain_json_namespace::unit_ctx
+				opt_explain_json_namespace::join_ctx
+					opt_explain_json_namespace::duplication_weedout_ctx
+					opt_explain_json_namespace::materialize_ctx
+					opt_explain_json_namespace::sort_ctx
+						opt_explain_json_namespace::sort_with_subqueries_ctx
+				opt_explain_json_namespace::union_ctx
+				opt_explain_json_namespace::union_result_ctx
+				
+Explain
+	Explain_no_table
+	Explain_table_base
+		Explain_join
+		Explain_table
+	Explain_union_result

@@ -1,0 +1,122 @@
+id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra	
+1	PRIMARY	<derived2>	ALL	(null)	(null)	(null)	(null)	2000	(null)	
+2	DERIVED	actor_1	ALL	(null)	(null)	(null)	(null)	1000	(null)	
+3	UNION	actor_2	ALL	(null)	(null)	(null)	(null)	1000	(null)	
+(null)	UNION RESULT	<union2,3>	ALL	(null)	(null)	(null)	(null)	(null)	Using temporary	
+4	UNION	<derived5>	ALL	(null)	(null)	(null)	(null)	2000	(null)	
+5	DERIVED	actor_3	ALL	(null)	(null)	(null)	(null)	1000	(null)	
+6	UNION	actor_4	ALL	(null)	(null)	(null)	(null)	1000	(null)	
+(null)	UNION RESULT	<union5,6>	ALL	(null)	(null)	(null)	(null)	(null)	Using temporary	
+(null)	UNION RESULT	<union1,4>	ALL	(null)	(null)	(null)	(null)	(null)	Using temporary	
+
+
+[
+   {
+      "Extra" : null,
+      "id" : "1",
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : 23689908,
+      "select_type" : "PRIMARY",
+      "table" : "<derived2>",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : null,
+      "id" : "2",
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : 23690084,
+      "select_type" : "DERIVED",
+      "table" : "actor_1",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : null,
+      "id" : "3",
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : 23690260,
+      "select_type" : "UNION",
+      "table" : "actor_2",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using temporary",
+      "id" : null,
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : 13023852,
+      "select_type" : "UNION RESULT",
+      "table" : "<union2,3>",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : null,
+      "id" : "4",
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : 23690620,
+      "select_type" : "UNION",
+      "table" : "<derived5>",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : null,
+      "id" : "5",
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : 23690796,
+      "select_type" : "DERIVED",
+      "table" : "actor_3",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : null,
+      "id" : "6",
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : 23690972,
+      "select_type" : "UNION",
+      "table" : "actor_4",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using temporary",
+      "id" : null,
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : 13023852,
+      "select_type" : "UNION RESULT",
+      "table" : "<union5,6>",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using temporary",
+      "id" : null,
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : 13023852,
+      "select_type" : "UNION RESULT",
+      "table" : "<union1,4>",
+      "type" : "ALL"
+   }
+]

@@ -1,0 +1,172 @@
+explain select count(distinct(category_id)) from db_product	{\
+  "steps": [\
+    {\
+      "join_preparation": {\
+        "select#": 1,\
+        "steps": [\
+          {\
+            "expanded_query": "/* select#1 */ select count(distinct `db_product`.`category_id`) AS `count(distinct(category_id))` from `db_product`"\
+          }\
+        ]\
+      }\
+    },\
+    {\
+      "join_optimization": {\
+        "select#": 1,\
+        "steps": [\
+          {\
+            "table_dependencies": [\
+              {\
+                "table": "`db_product`",\
+                "row_may_be_null": false,\
+                "map_bit": 0,\
+                "depends_on_map_bits": [\
+                ]\
+              }\
+            ]\
+          },\
+          {\
+            "rows_estimation": [\
+              {\
+                "table": "`db_product`",\
+                "const_keys_added": {\
+                  "keys": [\
+                    "db_p_ci"\
+                  ],\
+                  "cause": "indexed_distinct_aggregate"\
+                },\
+                "range_analysis": {\
+                  "table_scan": {\
+                    "rows": 4957,\
+                    "cost": 1090.5\
+                  },\
+                  "potential_range_indices": [\
+                    {\
+                      "index": "PRIMARY",\
+                      "usable": false,\
+                      "cause": "not_applicable"\
+                    },\
+                    {\
+                      "index": "db_p_ci",\
+                      "usable": true,\
+                      "key_parts": [\
+                        "category_id",\
+                        "ean_code"\
+                      ]\
+                    }\
+                  ],\
+                  "best_covering_index_scan": {\
+                    "index": "db_p_ci",\
+                    "cost": 1008.1,\
+                    "chosen": true\
+                  },\
+                  "group_index_range": {\
+                    "potential_group_range_indices": [\
+                      {\
+                        "index": "PRIMARY",\
+                        "usable": false,\
+                        "cause": "not_covering"\
+                      },\
+                      {\
+                        "index": "db_p_ci",\
+                        "covering": true,\
+                        "rows": 57,\
+                        "cost": 38.8\
+                      }\
+                    ]\
+                  },\
+                  "best_group_range_summary": {\
+                    "type": "index_group",\
+                    "index": "db_p_ci",\
+                    "group_attribute": null,\
+                    "min_aggregate": false,\
+                    "max_aggregate": false,\
+                    "distinct_aggregate": true,\
+                    "rows": 57,\
+                    "cost": 38.8,\
+                    "key_parts_used_for_access": [\
+                      "category_id"\
+                    ],\
+                    "ranges": [\
+                    ],\
+                    "chosen": true\
+                  },\
+                  "chosen_range_access_summary": {\
+                    "range_access_plan": {\
+                      "type": "index_group",\
+                      "index": "db_p_ci",\
+                      "group_attribute": null,\
+                      "min_aggregate": false,\
+                      "max_aggregate": false,\
+                      "distinct_aggregate": true,\
+                      "rows": 57,\
+                      "cost": 38.8,\
+                      "key_parts_used_for_access": [\
+                        "category_id"\
+                      ],\
+                      "ranges": [\
+                      ]\
+                    },\
+                    "rows_for_plan": 57,\
+                    "cost_for_plan": 38.8,\
+                    "chosen": true\
+                  }\
+                }\
+              }\
+            ]\
+          },\
+          {\
+            "considered_execution_plans": [\
+              {\
+                "plan_prefix": [\
+                ],\
+                "table": "`db_product`",\
+                "best_access_path": {\
+                  "considered_access_paths": [\
+                    {\
+                      "access_type": "range",\
+                      "rows": 57,\
+                      "cost": 50.2,\
+                      "chosen": true\
+                    }\
+                  ]\
+                },\
+                "cost_for_plan": 50.2,\
+                "rows_for_plan": 57,\
+                "chosen": true\
+              }\
+            ]\
+          },\
+          {\
+            "attaching_conditions_to_tables": {\
+              "original_condition": null,\
+              "attached_conditions_computation": [\
+              ],\
+              "attached_conditions_summary": [\
+                {\
+                  "table": "`db_product`",\
+                  "attached": null\
+                }\
+              ]\
+            }\
+          },\
+          {\
+            "refine_plan": [\
+              {\
+                "table": "`db_product`",\
+                "access_type": "range"\
+              }\
+            ]\
+          }\
+        ]\
+      }\
+    },\
+    {\
+      "join_explain": {\
+        "select#": 1,\
+        "steps": [\
+        ]\
+      }\
+    }\
+  ]\
+}

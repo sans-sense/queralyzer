@@ -1,0 +1,117 @@
+explain select count(*) from db_customer where birth_date>='01-JAN-2010'	{\
+  "steps": [\
+    {\
+      "join_preparation": {\
+        "select#": 1,\
+        "steps": [\
+          {\
+            "expanded_query": "/* select#1 */ select count(0) AS `count(*)` from `db_customer` where (`db_customer`.`birth_date` >= '01-JAN-2010')"\
+          }\
+        ]\
+      }\
+    },\
+    {\
+      "join_optimization": {\
+        "select#": 1,\
+        "steps": [\
+          {\
+            "condition_processing": {\
+              "condition": "WHERE",\
+              "original_condition": "(`db_customer`.`birth_date` >= '01-JAN-2010')",\
+              "steps": [\
+                {\
+                  "transformation": "equality_propagation",\
+                  "resulting_condition": "(`db_customer`.`birth_date` >= '01-JAN-2010')"\
+                },\
+                {\
+                  "transformation": "constant_propagation",\
+                  "resulting_condition": "(`db_customer`.`birth_date` >= '01-JAN-2010')"\
+                },\
+                {\
+                  "transformation": "trivial_condition_removal",\
+                  "resulting_condition": "(`db_customer`.`birth_date` >= '01-JAN-2010')"\
+                }\
+              ]\
+            }\
+          },\
+          {\
+            "table_dependencies": [\
+              {\
+                "table": "`db_customer`",\
+                "row_may_be_null": false,\
+                "map_bit": 0,\
+                "depends_on_map_bits": [\
+                ]\
+              }\
+            ]\
+          },\
+          {\
+            "ref_optimizer_key_uses": [\
+            ]\
+          },\
+          {\
+            "rows_estimation": [\
+              {\
+                "table": "`db_customer`",\
+                "table_scan": {\
+                  "rows": 9676,\
+                  "cost": 31\
+                }\
+              }\
+            ]\
+          },\
+          {\
+            "considered_execution_plans": [\
+              {\
+                "plan_prefix": [\
+                ],\
+                "table": "`db_customer`",\
+                "best_access_path": {\
+                  "considered_access_paths": [\
+                    {\
+                      "access_type": "scan",\
+                      "rows": 9676,\
+                      "cost": 1966.2,\
+                      "chosen": true\
+                    }\
+                  ]\
+                },\
+                "cost_for_plan": 1966.2,\
+                "rows_for_plan": 9676,\
+                "chosen": true\
+              }\
+            ]\
+          },\
+          {\
+            "attaching_conditions_to_tables": {\
+              "original_condition": "(`db_customer`.`birth_date` >= '01-JAN-2010')",\
+              "attached_conditions_computation": [\
+              ],\
+              "attached_conditions_summary": [\
+                {\
+                  "table": "`db_customer`",\
+                  "attached": "(`db_customer`.`birth_date` >= '01-JAN-2010')"\
+                }\
+              ]\
+            }\
+          },\
+          {\
+            "refine_plan": [\
+              {\
+                "table": "`db_customer`",\
+                "access_type": "table_scan"\
+              }\
+            ]\
+          }\
+        ]\
+      }\
+    },\
+    {\
+      "join_explain": {\
+        "select#": 1,\
+        "steps": [\
+        ]\
+      }\
+    }\
+  ]\
+}

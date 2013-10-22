@@ -1,0 +1,73 @@
+ EXPLAIN SELECT 
+T1.action_date,
+T1.ad_campaign_category,
+T1.campaign_id 
+FROM (
+   SELECT T12.action_date, T12.campaign_id, T12. ad_campaign_category
+   FROM email_action T12
+   WHERE T12.action_date > "2009-04-01" AND T12.action_date < "2011-05-01") T1,
+   (
+   SELECT T21.action_date, T21.campaign_id,T21.ad_campaign_category
+   FROM email_action T21
+   WHERE T21.action_type = "send" AND T21.action_date > "2009-04-01" AND T21.action_date < "2011-05-01"
+   GROUP BY T21.action_date, T21.campaign_id) T2 WHERE T1.action_date = T2.action_date
+   AND T1.campaign_id = T2.campaign_id GROUP BY T2.action_date, T2.campaign_id,T2.ad_campaign_category;
+ 
+ 
+ id	select_type	table	type	possible_keys	key	key_len	ref	rows	Extra	
+1	PRIMARY	<derived2>	ALL	(null)	(null)	(null)	(null)	1000	Using where; Using temporary; Using filesort	
+1	PRIMARY	<derived3>	ref	<auto_key0>	<auto_key0>	10	T1.action_date,T1.campaign_id	10	(null)	
+3	DERIVED	T21	ALL	(null)	(null)	(null)	(null)	1000	Using where; Using temporary; Using filesort	
+2	DERIVED	T12	ALL	(null)	(null)	(null)	(null)	1000	Using where	
+
+
+[
+   {
+      "Extra" : "Using where; Using temporary; Using filesort",
+      "id" : "1",
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : "1000",
+      "select_type" : "PRIMARY",
+      "table" : "<derived2>",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : null,
+      "id" : "1",
+      "key" : "<auto_key0>",
+      "key_len" : "10",
+      "possible_keys" : "<auto_key0>",
+      "ref" : "T1.action_date,T1.campaign_id",
+      "rows" : "10",
+      "select_type" : "PRIMARY",
+      "table" : "<derived3>",
+      "type" : "ref"
+   },
+   {
+      "Extra" : "Using where; Using temporary; Using filesort",
+      "id" : "3",
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : "1000",
+      "select_type" : "DERIVED",
+      "table" : "T21",
+      "type" : "ALL"
+   },
+   {
+      "Extra" : "Using where",
+      "id" : "2",
+      "key" : null,
+      "key_len" : null,
+      "possible_keys" : null,
+      "ref" : null,
+      "rows" : "1000",
+      "select_type" : "DERIVED",
+      "table" : "T12",
+      "type" : "ALL"
+   }
+]

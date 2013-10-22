@@ -2,7 +2,7 @@
 #include "query.h"
 Query::Query (std::string input)
 {
-    query_str="EXPLAIN " + input;
+    query_str=input;
 }
 
 Query::~Query ()
@@ -34,7 +34,8 @@ Query::initialiseQueryExecution ()
 		return 4;
 	}
 	EmbeddedMYSQL *embedded_mysql = EmbeddedMYSQL::getInstance ();
-	for (create_tables_it = create_tables_vector.begin ();
+	
+        for (create_tables_it = create_tables_vector.begin ();
 			create_tables_it != create_tables_vector.end ();++create_tables_it)
 	{
       if (embedded_mysql->createTableMYSQL (*create_tables_it))
@@ -49,10 +50,32 @@ Query::initialiseQueryExecution ()
 int
 Query::executeQuery ()
 {
-    explain_data_multimap.clear();
     EmbeddedMYSQL *embedded_mysql = EmbeddedMYSQL::getInstance ();
-    return (embedded_mysql->executeMYSQL (query_str, explain_data_multimap));
+    explain_data_multimap.clear();
+    /* Also fetch the optimizer output. And store it.
+     */
+    std::string query_explain_normal="EXPLAIN " + query_str;
+    std::string query_explain_json="EXPLAIN format=JSON " + query_str;
+    std::string optimizer_on="SET optimizer_trace='enabled=on';";
+    std::string optimizer_off="SET optimizer_trace='enabled=off';";
+    std::string optimizer_mem_size="SET OPTIMIZER_TRACE_MAX_MEM_SIZE=1000000;";
+    std::string optimizer_query="SELECT TRACE FROM INFORMATION_SCHEMA.OPTIMIZER_TRACE;";
+    embedded_mysql->executeOnlyMYSQL(optimizer_on);
+    embedded_mysql->executeOnlyMYSQL(optimizer_mem_size);
+    int result=-1;
+    if ((result=embedded_mysql->executeMYSQL (query_explain_normal, explain_data_multimap))==0)
+    {
+        embedded_mysql->executeMYSQL (query_explain_json, explain_output_in_json);
+
+    }
+    if(!result)
+    {
+        embedded_mysql->executeMYSQL(optimizer_query, optimizer_trace_in_json);
+    }
+    embedded_mysql->executeOnlyMYSQL(optimizer_off);
+    return result;
 }
+
 
 void
 Query::getQueryOutput (std::string & explain_json_output)

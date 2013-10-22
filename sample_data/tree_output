@@ -1,0 +1,124 @@
+JOIN
++- Bookmark lookup
+|  +- DERIVED
+|  |  table          derived(derived(temporary(p,e)),derived(temporary(p,e)))
+|  |  possible_keys  <auto_key0>
+|  |  +- JOIN
+|  |     +- Bookmark lookup
+|  |     |  +- DERIVED
+|  |     |  |  table          derived(temporary(p,e))
+|  |     |  |  possible_keys  <auto_key0>
+|  |     |  |  +- Filesort
+|  |     |  |     +- TEMPORARY
+|  |     |  |        table          temporary(p,e)
+|  |     |  |        +- JOIN
+|  |     |  |           +- Join buffer
+|  |     |  |           |  +- Filter with WHERE
+|  |     |  |           |     +- Table scan
+|  |     |  |           |        rows           1
+|  |     |  |           |        +- Table
+|  |     |  |           |           table          e
+|  |     |  |           +- Filter with WHERE
+|  |     |  |              +- Table scan
+|  |     |  |                 rows           1
+|  |     |  |                 +- Table
+|  |     |  |                    table          p
+|  |     |  +- Index lookup
+|  |     |     key            derived(temporary(p,e))-><auto_key0>
+|  |     |     possible_keys  <auto_key0>
+|  |     |     key_len        5
+|  |     |     ref            current_table.id
+|  |     |     rows           2
+|  |     +- Filesort
+|  |        +- Filter with WHERE
+|  |           +- Table scan
+|  |              rows           2
+|  |              +- DERIVED
+|  |                 table          derived(temporary(p,e))
+|  |                 +- Filesort
+|  |                    +- TEMPORARY
+|  |                       table          temporary(p,e)
+|  |                       +- JOIN
+|  |                          +- Join buffer
+|  |                          |  +- Filter with WHERE
+|  |                          |     +- Table scan
+|  |                          |        rows           1
+|  |                          |        +- Table
+|  |                          |           table          e
+|  |                          +- Filter with WHERE
+|  |                             +- Table scan
+|  |                                rows           1
+|  |                                +- Table
+|  |                                   table          p
+|  +- Index lookup
+|     key            derived(derived(temporary(p,e)),derived(temporary(p,e)))-><auto_key0>
+|     possible_keys  <auto_key0>
+|     key_len        5
+|     ref            booking_count.id
+|     rows           2
++- Filesort
+   +- Filter with WHERE
+      +- Table scan
+         rows           4
+         +- DERIVED
+            table          derived(derived(temporary(b,p,ur)),derived(temporary(b,p,ur)))
+            +- JOIN
+               +- Bookmark lookup
+               |  +- DERIVED
+               |  |  table          derived(temporary(b,p,ur))
+               |  |  possible_keys  <auto_key0>
+               |  |  +- Filesort
+               |  |     +- TEMPORARY
+               |  |        table          temporary(b,p,ur)
+               |  |        +- JOIN
+               |  |           +- Join buffer
+               |  |           |  +- Filter with WHERE
+               |  |           |     +- Table scan
+               |  |           |        rows           1
+               |  |           |        +- Table
+               |  |           |           table          ur
+               |  |           +- JOIN
+               |  |              +- Join buffer
+               |  |              |  +- Filter with WHERE
+               |  |              |     +- Table scan
+               |  |              |        rows           1
+               |  |              |        +- Table
+               |  |              |           table          p
+               |  |              +- Filter with WHERE
+               |  |                 +- Table scan
+               |  |                    rows           1
+               |  |                    +- Table
+               |  |                       table          b
+               |  +- Index lookup
+               |     key            derived(temporary(b,p,ur))-><auto_key0>
+               |     possible_keys  <auto_key0>
+               |     key_len        5
+               |     ref            current_table.id
+               |     rows           2
+               +- Filter with WHERE
+                  +- Table scan
+                     rows           2
+                     +- DERIVED
+                        table          derived(temporary(b,p,ur))
+                        +- Filesort
+                           +- TEMPORARY
+                              table          temporary(b,p,ur)
+                              +- JOIN
+                                 +- Join buffer
+                                 |  +- Filter with WHERE
+                                 |     +- Table scan
+                                 |        rows           1
+                                 |        +- Table
+                                 |           table          ur
+                                 +- JOIN
+                                    +- Join buffer
+                                    |  +- Filter with WHERE
+                                    |     +- Table scan
+                                    |        rows           1
+                                    |        +- Table
+                                    |           table          p
+                                    +- Filter with WHERE
+                                       +- Table scan
+                                          rows           1
+                                          +- Table
+                                             table          b

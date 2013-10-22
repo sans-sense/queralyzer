@@ -1,0 +1,51 @@
+SELECT booking_count.id,
+       booking_count.property_name,
+       (booking_count.current / guests_exposed.current) AS current,
+       (booking_count.historic / guests_exposed.historic) AS historic
+  FROM (SELECT current_table.id,
+               current_table.name AS property_name,
+               current_table.value AS current,
+               historic_table.value AS historic
+          FROM (SELECT COUNT(DISTINCT b.id) AS value, p.name, p.id
+                  FROM x_booking b, x_property p, x_upgrade_request ur
+                 WHERE b.property_id IN
+                          (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)
+                       AND b.property_id = p.id
+                       AND b.id = ur.booking_id
+                       AND b.arrival BETWEEN '2012-07-01' AND '2012-07-31'
+                       AND b.arrival < CURDATE()
+                GROUP BY b.property_id) current_table,
+               (SELECT COUNT(DISTINCT b.id) AS value, p.name, p.id
+                  FROM x_booking b, x_property p, x_upgrade_request ur
+                 WHERE b.property_id IN
+                          (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)
+                       AND b.property_id = p.id
+                       AND b.id = ur.booking_id
+                       AND b.arrival BETWEEN '2012-06-01' AND '2012-06-30'
+                       AND b.ARRIVAL < CURDATE()
+                GROUP BY b.property_id) historic_table
+         WHERE current_table.id = historic_table.id) booking_count,
+       (SELECT current_table.id,
+               current_table.name AS property_name,
+               current_table.guests_exposed AS current,
+               historic_table.guests_exposed AS historic
+          FROM (SELECT COUNT(e.gad) AS guests_exposed, p.id, p.name
+                  FROM x_property p, exposure e
+                 WHERE p.id IN
+                          (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)
+                       AND e.gad BETWEEN '2012-07-01' AND '2012-07-31'
+                       AND e.gad < CURDATE()
+                       AND e.property_id = p.id
+                GROUP BY e.property_id) current_table,
+               (SELECT COUNT(e.gad) AS guests_exposed, p.id, p.name
+                  FROM x_property p,exposure e
+                 WHERE p.id IN
+                          (87,856,694,1056,474,1301,455,1943,20,808,190,426,1888)
+                       AND e.property_id = p.id   
+                       AND e.gad BETWEEN '2012-06-01' AND '2012-06-30'
+                       AND e.gad < CURDATE()
+                GROUP BY e.property_id) historic_table
+         WHERE current_table.id = historic_table.id
+        ORDER BY id) guests_exposed
+ WHERE booking_count.id = guests_exposed.id
+ORDER BY id;

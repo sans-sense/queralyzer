@@ -17,7 +17,6 @@ class EmbeddedMYSQL
     static bool isInitialized;
     static MYSQL *mysql;
     MYSQL_RES *results;
-         
     std::multimap < std::string, TableMetaData * >table_data_multimap;
        
     std::multimap < std::string, IndexMetaData * >index_data_multimap;
@@ -41,6 +40,9 @@ class EmbeddedMYSQL
 
     int executeMYSQL(std::string query_str, std::multimap < std::string,
 	ExplainMetaData * >&explain_data_multimap);
+
+    int executeMYSQL(std::string query_str, std::string & mysql_output);
+    int executeOnlyMYSQL(std::string query_str);
 
     void getTableMetaDataMYSQL(std::string & table_json_output);
     int setTableMetaDataMYSQL(std::string & table_json_input);

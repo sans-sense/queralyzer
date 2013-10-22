@@ -240,6 +240,88 @@ EmbeddedMYSQL::executeMYSQL(std::string query_str,
     return 0;
 }
 
+int 
+EmbeddedMYSQL::executeMYSQL(std::string query_str, std::string & mysql_output)
+{
+    MYSQL_RES *results_curr=NULL;
+    if (isInitialized == false)
+    {
+	std::cout <<
+	    "MYSQL is not initialised properly, unable to process queries";
+    }
+    if (query_str.empty())
+    {
+	std::cout << "Cannot process empty query";
+	return 3;
+    }
+    /*
+    std::string table_json_string;
+    serializeMap(table_data_multimap, table_json_string);
+    int result = updateStorageEngine(table_json_string);
+
+    {
+	if (result == -1)
+	    return 6;
+    }
+    */
+    if (mysql_query(mysql, query_str.c_str()))
+    {
+	std::cout << "problems running " << query_str << " error " <<
+	    mysql_error(mysql);
+	return 3;
+    }
+    if (mysql_field_count(mysql) > 0)
+    {
+	results_curr = mysql_store_result(mysql);
+	// used to determine if the query returned any results
+	if (!results_curr)
+	{
+	    // Contains null result
+	    return 0;
+	}
+	/*
+	 * Store the values in explain_json_output
+	 */
+	MYSQL_ROW row;
+        int row_count=0;
+	while (row = mysql_fetch_row(results_curr))
+	{
+            /* We are only expecting one row and that too only the first column
+             * value is copied
+             */
+	    mysql_output = *(row + 0) ? (char *) *(row + 0) : "NULL";
+	    row_count++;
+            if (row_count > 1)
+            {
+                printf("More than one row in result set; expected one\n");
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+int 
+EmbeddedMYSQL::executeOnlyMYSQL(std::string query_str)
+{
+    if (isInitialized == false)
+    {
+	std::cout <<
+	    "MYSQL is not initialised properly, unable to process queries";
+    }
+    if (query_str.empty())
+    {
+	std::cout << "Cannot process empty query";
+	return 3;
+    }
+    if (mysql_query(mysql, query_str.c_str()))
+    {
+	std::cout << "problems running " << query_str << " error " <<
+	    mysql_error(mysql);
+	return 3;
+    }
+    return 0;
+}
 
 void
 EmbeddedMYSQL::getTableMetaDataMYSQL(std::string & table_json_output)
