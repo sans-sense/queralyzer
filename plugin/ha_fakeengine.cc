@@ -35,10 +35,6 @@ static HASH fakeengine_open_tables;
 static st_fakeengine_share *get_share(const char *table_name);
 static void free_share(st_fakeengine_share *share);
 
-/*****************************************************************************
-** BLACKHOLE tables
-*****************************************************************************/
-
 ha_fakeengine::ha_fakeengine(handlerton *hton,
                            TABLE_SHARE *table_arg)
   :handler(hton, table_arg),kRowCountFilePath("/tmp/rowcount.txt"),
