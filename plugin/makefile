@@ -1,7 +1,7 @@
 # we use the embedded server so we may need to build it from scratch
 QA_MYSQL_TEST := /usr/src/mysql/mysql-5.6.10/
-inc      := $(QA_MYSQL_TEST)/sql $(QA_MYSQL_TEST)/include $(QA_MYSQL_TEST)/regex /usr/src/mysql/mysql-5.6.10/include/
-lib      := /usr/src/mysql/mysql-5.6.10/libmysqld
+inc      := $(QA_MYSQL_TEST)/sql $(QA_MYSQL_TEST)/include $(QA_MYSQL_TEST)/regex $(QA_MYSQL_TEST)/include/
+lib      := $(QA_MYSQL_TEST)/libmysqld
 inc_params=$(foreach d, $(inc), -I$d)
 
 CC       := g++
