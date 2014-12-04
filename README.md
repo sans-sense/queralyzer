@@ -44,4 +44,4 @@ Refer http://dev.mysql.com/doc/refman/5.5/en/source-configuration-options.html f
  4. Use the query "set range of index <indexname> from <tablename>=<range> to set the range for specific index (Ex: set count of index idx_buyprice from products=200). By default range count is set to 3.
  5. In create queries, add "engine=FAKEENGINE" to create the table with our custom storage engine.
  6. Give explain command to view the execution plan.
- 7. By Default database name is "sampledb_fakeengine".
+ 7. By Default database name is "sampledb_fakeengine".(create a database sampledb_fakeengine using mysqlclient)
