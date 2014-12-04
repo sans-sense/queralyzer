@@ -25,9 +25,9 @@ We need to build MySQL from source if we do not have the embedded server library
 ### Steps to build embedded server
 
  1. Download mysql-${version} (>= 5.6)
- 2. Extract and run build --with-embedded-server, use CMake -DWITH_EMBEDDED_SERVER=true -DWITH_DEBUG=true
- 3. We should see a new file libsql_embedded.a
- 4. If there are problems in safe_mutex, comment SAFE_MUTEX definitions in CMakeLists.txt
+ 2. comment SAFE_MUTEX definitions in CMakeLists.txt
+ 3. Extract and run build --with-embedded-server, use CMake -DWITH_EMBEDDED_SERVER=true -DWITH_DEBUG=true
+ 4. We should see a new file libsql_embedded.a
 
 Refer http://dev.mysql.com/doc/refman/5.5/en/source-configuration-options.html for details
 
